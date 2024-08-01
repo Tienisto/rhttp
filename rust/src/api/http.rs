@@ -32,6 +32,7 @@ impl HttpMethod {
 pub enum HttpVersionPref {
     Http1,
     Http2,
+    Http3,
     All,
 }
 
@@ -61,6 +62,7 @@ pub async fn make_http_request(
         match http_version {
             HttpVersionPref::Http1 => client.http1_only(),
             HttpVersionPref::Http2 => client.http2_prior_knowledge(),
+            HttpVersionPref::Http3 => client.http3_prior_knowledge(),
             HttpVersionPref::All => client,
         }.build()?
     };
@@ -70,6 +72,7 @@ pub async fn make_http_request(
         match http_version {
             HttpVersionPref::Http1 => request.version(Version::HTTP_10),
             HttpVersionPref::Http2 => request.version(Version::HTTP_2),
+            HttpVersionPref::Http3 => request.version(Version::HTTP_3),
             HttpVersionPref::All => request,
         }.build()?
     };

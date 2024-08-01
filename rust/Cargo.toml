@@ -10,5 +10,5 @@ crate-type = ["cdylib", "staticlib"]
 anyhow = "1.0.86"
 flutter_rust_bridge = "=2.1.0"
 openssl = { version = "0.10", features = ["vendored"] }
-reqwest = { version = "0.12.5", default-features = false, features = ["charset", "default-tls", "http2", "json"] }
+reqwest = { version = "0.12.5", default-features = false, features = ["charset", "http2", "http3", "json", "rustls-tls", "rustls-tls-native-roots"] }
 tokio = { version = "1", features = ["full"] }

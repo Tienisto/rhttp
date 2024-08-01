@@ -23,7 +23,10 @@ enum HttpVersionPref {
   /// Only use HTTP/2.
   http2,
 
-  /// Default behavior: Use the latest HTTP version supported by the server.
+  /// Only use HTTP/3.
+  http3,
+
+  /// Default behavior: Let the server decide.
   all,
   ;
 }
@@ -78,6 +81,7 @@ extension on HttpVersionPref {
     return switch (this) {
       HttpVersionPref.http1 => rust.HttpVersionPref.http1,
       HttpVersionPref.http2 => rust.HttpVersionPref.http2,
+      HttpVersionPref.http3 => rust.HttpVersionPref.http3,
       HttpVersionPref.all => rust.HttpVersionPref.all,
     };
   }

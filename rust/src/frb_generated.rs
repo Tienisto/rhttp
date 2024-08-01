@@ -276,7 +276,8 @@ impl SseDecode for crate::api::http::HttpVersionPref {
         return match inner {
             0 => crate::api::http::HttpVersionPref::Http1,
             1 => crate::api::http::HttpVersionPref::Http2,
-            2 => crate::api::http::HttpVersionPref::All,
+            2 => crate::api::http::HttpVersionPref::Http3,
+            3 => crate::api::http::HttpVersionPref::All,
             _ => unreachable!("Invalid variant for HttpVersionPref: {}", inner),
         };
     }
@@ -452,7 +453,8 @@ impl flutter_rust_bridge::IntoDart for crate::api::http::HttpVersionPref {
         match self {
             Self::Http1 => 0.into_dart(),
             Self::Http2 => 1.into_dart(),
-            Self::All => 2.into_dart(),
+            Self::Http3 => 2.into_dart(),
+            Self::All => 3.into_dart(),
             _ => unreachable!(),
         }
     }
@@ -550,7 +552,8 @@ impl SseEncode for crate::api::http::HttpVersionPref {
             match self {
                 crate::api::http::HttpVersionPref::Http1 => 0,
                 crate::api::http::HttpVersionPref::Http2 => 1,
-                crate::api::http::HttpVersionPref::All => 2,
+                crate::api::http::HttpVersionPref::Http3 => 2,
+                crate::api::http::HttpVersionPref::All => 3,
                 _ => {
                     unimplemented!("");
                 }

@@ -69,6 +69,7 @@ enum HttpVersion {
 enum HttpVersionPref {
   http1,
   http2,
+  http3,
   all,
   ;
 }

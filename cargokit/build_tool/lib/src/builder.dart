@@ -157,7 +157,10 @@ class RustBuilder {
         '--target-dir',
         environment.targetTempDir,
       ],
-      environment: await _buildEnvironment(),
+      environment: {
+        ...(await _buildEnvironment()),
+        'RUSTFLAGS': '--cfg reqwest_unstable',
+      },
     );
     return path.join(
       environment.targetTempDir,
