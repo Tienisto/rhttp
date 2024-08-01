@@ -1,9 +1,9 @@
 # rhttp
 
-[![pub package](https://img.shields.io/pub/v/moform.svg)](https://pub.dev/packages/rhttp)
+[![pub package](https://img.shields.io/pub/v/rhttp.svg)](https://pub.dev/packages/rhttp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Make HTTP requests using Rust.
+Make HTTP requests using Rust from Flutter.
 
 ## About
 
