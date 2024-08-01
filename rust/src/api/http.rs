@@ -45,7 +45,7 @@ pub enum HttpVersion {
     Other,
 }
 
-pub struct HttpResult {
+pub struct HttpResponse {
     pub headers: Vec<(String, String)>,
     pub version: HttpVersion,
     pub status_code: u16,
@@ -56,7 +56,7 @@ pub async fn make_http_request(
     method: HttpMethod,
     url: String,
     http_version: HttpVersionPref,
-) -> Result<HttpResult> {
+) -> Result<HttpResponse> {
     let client = {
         let client = reqwest::Client::builder();
         match http_version {
@@ -79,12 +79,12 @@ pub async fn make_http_request(
 
     let response = client.execute(request).await?;
 
-    Ok(HttpResult {
+    Ok(HttpResponse {
         headers: response.headers().iter().map(|(k, v)| (k.as_str().to_string(), v.to_str().unwrap().to_string())).collect(),
         version: match response.version() {
             Version::HTTP_09 => HttpVersion::Http09,
-            Version::HTTP_10 => HttpVersion::Http10,
-            Version::HTTP_11 => HttpVersion::Http11,
+            Version::HTTP_10 => HttpVersion::Http1_0,
+            Version::HTTP_11 => HttpVersion::Http1_1,
             Version::HTTP_2 => HttpVersion::Http2,
             Version::HTTP_3 => HttpVersion::Http3,
             _ => HttpVersion::Other,

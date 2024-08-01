@@ -1,7 +1,7 @@
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/rust/frb_generated.dart';
 
-export 'package:rhttp/src/rust/api/http.dart' show HttpResult, HttpVersion;
+export 'package:rhttp/src/rust/api/http.dart' show HttpResponse, HttpVersion;
 
 enum HttpMethod {
   options,
@@ -38,7 +38,7 @@ class Rhttp {
   }
 
   /// Makes an HTTP request.
-  static Future<rust.HttpResult> request({
+  static Future<rust.HttpResponse> request({
     required HttpMethod method,
     required String url,
     HttpVersionPref? httpVersion,
@@ -51,9 +51,96 @@ class Rhttp {
   }
 
   /// Makes an HTTP GET request.
-  static Future<rust.HttpResult> get(String url, {HttpVersionPref? httpVersion}) async {
+  static Future<rust.HttpResponse> get(
+    String url, {
+    HttpVersionPref? httpVersion,
+  }) async {
     return await request(
       method: HttpMethod.get,
+      url: url,
+      httpVersion: httpVersion,
+    );
+  }
+
+  /// Makes an HTTP POST request.
+  static Future<rust.HttpResponse> post(
+    String url, {
+    HttpVersionPref? httpVersion,
+  }) async {
+    return await request(
+      method: HttpMethod.post,
+      url: url,
+      httpVersion: httpVersion,
+    );
+  }
+
+  /// Makes an HTTP PUT request.
+  static Future<rust.HttpResponse> put(
+    String url, {
+    HttpVersionPref? httpVersion,
+  }) async {
+    return await request(
+      method: HttpMethod.put,
+      url: url,
+      httpVersion: httpVersion,
+    );
+  }
+
+  /// Makes an HTTP DELETE request.
+  static Future<rust.HttpResponse> delete(
+    String url, {
+    HttpVersionPref? httpVersion,
+  }) async {
+    return await request(
+      method: HttpMethod.delete,
+      url: url,
+      httpVersion: httpVersion,
+    );
+  }
+
+  /// Makes an HTTP HEAD request.
+  static Future<rust.HttpResponse> head(
+    String url, {
+    HttpVersionPref? httpVersion,
+  }) async {
+    return await request(
+      method: HttpMethod.head,
+      url: url,
+      httpVersion: httpVersion,
+    );
+  }
+
+  /// Makes an HTTP PATCH request.
+  static Future<rust.HttpResponse> patch(
+    String url, {
+    HttpVersionPref? httpVersion,
+  }) async {
+    return await request(
+      method: HttpMethod.patch,
+      url: url,
+      httpVersion: httpVersion,
+    );
+  }
+
+  /// Makes an HTTP OPTIONS request.
+  static Future<rust.HttpResponse> options(
+    String url, {
+    HttpVersionPref? httpVersion,
+  }) async {
+    return await request(
+      method: HttpMethod.options,
+      url: url,
+      httpVersion: httpVersion,
+    );
+  }
+
+  /// Makes an HTTP TRACE request.
+  static Future<rust.HttpResponse> trace(
+    String url, {
+    HttpVersionPref? httpVersion,
+  }) async {
+    return await request(
+      method: HttpMethod.trace,
       url: url,
       httpVersion: httpVersion,
     );

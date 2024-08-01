@@ -8,7 +8,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `to_method`
 
-Future<HttpResult> makeHttpRequest(
+Future<HttpResponse> makeHttpRequest(
         {required HttpMethod method,
         required String url,
         required HttpVersionPref httpVersion}) =>
@@ -28,13 +28,13 @@ enum HttpMethod {
   ;
 }
 
-class HttpResult {
+class HttpResponse {
   final List<(String, String)> headers;
   final HttpVersion version;
   final int statusCode;
   final String body;
 
-  const HttpResult({
+  const HttpResponse({
     required this.headers,
     required this.version,
     required this.statusCode,
@@ -48,7 +48,7 @@ class HttpResult {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is HttpResult &&
+      other is HttpResponse &&
           runtimeType == other.runtimeType &&
           headers == other.headers &&
           version == other.version &&

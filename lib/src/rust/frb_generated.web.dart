@@ -34,7 +34,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   HttpMethod dco_decode_http_method(dynamic raw);
 
   @protected
-  HttpResult dco_decode_http_result(dynamic raw);
+  HttpResponse dco_decode_http_response(dynamic raw);
 
   @protected
   HttpVersion dco_decode_http_version(dynamic raw);
@@ -77,7 +77,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   HttpMethod sse_decode_http_method(SseDeserializer deserializer);
 
   @protected
-  HttpResult sse_decode_http_result(SseDeserializer deserializer);
+  HttpResponse sse_decode_http_response(SseDeserializer deserializer);
 
   @protected
   HttpVersion sse_decode_http_version(SseDeserializer deserializer);
@@ -126,7 +126,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_http_method(HttpMethod self, SseSerializer serializer);
 
   @protected
-  void sse_encode_http_result(HttpResult self, SseSerializer serializer);
+  void sse_encode_http_response(HttpResponse self, SseSerializer serializer);
 
   @protected
   void sse_encode_http_version(HttpVersion self, SseSerializer serializer);

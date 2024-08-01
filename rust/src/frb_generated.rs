@@ -237,14 +237,14 @@ impl SseDecode for crate::api::http::HttpMethod {
     }
 }
 
-impl SseDecode for crate::api::http::HttpResult {
+impl SseDecode for crate::api::http::HttpResponse {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_headers = <Vec<(String, String)>>::sse_decode(deserializer);
         let mut var_version = <crate::api::http::HttpVersion>::sse_decode(deserializer);
         let mut var_statusCode = <u16>::sse_decode(deserializer);
         let mut var_body = <String>::sse_decode(deserializer);
-        return crate::api::http::HttpResult {
+        return crate::api::http::HttpResponse {
             headers: var_headers,
             version: var_version,
             status_code: var_statusCode,
@@ -406,7 +406,7 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpMethod>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::http::HttpResult {
+impl flutter_rust_bridge::IntoDart for crate::api::http::HttpResponse {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.headers.into_into_dart().into_dart(),
@@ -417,11 +417,14 @@ impl flutter_rust_bridge::IntoDart for crate::api::http::HttpResult {
         .into_dart()
     }
 }
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::http::HttpResult {}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpResult>
-    for crate::api::http::HttpResult
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::http::HttpResponse
 {
-    fn into_into_dart(self) -> crate::api::http::HttpResult {
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpResponse>
+    for crate::api::http::HttpResponse
+{
+    fn into_into_dart(self) -> crate::api::http::HttpResponse {
         self
     }
 }
@@ -515,7 +518,7 @@ impl SseEncode for crate::api::http::HttpMethod {
     }
 }
 
-impl SseEncode for crate::api::http::HttpResult {
+impl SseEncode for crate::api::http::HttpResponse {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<(String, String)>>::sse_encode(self.headers, serializer);

@@ -70,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  Future<HttpResult> crateApiHttpMakeHttpRequest(
+  Future<HttpResponse> crateApiHttpMakeHttpRequest(
       {required HttpMethod method,
       required String url,
       required HttpVersionPref httpVersion});
@@ -91,7 +91,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  Future<HttpResult> crateApiHttpMakeHttpRequest(
+  Future<HttpResponse> crateApiHttpMakeHttpRequest(
       {required HttpMethod method,
       required String url,
       required HttpVersionPref httpVersion}) {
@@ -105,7 +105,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             funcId: 1, port: port_);
       },
       codec: SseCodec(
-        decodeSuccessData: sse_decode_http_result,
+        decodeSuccessData: sse_decode_http_response,
         decodeErrorData: sse_decode_AnyhowException,
       ),
       constMeta: kCrateApiHttpMakeHttpRequestConstMeta,
@@ -217,12 +217,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  HttpResult dco_decode_http_result(dynamic raw) {
+  HttpResponse dco_decode_http_response(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
     if (arr.length != 4)
       throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return HttpResult(
+    return HttpResponse(
       headers: dco_decode_list_record_string_string(arr[0]),
       version: dco_decode_http_version(arr[1]),
       statusCode: dco_decode_u_16(arr[2]),
@@ -320,13 +320,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  HttpResult sse_decode_http_result(SseDeserializer deserializer) {
+  HttpResponse sse_decode_http_response(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_headers = sse_decode_list_record_string_string(deserializer);
     var var_version = sse_decode_http_version(deserializer);
     var var_statusCode = sse_decode_u_16(deserializer);
     var var_body = sse_decode_String(deserializer);
-    return HttpResult(
+    return HttpResponse(
         headers: var_headers,
         version: var_version,
         statusCode: var_statusCode,
@@ -438,7 +438,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_http_result(HttpResult self, SseSerializer serializer) {
+  void sse_encode_http_response(HttpResponse self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_record_string_string(self.headers, serializer);
     sse_encode_http_version(self.version, serializer);
