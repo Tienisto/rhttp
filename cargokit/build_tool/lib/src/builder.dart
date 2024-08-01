@@ -195,7 +195,13 @@ class RustBuilder {
       if (!env.ndkIsInstalled() && environment.javaHome != null) {
         env.installNdk(javaHome: environment.javaHome!);
       }
-      return env.buildEnvironment();
+      final map = await env.buildEnvironment();
+      final rustFlags = map['CARGO_ENCODED_RUSTFLAGS'];
+      if (rustFlags != null) {
+        map['CARGO_ENCODED_RUSTFLAGS'] =
+            "$rustFlags\u001f--cfg\u001freqwest_unstable";
+      }
+      return map;
     }
   }
 }
