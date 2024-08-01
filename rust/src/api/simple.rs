@@ -1,10 +1,25 @@
+use anyhow::Result;
+use std::thread::sleep;
+use std::time::Duration;
+use crate::frb_generated::StreamSink;
+
 #[flutter_rust_bridge::frb(sync)] // Synchronous mode for simplicity of the demo
 pub fn greet(name: String) -> String {
     format!("Hello, {name}!")
 }
 
-#[flutter_rust_bridge::frb(init)]
-pub fn init_app() {
-    // Default utilities - feel free to customize
-    flutter_rust_bridge::setup_default_user_utils();
+const ONE_SECOND: Duration = Duration::from_secs(1);
+
+// can't omit the return type yet, this is a bug
+pub fn tick(sink: StreamSink<i32>) -> Result<()> {
+    let mut ticks = 0;
+    loop {
+        sink.add(ticks).expect("Failed to send tick");
+        sleep(ONE_SECOND);
+        if ticks == i32::MAX {
+            break;
+        }
+        ticks += 1;
+    }
+    Ok(())
 }
