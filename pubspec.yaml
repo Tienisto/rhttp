@@ -1,11 +1,19 @@
 name: rhttp
-description: "A new Flutter FFI plugin project."
+description: Reactive, model-driven, and type-safe forms for Flutter without the overhead of managing a TextEditingController. A light wrapper around Flutter's TextFormField.
 version: 0.0.1
-homepage:
+repository: https://github.com/Tienisto/rhttp
+topics:
+  - http
+  - rust
+  - ffi
+  - http2
+  - http3
+funding:
+  - https://github.com/sponsors/Tienisto/
 
 environment:
-  sdk: '>=3.4.4 <4.0.0'
-  flutter: '>=3.3.0'
+  sdk: ^3.4.0
+  flutter: '>=3.22.0'
 
 dependencies:
   flutter:

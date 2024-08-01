@@ -1,92 +1,86 @@
 # rhttp
 
-A new Flutter FFI plugin project.
+[![pub package](https://img.shields.io/pub/v/moform.svg)](https://pub.dev/packages/rhttp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+Make HTTP requests using Rust.
+
+## About
+
+The default HTTP client in Dart is part of `dart:io`, which lacks configurability and performance compared to other HTTP clients.
+This package uses FFI with [flutter_rust_bridge](https://pub.dev/packages/flutter_rust_bridge) to call Rust code. This allows you to use a faster and more efficient HTTP client.
+On Rust's side, the [reqwest](https://crates.io/crates/reqwest) crate is used to make the requests.
 
 ## Getting Started
 
-This project is a starting point for a Flutter
-[FFI plugin](https://docs.flutter.dev/development/platform-integration/c-interop),
-a specialized package that includes native code directly invoked with Dart FFI.
+### ➤ Installation
 
-## Project structure
-
-This template uses the following structure:
-
-* `src`: Contains the native source code, and a CmakeFile.txt file for building
-  that source code into a dynamic library.
-
-* `lib`: Contains the Dart code that defines the API of the plugin, and which
-  calls into the native code using `dart:ffi`.
-
-* platform folders (`android`, `ios`, `windows`, etc.): Contains the build files
-  for building and bundling the native code library with the platform application.
-
-## Building and bundling native code
-
-The `pubspec.yaml` specifies FFI plugins as follows:
+1. Install Rust via [rustup](https://rustup.rs/).
+2. Add `rhttp` to `pubspec.yaml`:
 
 ```yaml
-  plugin:
-    platforms:
-      some_platform:
-        ffiPlugin: true
+dependencies:
+  rhttp: <version>
 ```
 
-This configuration invokes the native build for the various target platforms
-and bundles the binaries in Flutter applications using these FFI plugins.
+### ➤ Initialization
 
-This can be combined with dartPluginClass, such as when FFI is used for the
-implementation of one platform in a federated plugin:
+```dart
+import 'package:rhttp/rhttp.dart';
 
-```yaml
-  plugin:
-    implements: some_other_plugin
-    platforms:
-      some_platform:
-        dartPluginClass: SomeClass
-        ffiPlugin: true
+void main() async {
+  await Rhttp.init(); // add this
+  runApp(MyApp());
+}
 ```
 
-A plugin can have both FFI and method channels:
+### ➤ Usage
 
-```yaml
-  plugin:
-    platforms:
-      some_platform:
-        pluginClass: SomeName
-        ffiPlugin: true
+```dart
+import 'package:rhttp/rhttp.dart';
+
+void main() async {
+  await Rhttp.init();
+  
+  // Make a GET request
+  HttpResponse response = await Rhttp.get('https://example.com');
+  
+  // Read the response
+  int statusCode = response.statusCode;
+  String body = response.body;
+}
 ```
 
-The native build systems that are invoked by FFI (and method channel) plugins are:
+## Configuration
 
-* For Android: Gradle, which invokes the Android NDK for native builds.
-  * See the documentation in android/build.gradle.
-* For iOS and MacOS: Xcode, via CocoaPods.
-  * See the documentation in ios/rhttp.podspec.
-  * See the documentation in macos/rhttp.podspec.
-* For Linux and Windows: CMake.
-  * See the documentation in linux/CMakeLists.txt.
-  * See the documentation in windows/CMakeLists.txt.
+### ➤ Custom HTTP version
 
-## Binding to native code
+You can specify the HTTP version to use for the request:
 
-To use the native code, bindings in Dart are needed.
-To avoid writing these by hand, they are generated from the header file
-(`src/rhttp.h`) by `package:ffigen`.
-Regenerate the bindings by running `dart run ffigen --config ffigen.yaml`.
+```dart
+await Rhttp.get('https://example.com', httpVersion: HttpVersionPref.http3);
+```
 
-## Invoking native code
+## License
 
-Very short-running native functions can be directly invoked from any isolate.
-For example, see `sum` in `lib/rhttp.dart`.
+MIT License
 
-Longer-running functions should be invoked on a helper isolate to avoid
-dropping frames in Flutter applications.
-For example, see `sumAsync` in `lib/rhttp.dart`.
+Copyright (c) 2024 Tien Do Nam
 
-## Flutter help
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
