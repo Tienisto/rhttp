@@ -1,9 +1,12 @@
+use crate::api::http_types::HttpHeaderName;
+use crate::frb_generated::StreamSink;
+use anyhow::Result;
+use flutter_rust_bridge::DartFnFuture;
+use futures_util::StreamExt;
+use reqwest::header::{HeaderName, HeaderValue};
+use reqwest::{Method, Response, Url, Version};
 use std::collections::HashMap;
 use std::str::FromStr;
-use anyhow::Result;
-use reqwest::{Method, Url, Version};
-use reqwest::header::{HeaderName, HeaderValue};
-use crate::api::http_types::HttpHeaderName;
 
 pub enum HttpMethod {
     Options,
@@ -36,6 +39,7 @@ impl HttpMethod {
 pub enum HttpHeaders {
     Map(HashMap<HttpHeaderName, String>),
     RawMap(HashMap<String, String>),
+    List(Vec<(String, String)>),
 }
 
 pub enum HttpBody {
@@ -54,7 +58,6 @@ pub enum HttpVersionPref {
 pub enum HttpExpectBody {
     Text,
     Bytes,
-    Stream,
 }
 
 pub enum HttpVersion {
@@ -64,6 +67,19 @@ pub enum HttpVersion {
     Http2,
     Http3,
     Other,
+}
+
+impl HttpVersion {
+    fn from_version(version: Version) -> HttpVersion {
+        match version {
+            Version::HTTP_09 => HttpVersion::Http09,
+            Version::HTTP_10 => HttpVersion::Http10,
+            Version::HTTP_11 => HttpVersion::Http11,
+            Version::HTTP_2 => HttpVersion::Http2,
+            Version::HTTP_3 => HttpVersion::Http3,
+            _ => HttpVersion::Other,
+        }
+    }
 }
 
 pub struct HttpResponse {
@@ -88,6 +104,64 @@ pub async fn make_http_request(
     body: Option<HttpBody>,
     expect_body: HttpExpectBody,
 ) -> Result<HttpResponse> {
+    let response =
+        make_http_request_helper(http_version, method, url, query, headers, body).await?;
+
+    Ok(HttpResponse {
+        headers: header_to_vec(response.headers()),
+        version: HttpVersion::from_version(response.version()),
+        status_code: response.status().as_u16(),
+        body: match expect_body {
+            HttpExpectBody::Text => HttpResponseBody::Text(response.text().await?),
+            HttpExpectBody::Bytes => HttpResponseBody::Bytes(response.bytes().await?.to_vec()),
+        },
+    })
+}
+
+pub async fn make_http_request_receive_stream(
+    http_version: HttpVersionPref,
+    method: HttpMethod,
+    url: String,
+    query: Option<Vec<(String, String)>>,
+    headers: Option<HttpHeaders>,
+    body: Option<HttpBody>,
+    stream_sink: StreamSink<Vec<u8>>,
+    on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
+) -> Result<()> {
+    let response =
+        make_http_request_helper(http_version, method, url, query, headers, body).await?;
+
+    let http_response = HttpResponse {
+        headers: header_to_vec(response.headers()),
+        version: HttpVersion::from_version(response.version()),
+        status_code: response.status().as_u16(),
+        body: HttpResponseBody::Stream,
+    };
+
+    on_response(http_response).await;
+
+    let mut stream_sink = stream_sink;
+    let mut stream = response.bytes_stream();
+
+    while let Some(chunk) = stream.next().await {
+        let chunk = chunk?;
+        stream_sink
+            .add(chunk.to_vec())
+            .map_err(|e| anyhow::anyhow!(e.to_string()))?;
+    }
+
+    Ok(())
+}
+
+/// This function is used to make an HTTP request without any response handling.
+async fn make_http_request_helper(
+    http_version: HttpVersionPref,
+    method: HttpMethod,
+    url: String,
+    query: Option<Vec<(String, String)>>,
+    headers: Option<HttpHeaders>,
+    body: Option<HttpBody>,
+) -> Result<Response> {
     let client = {
         let client = reqwest::Client::builder();
         match http_version {
@@ -95,7 +169,8 @@ pub async fn make_http_request(
             HttpVersionPref::Http2 => client.http2_prior_knowledge(),
             HttpVersionPref::Http3 => client.http3_prior_knowledge(),
             HttpVersionPref::All => client,
-        }.build()?
+        }
+        .build()?
     };
 
     let request = {
@@ -119,14 +194,21 @@ pub async fn make_http_request(
                     let header_value = HeaderValue::from_str(&v)?;
                     request = request.header(header_name, header_value);
                 }
-            },
+            }
             Some(HttpHeaders::RawMap(map)) => {
                 for (k, v) in map {
                     let header_name = HeaderName::from_str(&k)?;
                     let header_value = HeaderValue::from_str(&v)?;
                     request = request.header(header_name, header_value);
                 }
-            },
+            }
+            Some(HttpHeaders::List(list)) => {
+                for (k, v) in list {
+                    let header_name = HeaderName::from_str(&k)?;
+                    let header_value = HeaderValue::from_str(&v)?;
+                    request = request.header(header_name, header_value);
+                }
+            }
             None => (),
         };
 
@@ -142,21 +224,12 @@ pub async fn make_http_request(
 
     let response = client.execute(request).await?;
 
-    Ok(HttpResponse {
-        headers: response.headers().iter().map(|(k, v)| (k.as_str().to_string(), v.to_str().unwrap().to_string())).collect(),
-        version: match response.version() {
-            Version::HTTP_09 => HttpVersion::Http09,
-            Version::HTTP_10 => HttpVersion::Http10,
-            Version::HTTP_11 => HttpVersion::Http11,
-            Version::HTTP_2 => HttpVersion::Http2,
-            Version::HTTP_3 => HttpVersion::Http3,
-            _ => HttpVersion::Other,
-        },
-        status_code: response.status().as_u16(),
-        body: match expect_body {
-            HttpExpectBody::Text => HttpResponseBody::Text(response.text().await?),
-            HttpExpectBody::Bytes => HttpResponseBody::Bytes(response.bytes().await?.to_vec()),
-            HttpExpectBody::Stream => HttpResponseBody::Stream,
-        },
-    })
+    Ok(response)
+}
+
+fn header_to_vec(headers: &reqwest::header::HeaderMap) -> Vec<(String, String)> {
+    headers
+        .iter()
+        .map(|(k, v)| (k.as_str().to_string(), v.to_str().unwrap().to_string()))
+        .collect()
 }

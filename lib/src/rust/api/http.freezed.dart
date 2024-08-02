@@ -516,23 +516,26 @@ abstract class HttpBody_Form extends HttpBody {
 
 /// @nodoc
 mixin _$HttpHeaders {
-  Map<Object, String> get field0 => throw _privateConstructorUsedError;
+  Object get field0 => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(Map<HttpHeaderName, String> field0) map,
     required TResult Function(Map<String, String> field0) rawMap,
+    required TResult Function(List<(String, String)> field0) list,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(Map<HttpHeaderName, String> field0)? map,
     TResult? Function(Map<String, String> field0)? rawMap,
+    TResult? Function(List<(String, String)> field0)? list,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(Map<HttpHeaderName, String> field0)? map,
     TResult Function(Map<String, String> field0)? rawMap,
+    TResult Function(List<(String, String)> field0)? list,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -540,18 +543,21 @@ mixin _$HttpHeaders {
   TResult map<TResult extends Object?>({
     required TResult Function(HttpHeaders_Map value) map,
     required TResult Function(HttpHeaders_RawMap value) rawMap,
+    required TResult Function(HttpHeaders_List value) list,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(HttpHeaders_Map value)? map,
     TResult? Function(HttpHeaders_RawMap value)? rawMap,
+    TResult? Function(HttpHeaders_List value)? list,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(HttpHeaders_Map value)? map,
     TResult Function(HttpHeaders_RawMap value)? rawMap,
+    TResult Function(HttpHeaders_List value)? list,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -650,6 +656,7 @@ class _$HttpHeaders_MapImpl extends HttpHeaders_Map {
   TResult when<TResult extends Object?>({
     required TResult Function(Map<HttpHeaderName, String> field0) map,
     required TResult Function(Map<String, String> field0) rawMap,
+    required TResult Function(List<(String, String)> field0) list,
   }) {
     return map(field0);
   }
@@ -659,6 +666,7 @@ class _$HttpHeaders_MapImpl extends HttpHeaders_Map {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(Map<HttpHeaderName, String> field0)? map,
     TResult? Function(Map<String, String> field0)? rawMap,
+    TResult? Function(List<(String, String)> field0)? list,
   }) {
     return map?.call(field0);
   }
@@ -668,6 +676,7 @@ class _$HttpHeaders_MapImpl extends HttpHeaders_Map {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(Map<HttpHeaderName, String> field0)? map,
     TResult Function(Map<String, String> field0)? rawMap,
+    TResult Function(List<(String, String)> field0)? list,
     required TResult orElse(),
   }) {
     if (map != null) {
@@ -681,6 +690,7 @@ class _$HttpHeaders_MapImpl extends HttpHeaders_Map {
   TResult map<TResult extends Object?>({
     required TResult Function(HttpHeaders_Map value) map,
     required TResult Function(HttpHeaders_RawMap value) rawMap,
+    required TResult Function(HttpHeaders_List value) list,
   }) {
     return map(this);
   }
@@ -690,6 +700,7 @@ class _$HttpHeaders_MapImpl extends HttpHeaders_Map {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(HttpHeaders_Map value)? map,
     TResult? Function(HttpHeaders_RawMap value)? rawMap,
+    TResult? Function(HttpHeaders_List value)? list,
   }) {
     return map?.call(this);
   }
@@ -699,6 +710,7 @@ class _$HttpHeaders_MapImpl extends HttpHeaders_Map {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(HttpHeaders_Map value)? map,
     TResult Function(HttpHeaders_RawMap value)? rawMap,
+    TResult Function(HttpHeaders_List value)? list,
     required TResult orElse(),
   }) {
     if (map != null) {
@@ -795,6 +807,7 @@ class _$HttpHeaders_RawMapImpl extends HttpHeaders_RawMap {
   TResult when<TResult extends Object?>({
     required TResult Function(Map<HttpHeaderName, String> field0) map,
     required TResult Function(Map<String, String> field0) rawMap,
+    required TResult Function(List<(String, String)> field0) list,
   }) {
     return rawMap(field0);
   }
@@ -804,6 +817,7 @@ class _$HttpHeaders_RawMapImpl extends HttpHeaders_RawMap {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(Map<HttpHeaderName, String> field0)? map,
     TResult? Function(Map<String, String> field0)? rawMap,
+    TResult? Function(List<(String, String)> field0)? list,
   }) {
     return rawMap?.call(field0);
   }
@@ -813,6 +827,7 @@ class _$HttpHeaders_RawMapImpl extends HttpHeaders_RawMap {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(Map<HttpHeaderName, String> field0)? map,
     TResult Function(Map<String, String> field0)? rawMap,
+    TResult Function(List<(String, String)> field0)? list,
     required TResult orElse(),
   }) {
     if (rawMap != null) {
@@ -826,6 +841,7 @@ class _$HttpHeaders_RawMapImpl extends HttpHeaders_RawMap {
   TResult map<TResult extends Object?>({
     required TResult Function(HttpHeaders_Map value) map,
     required TResult Function(HttpHeaders_RawMap value) rawMap,
+    required TResult Function(HttpHeaders_List value) list,
   }) {
     return rawMap(this);
   }
@@ -835,6 +851,7 @@ class _$HttpHeaders_RawMapImpl extends HttpHeaders_RawMap {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(HttpHeaders_Map value)? map,
     TResult? Function(HttpHeaders_RawMap value)? rawMap,
+    TResult? Function(HttpHeaders_List value)? list,
   }) {
     return rawMap?.call(this);
   }
@@ -844,6 +861,7 @@ class _$HttpHeaders_RawMapImpl extends HttpHeaders_RawMap {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(HttpHeaders_Map value)? map,
     TResult Function(HttpHeaders_RawMap value)? rawMap,
+    TResult Function(HttpHeaders_List value)? list,
     required TResult orElse(),
   }) {
     if (rawMap != null) {
@@ -862,6 +880,157 @@ abstract class HttpHeaders_RawMap extends HttpHeaders {
   Map<String, String> get field0;
   @JsonKey(ignore: true)
   _$$HttpHeaders_RawMapImplCopyWith<_$HttpHeaders_RawMapImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$HttpHeaders_ListImplCopyWith<$Res> {
+  factory _$$HttpHeaders_ListImplCopyWith(_$HttpHeaders_ListImpl value,
+          $Res Function(_$HttpHeaders_ListImpl) then) =
+      __$$HttpHeaders_ListImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<(String, String)> field0});
+}
+
+/// @nodoc
+class __$$HttpHeaders_ListImplCopyWithImpl<$Res>
+    extends _$HttpHeadersCopyWithImpl<$Res, _$HttpHeaders_ListImpl>
+    implements _$$HttpHeaders_ListImplCopyWith<$Res> {
+  __$$HttpHeaders_ListImplCopyWithImpl(_$HttpHeaders_ListImpl _value,
+      $Res Function(_$HttpHeaders_ListImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+  }) {
+    return _then(_$HttpHeaders_ListImpl(
+      null == field0
+          ? _value._field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as List<(String, String)>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$HttpHeaders_ListImpl extends HttpHeaders_List {
+  const _$HttpHeaders_ListImpl(final List<(String, String)> field0)
+      : _field0 = field0,
+        super._();
+
+  final List<(String, String)> _field0;
+  @override
+  List<(String, String)> get field0 {
+    if (_field0 is EqualUnmodifiableListView) return _field0;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_field0);
+  }
+
+  @override
+  String toString() {
+    return 'HttpHeaders.list(field0: $field0)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HttpHeaders_ListImpl &&
+            const DeepCollectionEquality().equals(other._field0, _field0));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_field0));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HttpHeaders_ListImplCopyWith<_$HttpHeaders_ListImpl> get copyWith =>
+      __$$HttpHeaders_ListImplCopyWithImpl<_$HttpHeaders_ListImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(Map<HttpHeaderName, String> field0) map,
+    required TResult Function(Map<String, String> field0) rawMap,
+    required TResult Function(List<(String, String)> field0) list,
+  }) {
+    return list(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(Map<HttpHeaderName, String> field0)? map,
+    TResult? Function(Map<String, String> field0)? rawMap,
+    TResult? Function(List<(String, String)> field0)? list,
+  }) {
+    return list?.call(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(Map<HttpHeaderName, String> field0)? map,
+    TResult Function(Map<String, String> field0)? rawMap,
+    TResult Function(List<(String, String)> field0)? list,
+    required TResult orElse(),
+  }) {
+    if (list != null) {
+      return list(field0);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(HttpHeaders_Map value) map,
+    required TResult Function(HttpHeaders_RawMap value) rawMap,
+    required TResult Function(HttpHeaders_List value) list,
+  }) {
+    return list(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(HttpHeaders_Map value)? map,
+    TResult? Function(HttpHeaders_RawMap value)? rawMap,
+    TResult? Function(HttpHeaders_List value)? list,
+  }) {
+    return list?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(HttpHeaders_Map value)? map,
+    TResult Function(HttpHeaders_RawMap value)? rawMap,
+    TResult Function(HttpHeaders_List value)? list,
+    required TResult orElse(),
+  }) {
+    if (list != null) {
+      return list(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class HttpHeaders_List extends HttpHeaders {
+  const factory HttpHeaders_List(final List<(String, String)> field0) =
+      _$HttpHeaders_ListImpl;
+  const HttpHeaders_List._() : super._();
+
+  @override
+  List<(String, String)> get field0;
+  @JsonKey(ignore: true)
+  _$$HttpHeaders_ListImplCopyWith<_$HttpHeaders_ListImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

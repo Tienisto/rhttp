@@ -8,6 +8,10 @@ sealed class HttpResponse {
   final int statusCode;
   final List<(String, String)> headers;
 
+  Map<String, String> get headerMap => {
+        for (final entry in headers) entry.$1: entry.$2,
+      };
+
   const HttpResponse({
     required this.version,
     required this.statusCode,
@@ -24,6 +28,11 @@ class HttpTextResponse extends HttpResponse {
     required super.headers,
     required this.body,
   });
+
+  @override
+  String toString() {
+    return 'HttpTextResponse(${version.name}, status: $statusCode)';
+  }
 }
 
 class HttpBytesResponse extends HttpResponse {
@@ -35,6 +44,27 @@ class HttpBytesResponse extends HttpResponse {
     required super.headers,
     required this.body,
   });
+
+  @override
+  String toString() {
+    return 'HttpBytesResponse(${version.name}, status: $statusCode)';
+  }
+}
+
+class HttpStreamResponse extends HttpResponse {
+  final Stream<Uint8List> body;
+
+  const HttpStreamResponse({
+    required super.version,
+    required super.statusCode,
+    required super.headers,
+    required this.body,
+  });
+
+  @override
+  String toString() {
+    return 'HttpStreamResponse(${version.name}, status: $statusCode)';
+  }
 }
 
 enum HttpVersion {
@@ -48,7 +78,14 @@ enum HttpVersion {
 }
 
 @internal
-HttpResponse parseHttpResponse(rust.HttpResponse response) {
+HttpResponse parseHttpResponse(
+  rust.HttpResponse response, {
+  Stream<Uint8List>? bodyStream,
+}) {
+  assert((response.body is rust.HttpResponseBody_Stream &&
+          bodyStream != null) ||
+      (response.body is! rust.HttpResponseBody_Stream && bodyStream == null));
+
   return switch (response.body) {
     rust.HttpResponseBody_Text text => HttpTextResponse(
         version: parseHttpVersion(response.version),
@@ -62,7 +99,12 @@ HttpResponse parseHttpResponse(rust.HttpResponse response) {
         headers: response.headers,
         body: bytes.field0,
       ),
-    rust.HttpResponseBody_Stream _ => throw UnimplementedError(),
+    rust.HttpResponseBody_Stream _ => HttpStreamResponse(
+        version: parseHttpVersion(response.version),
+        statusCode: response.statusCode,
+        headers: response.headers,
+        body: bodyStream!,
+      ),
   };
 }
 

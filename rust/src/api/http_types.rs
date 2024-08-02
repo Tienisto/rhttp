@@ -93,7 +93,9 @@ impl HttpHeaderName {
             HttpHeaderName::AcceptEncoding => header::ACCEPT_ENCODING,
             HttpHeaderName::AcceptLanguage => header::ACCEPT_LANGUAGE,
             HttpHeaderName::AcceptRanges => header::ACCEPT_RANGES,
-            HttpHeaderName::AccessControlAllowCredentials => header::ACCESS_CONTROL_ALLOW_CREDENTIALS,
+            HttpHeaderName::AccessControlAllowCredentials => {
+                header::ACCESS_CONTROL_ALLOW_CREDENTIALS
+            }
             HttpHeaderName::AccessControlAllowHeaders => header::ACCESS_CONTROL_ALLOW_HEADERS,
             HttpHeaderName::AccessControlAllowMethods => header::ACCESS_CONTROL_ALLOW_METHODS,
             HttpHeaderName::AccessControlAllowOrigin => header::ACCESS_CONTROL_ALLOW_ORIGIN,
@@ -116,7 +118,9 @@ impl HttpHeaderName {
             HttpHeaderName::ContentLocation => header::CONTENT_LOCATION,
             HttpHeaderName::ContentRange => header::CONTENT_RANGE,
             HttpHeaderName::ContentSecurityPolicy => header::CONTENT_SECURITY_POLICY,
-            HttpHeaderName::ContentSecurityPolicyReportOnly => header::CONTENT_SECURITY_POLICY_REPORT_ONLY,
+            HttpHeaderName::ContentSecurityPolicyReportOnly => {
+                header::CONTENT_SECURITY_POLICY_REPORT_ONLY
+            }
             HttpHeaderName::ContentType => header::CONTENT_TYPE,
             HttpHeaderName::Cookie => header::COOKIE,
             HttpHeaderName::Dnt => header::DNT,

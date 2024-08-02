@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
@@ -8,110 +8,6 @@ import 'package:rhttp/src/rust/api/http_types.dart';
 import 'package:rhttp/src/rust/frb_generated.dart';
 
 export 'package:rhttp/src/rust/api/http_types.dart' show HttpHeaderName;
-
-enum HttpMethod {
-  options,
-  get,
-  post,
-  put,
-  delete,
-  head,
-  trace,
-  connect,
-  patch,
-  ;
-}
-
-enum HttpVersionPref {
-  /// Only use HTTP/1.
-  http1,
-
-  /// Only use HTTP/2.
-  http2,
-
-  /// Only use HTTP/3.
-  http3,
-
-  /// Default behavior: Let the server decide.
-  all,
-  ;
-}
-
-sealed class HttpHeaders {
-  const HttpHeaders();
-
-  /// A typed header map with a set of predefined keys.
-  const factory HttpHeaders.map(Map<HttpHeaderName, String> map) =
-      HttpHeaderMap._;
-
-  /// A raw header map where the keys are strings.
-  const factory HttpHeaders.rawMap(Map<String, String> map) =
-      HttpHeaderRawMap._;
-}
-
-/// A typed header map with a set of predefined keys.
-class HttpHeaderMap extends HttpHeaders {
-  final Map<HttpHeaderName, String> map;
-
-  const HttpHeaderMap._(this.map);
-}
-
-/// A raw header map where the keys are strings.
-class HttpHeaderRawMap extends HttpHeaders {
-  final Map<String, String> map;
-
-  const HttpHeaderRawMap._(this.map);
-}
-
-sealed class HttpBody {
-  const HttpBody();
-
-  /// A plain text body.
-  const factory HttpBody.text(String text) = HttpBodyText._;
-
-  /// A JSON body.
-  /// The Content-Type header will be set to `application/json` if not provided.
-  const factory HttpBody.json(Map<String, dynamic> json) = HttpBodyJson._;
-
-  /// A body of raw bytes.
-  const factory HttpBody.bytes(Uint8List bytes) = HttpBodyBytes._;
-
-  /// A www-form-urlencoded body.
-  /// The Content-Type header will be set to `application/x-www-form-urlencoded`
-  /// if not provided.
-  const factory HttpBody.form(Map<String, String> form) = HttpBodyForm._;
-}
-
-/// A plain text body.
-class HttpBodyText extends HttpBody {
-  final String text;
-
-  const HttpBodyText._(this.text);
-}
-
-/// A JSON body.
-/// The Content-Type header will be set to `application/json` if not provided.
-class HttpBodyJson extends HttpBody {
-  final Map<String, dynamic> json;
-
-  const HttpBodyJson._(this.json);
-}
-
-/// A body of raw bytes.
-class HttpBodyBytes extends HttpBody {
-  final Uint8List bytes;
-
-  const HttpBodyBytes._(this.bytes);
-}
-
-/// A www-form-urlencoded body.
-/// The Content-Type header will be set to `application/x-www-form-urlencoded`
-/// if not provided.
-class HttpBodyForm extends HttpBody {
-  final Map<String, String> form;
-
-  const HttpBodyForm._(this.form);
-}
 
 class Rhttp {
   /// Initializes the Rust library.
@@ -135,7 +31,7 @@ class Rhttp {
           if (map.map.containsKey(HttpHeaderName.contentType)) {
             break;
           }
-          headers = HttpHeaderMap._({
+          headers = HttpHeaders.map({
             ...map.map,
             HttpHeaderName.contentType: 'application/json',
           });
@@ -144,30 +40,50 @@ class Rhttp {
           if (rawMap.map.keys.any((e) => e.toLowerCase() == 'content-type')) {
             break;
           }
-          headers = HttpHeaderRawMap._({
+          headers = HttpHeaders.rawMap({
             ...rawMap.map,
             'Content-Type': 'application/json',
           });
           break;
         default:
-          headers = const HttpHeaderMap._({
+          headers = const HttpHeaders.map({
             HttpHeaderName.contentType: 'application/json',
           });
           break;
       }
     }
 
-    final response = await rust.makeHttpRequest(
-      httpVersion: httpVersion?._toRustType() ?? rust.HttpVersionPref.all,
-      method: method._toRustType(),
-      url: url,
-      query: query?.entries.map((e) => (e.key, e.value)).toList(),
-      headers: headers?._toRustType(),
-      body: body?._toRustType(),
-      expectBody: expectBody.toRustType(),
-    );
+    if (expectBody == HttpExpectBody.stream) {
+      final responseCompleter = Completer<rust.HttpResponse>();
+      final stream = rust.makeHttpRequestReceiveStream(
+        httpVersion: httpVersion?._toRustType() ?? rust.HttpVersionPref.all,
+        method: method._toRustType(),
+        url: url,
+        query: query?.entries.map((e) => (e.key, e.value)).toList(),
+        headers: headers?._toRustType(),
+        body: body?._toRustType(),
+        onResponse: (r) => responseCompleter.complete(r),
+      );
 
-    return parseHttpResponse(response);
+      final response = await responseCompleter.future;
+
+      return parseHttpResponse(
+        response,
+        bodyStream: stream,
+      );
+    } else {
+      final response = await rust.makeHttpRequest(
+        httpVersion: httpVersion?._toRustType() ?? rust.HttpVersionPref.all,
+        method: method._toRustType(),
+        url: url,
+        query: query?.entries.map((e) => (e.key, e.value)).toList(),
+        headers: headers?._toRustType(),
+        body: body?._toRustType(),
+        expectBody: expectBody.toRustType(),
+      );
+
+      return parseHttpResponse(response);
+    }
   }
 
   /// Alias for [requestText].
@@ -227,6 +143,26 @@ class Rhttp {
       expectBody: HttpExpectBody.bytes,
     );
     return response as HttpBytesResponse;
+  }
+
+  static Future<HttpStreamResponse> requestStream({
+    HttpVersionPref? httpVersion,
+    required HttpMethod method,
+    required String url,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
+  }) async {
+    final response = await requestGeneric(
+      httpVersion: httpVersion,
+      method: method,
+      url: url,
+      query: query,
+      headers: headers,
+      body: body,
+      expectBody: HttpExpectBody.stream,
+    );
+    return response as HttpStreamResponse;
   }
 
   /// Makes an HTTP GET request.
@@ -400,6 +336,7 @@ extension on HttpHeaders {
     return switch (this) {
       HttpHeaderMap map => rust.HttpHeaders.map(map.map),
       HttpHeaderRawMap rawMap => rust.HttpHeaders.rawMap(rawMap.map),
+      HttpHeaderList list => rust.HttpHeaders.list(list.list),
     };
   }
 }

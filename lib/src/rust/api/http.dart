@@ -7,9 +7,10 @@ import '../frb_generated.dart';
 import 'http_types.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+
 part 'http.freezed.dart';
 
-// These functions are ignored because they are not marked as `pub`: `to_method`
+// These functions are ignored because they are not marked as `pub`: `from_version`, `header_to_vec`, `make_http_request_helper`, `to_method`
 
 Future<HttpResponse> makeHttpRequest(
         {required HttpVersionPref httpVersion,
@@ -28,6 +29,23 @@ Future<HttpResponse> makeHttpRequest(
         body: body,
         expectBody: expectBody);
 
+Stream<Uint8List> makeHttpRequestReceiveStream(
+        {required HttpVersionPref httpVersion,
+        required HttpMethod method,
+        required String url,
+        List<(String, String)>? query,
+        HttpHeaders? headers,
+        HttpBody? body,
+        required FutureOr<void> Function(HttpResponse) onResponse}) =>
+    RustLib.instance.api.crateApiHttpMakeHttpRequestReceiveStream(
+        httpVersion: httpVersion,
+        method: method,
+        url: url,
+        query: query,
+        headers: headers,
+        body: body,
+        onResponse: onResponse);
+
 @freezed
 sealed class HttpBody with _$HttpBody {
   const HttpBody._();
@@ -35,9 +53,11 @@ sealed class HttpBody with _$HttpBody {
   const factory HttpBody.text(
     String field0,
   ) = HttpBody_Text;
+
   const factory HttpBody.bytes(
     Uint8List field0,
   ) = HttpBody_Bytes;
+
   const factory HttpBody.form(
     Map<String, String> field0,
   ) = HttpBody_Form;
@@ -46,7 +66,6 @@ sealed class HttpBody with _$HttpBody {
 enum HttpExpectBody {
   text,
   bytes,
-  stream,
   ;
 }
 
@@ -57,9 +76,14 @@ sealed class HttpHeaders with _$HttpHeaders {
   const factory HttpHeaders.map(
     Map<HttpHeaderName, String> field0,
   ) = HttpHeaders_Map;
+
   const factory HttpHeaders.rawMap(
     Map<String, String> field0,
   ) = HttpHeaders_RawMap;
+
+  const factory HttpHeaders.list(
+    List<(String, String)> field0,
+  ) = HttpHeaders_List;
 }
 
 enum HttpMethod {
@@ -110,9 +134,11 @@ sealed class HttpResponseBody with _$HttpResponseBody {
   const factory HttpResponseBody.text(
     String field0,
   ) = HttpResponseBody_Text;
+
   const factory HttpResponseBody.bytes(
     Uint8List field0,
   ) = HttpResponseBody_Bytes;
+
   const factory HttpResponseBody.stream() = HttpResponseBody_Stream;
 }
 

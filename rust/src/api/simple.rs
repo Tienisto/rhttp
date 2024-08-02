@@ -1,7 +1,7 @@
+use crate::frb_generated::StreamSink;
 use anyhow::Result;
 use std::thread::sleep;
 use std::time::Duration;
-use crate::frb_generated::StreamSink;
 
 #[flutter_rust_bridge::frb(sync)] // Synchronous mode for simplicity of the demo
 pub fn greet(name: String) -> String {

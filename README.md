@@ -43,7 +43,7 @@ void main() async {
   await Rhttp.init();
   
   // Make a GET request
-  HttpResponse response = await Rhttp.get('https://example.com');
+  HttpTextResponse response = await Rhttp.get('https://example.com');
   
   // Read the response
   int statusCode = response.statusCode;
@@ -65,7 +65,7 @@ await Rhttp.request(method: HttpMethod.post, url: 'https://example.com');
 await Rhttp.post('https://example.com');
 ```
 
-### ➤ Query parameters
+### ➤ Request query parameters
 
 You can add query parameters to the URL:
 
@@ -73,7 +73,7 @@ You can add query parameters to the URL:
 await Rhttp.get('https://example.com', query: {'key': 'value'});
 ```
 
-### ➤ Headers
+### ➤ Request Headers
 
 You can add headers to the request:
 
@@ -87,7 +87,7 @@ await Rhttp.request(
 );
 ```
 
-### ➤ Body
+### ➤ Request Body
 
 You can add a body to the request. There are different types of bodies you can use:
 
@@ -145,6 +145,23 @@ await Rhttp.request(
   url: 'https://example.com',
   body: HttpBody.form({'key': 'value'}),
 );
+```
+
+### ➤ Response Body
+
+To let Rust do most of the work, you must specify the expected response body type before making the request.
+
+Functions without a specified type will return a `HttpTextResponse`. (e.g. `Rhttp.get`, `Rhttp.request`, etc.)
+
+```dart
+HttpTextResponse response = await Rhttp.getText('https://example.com');
+String body = response.body;
+
+HttpBytesResponse response = await Rhttp.getBytes('https://example.com');
+Uint8List body = response.body;
+
+HttpStreamResponse response = await Rhttp.getStream('https://example.com');
+Stream<Uint8List> body = response.body;
 ```
 
 ### ➤ HTTP version
