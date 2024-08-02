@@ -4,16 +4,54 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
+import 'http_types.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+part 'http.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `to_method`
 
 Future<HttpResponse> makeHttpRequest(
-        {required HttpMethod method,
+        {required HttpVersionPref httpVersion,
+        required HttpMethod method,
         required String url,
-        required HttpVersionPref httpVersion}) =>
+        List<(String, String)>? query,
+        HttpHeaders? headers,
+        HttpBody? body}) =>
     RustLib.instance.api.crateApiHttpMakeHttpRequest(
-        method: method, url: url, httpVersion: httpVersion);
+        httpVersion: httpVersion,
+        method: method,
+        url: url,
+        query: query,
+        headers: headers,
+        body: body);
+
+@freezed
+sealed class HttpBody with _$HttpBody {
+  const HttpBody._();
+
+  const factory HttpBody.text(
+    String field0,
+  ) = HttpBody_Text;
+  const factory HttpBody.bytes(
+    Uint8List field0,
+  ) = HttpBody_Bytes;
+  const factory HttpBody.form(
+    Map<String, String> field0,
+  ) = HttpBody_Form;
+}
+
+@freezed
+sealed class HttpHeaders with _$HttpHeaders {
+  const HttpHeaders._();
+
+  const factory HttpHeaders.map(
+    Map<HttpHeaderName, String> field0,
+  ) = HttpHeaders_Map;
+  const factory HttpHeaders.rawMap(
+    Map<String, String> field0,
+  ) = HttpHeaders_RawMap;
+}
 
 enum HttpMethod {
   options,

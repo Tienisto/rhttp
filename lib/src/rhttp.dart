@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:rhttp/src/rust/api/http.dart' as rust;
+import 'package:rhttp/src/rust/api/http_types.dart';
 import 'package:rhttp/src/rust/frb_generated.dart';
 
 export 'package:rhttp/src/rust/api/http.dart' show HttpResponse, HttpVersion;
+export 'package:rhttp/src/rust/api/http_types.dart' show HttpHeaderName;
 
 enum HttpMethod {
   options,
@@ -31,6 +36,82 @@ enum HttpVersionPref {
   ;
 }
 
+sealed class HttpHeaders {
+  const HttpHeaders();
+
+  /// A typed header map with a set of predefined keys.
+  const factory HttpHeaders.map(Map<HttpHeaderName, String> map) =
+      HttpHeaderMap._;
+
+  /// A raw header map where the keys are strings.
+  const factory HttpHeaders.rawMap(Map<String, String> map) =
+      HttpHeaderRawMap._;
+}
+
+/// A typed header map with a set of predefined keys.
+class HttpHeaderMap extends HttpHeaders {
+  final Map<HttpHeaderName, String> map;
+
+  const HttpHeaderMap._(this.map);
+}
+
+/// A raw header map where the keys are strings.
+class HttpHeaderRawMap extends HttpHeaders {
+  final Map<String, String> map;
+
+  const HttpHeaderRawMap._(this.map);
+}
+
+sealed class HttpBody {
+  const HttpBody();
+
+  /// A plain text body.
+  const factory HttpBody.text(String text) = HttpBodyText._;
+
+  /// A JSON body.
+  /// The Content-Type header will be set to `application/json` if not provided.
+  const factory HttpBody.json(Map<String, dynamic> json) = HttpBodyJson._;
+
+  /// A body of raw bytes.
+  const factory HttpBody.bytes(Uint8List bytes) = HttpBodyBytes._;
+
+  /// A www-form-urlencoded body.
+  /// The Content-Type header will be set to `application/x-www-form-urlencoded`
+  /// if not provided.
+  const factory HttpBody.form(Map<String, String> form) = HttpBodyForm._;
+}
+
+/// A plain text body.
+class HttpBodyText extends HttpBody {
+  final String text;
+
+  const HttpBodyText._(this.text);
+}
+
+/// A JSON body.
+/// The Content-Type header will be set to `application/json` if not provided.
+class HttpBodyJson extends HttpBody {
+  final Map<String, dynamic> json;
+
+  const HttpBodyJson._(this.json);
+}
+
+/// A body of raw bytes.
+class HttpBodyBytes extends HttpBody {
+  final Uint8List bytes;
+
+  const HttpBodyBytes._(this.bytes);
+}
+
+/// A www-form-urlencoded body.
+/// The Content-Type header will be set to `application/x-www-form-urlencoded`
+/// if not provided.
+class HttpBodyForm extends HttpBody {
+  final Map<String, String> form;
+
+  const HttpBodyForm._(this.form);
+}
+
 class Rhttp {
   /// Initializes the Rust library.
   static Future<void> init() async {
@@ -39,14 +120,47 @@ class Rhttp {
 
   /// Makes an HTTP request.
   static Future<rust.HttpResponse> request({
+    HttpVersionPref? httpVersion,
     required HttpMethod method,
     required String url,
-    HttpVersionPref? httpVersion,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
   }) async {
+    if (body is HttpBodyJson) {
+      switch (headers) {
+        case HttpHeaderMap map:
+          if (map.map.containsKey(HttpHeaderName.contentType)) {
+            break;
+          }
+          headers = HttpHeaderMap._({
+            ...map.map,
+            HttpHeaderName.contentType: 'application/json',
+          });
+          break;
+        case HttpHeaderRawMap rawMap:
+          if (rawMap.map.keys.any((e) => e.toLowerCase() == 'content-type')) {
+            break;
+          }
+          headers = HttpHeaderRawMap._({
+            ...rawMap.map,
+            'Content-Type': 'application/json',
+          });
+          break;
+        default:
+          headers = const HttpHeaderMap._({
+            HttpHeaderName.contentType: 'application/json',
+          });
+          break;
+      }
+    }
     return await rust.makeHttpRequest(
+      httpVersion: httpVersion?._toRustType() ?? rust.HttpVersionPref.all,
       method: method._toRustType(),
       url: url,
-      httpVersion: httpVersion?._toRustType() ?? rust.HttpVersionPref.all,
+      query: query?.entries.map((e) => (e.key, e.value)).toList(),
+      headers: headers?._toRustType(),
+      body: body?._toRustType(),
     );
   }
 
@@ -54,11 +168,15 @@ class Rhttp {
   static Future<rust.HttpResponse> get(
     String url, {
     HttpVersionPref? httpVersion,
+    Map<String, String>? query,
+    HttpHeaders? headers,
   }) async {
     return await request(
       method: HttpMethod.get,
       url: url,
       httpVersion: httpVersion,
+      query: query,
+      headers: headers,
     );
   }
 
@@ -66,11 +184,17 @@ class Rhttp {
   static Future<rust.HttpResponse> post(
     String url, {
     HttpVersionPref? httpVersion,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
   }) async {
     return await request(
       method: HttpMethod.post,
       url: url,
       httpVersion: httpVersion,
+      query: query,
+      headers: headers,
+      body: body,
     );
   }
 
@@ -78,11 +202,17 @@ class Rhttp {
   static Future<rust.HttpResponse> put(
     String url, {
     HttpVersionPref? httpVersion,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
   }) async {
     return await request(
       method: HttpMethod.put,
       url: url,
       httpVersion: httpVersion,
+      query: query,
+      headers: headers,
+      body: body,
     );
   }
 
@@ -90,11 +220,17 @@ class Rhttp {
   static Future<rust.HttpResponse> delete(
     String url, {
     HttpVersionPref? httpVersion,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
   }) async {
     return await request(
       method: HttpMethod.delete,
       url: url,
       httpVersion: httpVersion,
+      query: query,
+      headers: headers,
+      body: body,
     );
   }
 
@@ -102,11 +238,13 @@ class Rhttp {
   static Future<rust.HttpResponse> head(
     String url, {
     HttpVersionPref? httpVersion,
+    Map<String, String>? query,
   }) async {
     return await request(
       method: HttpMethod.head,
       url: url,
       httpVersion: httpVersion,
+      query: query,
     );
   }
 
@@ -114,11 +252,17 @@ class Rhttp {
   static Future<rust.HttpResponse> patch(
     String url, {
     HttpVersionPref? httpVersion,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
   }) async {
     return await request(
       method: HttpMethod.patch,
       url: url,
       httpVersion: httpVersion,
+      query: query,
+      headers: headers,
+      body: body,
     );
   }
 
@@ -126,11 +270,17 @@ class Rhttp {
   static Future<rust.HttpResponse> options(
     String url, {
     HttpVersionPref? httpVersion,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
   }) async {
     return await request(
       method: HttpMethod.options,
       url: url,
       httpVersion: httpVersion,
+      query: query,
+      headers: headers,
+      body: body,
     );
   }
 
@@ -138,11 +288,17 @@ class Rhttp {
   static Future<rust.HttpResponse> trace(
     String url, {
     HttpVersionPref? httpVersion,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
   }) async {
     return await request(
       method: HttpMethod.trace,
       url: url,
       httpVersion: httpVersion,
+      query: query,
+      headers: headers,
+      body: body,
     );
   }
 }
@@ -170,6 +326,26 @@ extension on HttpVersionPref {
       HttpVersionPref.http2 => rust.HttpVersionPref.http2,
       HttpVersionPref.http3 => rust.HttpVersionPref.http3,
       HttpVersionPref.all => rust.HttpVersionPref.all,
+    };
+  }
+}
+
+extension on HttpHeaders {
+  rust.HttpHeaders _toRustType() {
+    return switch (this) {
+      HttpHeaderMap map => rust.HttpHeaders.map(map.map),
+      HttpHeaderRawMap rawMap => rust.HttpHeaders.rawMap(rawMap.map),
+    };
+  }
+}
+
+extension on HttpBody {
+  rust.HttpBody _toRustType() {
+    return switch (this) {
+      HttpBodyText text => rust.HttpBody.text(text.text),
+      HttpBodyJson json => rust.HttpBody.text(jsonEncode(json.json)),
+      HttpBodyBytes bytes => rust.HttpBody.bytes(bytes.bytes),
+      HttpBodyForm form => rust.HttpBody.form(form.form),
     };
   }
 }

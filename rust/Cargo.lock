@@ -1078,6 +1078,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "flutter_rust_bridge",
+ "http",
  "openssl",
  "reqwest",
  "tokio",

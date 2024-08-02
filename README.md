@@ -3,7 +3,7 @@
 [![pub package](https://img.shields.io/pub/v/rhttp.svg)](https://pub.dev/packages/rhttp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Make HTTP requests using Rust from Flutter.
+Make HTTP requests using Rust for Flutter developers.
 
 ## About
 
@@ -53,7 +53,101 @@ void main() async {
 
 ## Configuration
 
-### ➤ Custom HTTP version
+### ➤ HTTP methods
+
+You can make requests using different HTTP methods:
+
+```dart
+// Pass the method as an argument
+await Rhttp.request(method: HttpMethod.post, url: 'https://example.com');
+
+// Use the helper methods
+await Rhttp.post('https://example.com');
+```
+
+### ➤ Query parameters
+
+You can add query parameters to the URL:
+
+```dart
+await Rhttp.get('https://example.com', query: {'key': 'value'});
+```
+
+### ➤ Headers
+
+You can add headers to the request:
+
+```dart
+await Rhttp.request(
+  method: HttpMethod.get,
+  url: 'https://example.com',
+  headers: const HttpHeaders.map({
+    HttpHeaderName.contentType: 'application/json',
+  }),
+);
+```
+
+### ➤ Body
+
+You can add a body to the request. There are different types of bodies you can use:
+
+**Text**
+
+Pass a string to the `HttpBody.text` constructor.
+
+```dart
+// Raw body
+await Rhttp.request(
+  method: HttpMethod.post,
+  url: 'https://example.com',
+  body: HttpBody.text('raw body'),
+);
+```
+
+**JSON**
+
+Pass JSON map to the `HttpBody.json` constructor.
+
+The Content-Type header will be set to `application/json` if not provided.
+
+```dart
+// JSON body
+await Rhttp.request(
+  method: HttpMethod.post,
+  url: 'https://example.com',
+  body: HttpBody.json({'key': 'value'}),
+);
+```
+
+**Binary**
+
+Pass a `Uint8List` to the `HttpBody.bytes` constructor.
+
+```dart
+// Binary body
+await Rhttp.request(
+  method: HttpMethod.post,
+  url: 'https://example.com',
+  body: HttpBody.bytes(Uint8List.fromList([0, 1, 2])),
+);
+```
+
+**Form**
+
+Pass a flat map to the `HttpBody.form` constructor.
+
+The Content-Type header will be set to `application/x-www-form-urlencoded` if not provided.
+
+```dart
+// Form body
+await Rhttp.request(
+  method: HttpMethod.post,
+  url: 'https://example.com',
+  body: HttpBody.form({'key': 'value'}),
+);
+```
+
+### ➤ HTTP version
 
 You can specify the HTTP version to use for the request:
 

@@ -1,5 +1,9 @@
+use std::collections::HashMap;
+use std::str::FromStr;
 use anyhow::Result;
 use reqwest::{Method, Url, Version};
+use reqwest::header::{HeaderName, HeaderValue};
+use crate::api::http_types::HttpHeaderName;
 
 pub enum HttpMethod {
     Options,
@@ -29,6 +33,17 @@ impl HttpMethod {
     }
 }
 
+pub enum HttpHeaders {
+    Map(HashMap<HttpHeaderName, String>),
+    RawMap(HashMap<String, String>),
+}
+
+pub enum HttpBody {
+    Text(String),
+    Bytes(Vec<u8>),
+    Form(HashMap<String, String>),
+}
+
 pub enum HttpVersionPref {
     Http1,
     Http2,
@@ -53,9 +68,12 @@ pub struct HttpResponse {
 }
 
 pub async fn make_http_request(
+    http_version: HttpVersionPref,
     method: HttpMethod,
     url: String,
-    http_version: HttpVersionPref,
+    query: Option<Vec<(String, String)>>,
+    headers: Option<HttpHeaders>,
+    body: Option<HttpBody>,
 ) -> Result<HttpResponse> {
     let client = {
         let client = reqwest::Client::builder();
@@ -68,13 +86,45 @@ pub async fn make_http_request(
     };
 
     let request = {
-        let request = client.request(method.to_method(), Url::parse(&url)?);
-        match http_version {
+        let mut request = client.request(method.to_method(), Url::parse(&url)?);
+
+        request = match http_version {
             HttpVersionPref::Http1 => request.version(Version::HTTP_10),
             HttpVersionPref::Http2 => request.version(Version::HTTP_2),
             HttpVersionPref::Http3 => request.version(Version::HTTP_3),
             HttpVersionPref::All => request,
-        }.build()?
+        };
+
+        if let Some(query) = query {
+            request = request.query(&query);
+        }
+
+        match headers {
+            Some(HttpHeaders::Map(map)) => {
+                for (k, v) in map {
+                    let header_name = k.to_actual_header_name();
+                    let header_value = HeaderValue::from_str(&v)?;
+                    request = request.header(header_name, header_value);
+                }
+            },
+            Some(HttpHeaders::RawMap(map)) => {
+                for (k, v) in map {
+                    let header_name = HeaderName::from_str(&k)?;
+                    let header_value = HeaderValue::from_str(&v)?;
+                    request = request.header(header_name, header_value);
+                }
+            },
+            None => (),
+        };
+
+        request = match body {
+            Some(HttpBody::Text(text)) => request.body(text),
+            Some(HttpBody::Bytes(bytes)) => request.body(bytes),
+            Some(HttpBody::Form(form)) => request.form(&form),
+            None => request,
+        };
+
+        request.build()?
     };
 
     let response = client.execute(request).await?;

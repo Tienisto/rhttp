@@ -4,6 +4,7 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/http.dart';
+import 'api/http_types.dart';
 import 'api/simple.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -23,10 +24,32 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AnyhowException dco_decode_AnyhowException(dynamic raw);
 
   @protected
+  Map<String, String> dco_decode_Map_String_String(dynamic raw);
+
+  @protected
+  Map<HttpHeaderName, String> dco_decode_Map_http_header_name_String(
+      dynamic raw);
+
+  @protected
   RustStreamSink<int> dco_decode_StreamSink_i_32_Sse(dynamic raw);
 
   @protected
   String dco_decode_String(dynamic raw);
+
+  @protected
+  HttpBody dco_decode_box_autoadd_http_body(dynamic raw);
+
+  @protected
+  HttpHeaders dco_decode_box_autoadd_http_headers(dynamic raw);
+
+  @protected
+  HttpBody dco_decode_http_body(dynamic raw);
+
+  @protected
+  HttpHeaderName dco_decode_http_header_name(dynamic raw);
+
+  @protected
+  HttpHeaders dco_decode_http_headers(dynamic raw);
 
   @protected
   HttpMethod dco_decode_http_method(dynamic raw);
@@ -47,7 +70,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  List<(HttpHeaderName, String)> dco_decode_list_record_http_header_name_string(
+      dynamic raw);
+
+  @protected
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
+
+  @protected
+  HttpBody? dco_decode_opt_box_autoadd_http_body(dynamic raw);
+
+  @protected
+  HttpHeaders? dco_decode_opt_box_autoadd_http_headers(dynamic raw);
+
+  @protected
+  List<(String, String)>? dco_decode_opt_list_record_string_string(dynamic raw);
+
+  @protected
+  (HttpHeaderName, String) dco_decode_record_http_header_name_string(
+      dynamic raw);
 
   @protected
   (String, String) dco_decode_record_string_string(dynamic raw);
@@ -65,11 +105,34 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
   @protected
+  Map<String, String> sse_decode_Map_String_String(
+      SseDeserializer deserializer);
+
+  @protected
+  Map<HttpHeaderName, String> sse_decode_Map_http_header_name_String(
+      SseDeserializer deserializer);
+
+  @protected
   RustStreamSink<int> sse_decode_StreamSink_i_32_Sse(
       SseDeserializer deserializer);
 
   @protected
   String sse_decode_String(SseDeserializer deserializer);
+
+  @protected
+  HttpBody sse_decode_box_autoadd_http_body(SseDeserializer deserializer);
+
+  @protected
+  HttpHeaders sse_decode_box_autoadd_http_headers(SseDeserializer deserializer);
+
+  @protected
+  HttpBody sse_decode_http_body(SseDeserializer deserializer);
+
+  @protected
+  HttpHeaderName sse_decode_http_header_name(SseDeserializer deserializer);
+
+  @protected
+  HttpHeaders sse_decode_http_headers(SseDeserializer deserializer);
 
   @protected
   HttpMethod sse_decode_http_method(SseDeserializer deserializer);
@@ -90,7 +153,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  List<(HttpHeaderName, String)> sse_decode_list_record_http_header_name_string(
+      SseDeserializer deserializer);
+
+  @protected
   List<(String, String)> sse_decode_list_record_string_string(
+      SseDeserializer deserializer);
+
+  @protected
+  HttpBody? sse_decode_opt_box_autoadd_http_body(SseDeserializer deserializer);
+
+  @protected
+  HttpHeaders? sse_decode_opt_box_autoadd_http_headers(
+      SseDeserializer deserializer);
+
+  @protected
+  List<(String, String)>? sse_decode_opt_list_record_string_string(
+      SseDeserializer deserializer);
+
+  @protected
+  (HttpHeaderName, String) sse_decode_record_http_header_name_string(
       SseDeserializer deserializer);
 
   @protected
@@ -114,11 +196,37 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       AnyhowException self, SseSerializer serializer);
 
   @protected
+  void sse_encode_Map_String_String(
+      Map<String, String> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_Map_http_header_name_String(
+      Map<HttpHeaderName, String> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_StreamSink_i_32_Sse(
       RustStreamSink<int> self, SseSerializer serializer);
 
   @protected
   void sse_encode_String(String self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_http_body(
+      HttpBody self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_http_headers(
+      HttpHeaders self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_http_body(HttpBody self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_http_header_name(
+      HttpHeaderName self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_http_headers(HttpHeaders self, SseSerializer serializer);
 
   @protected
   void sse_encode_http_method(HttpMethod self, SseSerializer serializer);
@@ -141,8 +249,28 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       Uint8List self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_record_http_header_name_string(
+      List<(HttpHeaderName, String)> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_record_string_string(
       List<(String, String)> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_http_body(
+      HttpBody? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_http_headers(
+      HttpHeaders? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_list_record_string_string(
+      List<(String, String)>? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_http_header_name_string(
+      (HttpHeaderName, String) self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_string(
