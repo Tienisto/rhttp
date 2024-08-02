@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:rhttp/src/model/request.dart';
+import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/rust/api/http_types.dart';
 import 'package:rhttp/src/rust/frb_generated.dart';
 
-export 'package:rhttp/src/rust/api/http.dart' show HttpResponse, HttpVersion;
 export 'package:rhttp/src/rust/api/http_types.dart' show HttpHeaderName;
 
 enum HttpMethod {
@@ -119,13 +120,14 @@ class Rhttp {
   }
 
   /// Makes an HTTP request.
-  static Future<rust.HttpResponse> request({
+  static Future<HttpResponse> requestGeneric({
     HttpVersionPref? httpVersion,
     required HttpMethod method,
     required String url,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    required HttpExpectBody expectBody,
   }) async {
     if (body is HttpBodyJson) {
       switch (headers) {
@@ -154,18 +156,81 @@ class Rhttp {
           break;
       }
     }
-    return await rust.makeHttpRequest(
+
+    final response = await rust.makeHttpRequest(
       httpVersion: httpVersion?._toRustType() ?? rust.HttpVersionPref.all,
       method: method._toRustType(),
       url: url,
       query: query?.entries.map((e) => (e.key, e.value)).toList(),
       headers: headers?._toRustType(),
       body: body?._toRustType(),
+      expectBody: expectBody.toRustType(),
+    );
+
+    return parseHttpResponse(response);
+  }
+
+  /// Alias for [requestText].
+  static Future<HttpTextResponse> request({
+    HttpVersionPref? httpVersion,
+    required HttpMethod method,
+    required String url,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
+  }) async {
+    return await requestText(
+      httpVersion: httpVersion,
+      method: method,
+      url: url,
+      query: query,
+      headers: headers,
+      body: body,
     );
   }
 
+  static Future<HttpTextResponse> requestText({
+    HttpVersionPref? httpVersion,
+    required HttpMethod method,
+    required String url,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
+  }) async {
+    final response = await requestGeneric(
+      httpVersion: httpVersion,
+      method: method,
+      url: url,
+      query: query,
+      headers: headers,
+      body: body,
+      expectBody: HttpExpectBody.text,
+    );
+    return response as HttpTextResponse;
+  }
+
+  static Future<HttpBytesResponse> requestBytes({
+    HttpVersionPref? httpVersion,
+    required HttpMethod method,
+    required String url,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
+  }) async {
+    final response = await requestGeneric(
+      httpVersion: httpVersion,
+      method: method,
+      url: url,
+      query: query,
+      headers: headers,
+      body: body,
+      expectBody: HttpExpectBody.bytes,
+    );
+    return response as HttpBytesResponse;
+  }
+
   /// Makes an HTTP GET request.
-  static Future<rust.HttpResponse> get(
+  static Future<HttpTextResponse> get(
     String url, {
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
@@ -181,7 +246,7 @@ class Rhttp {
   }
 
   /// Makes an HTTP POST request.
-  static Future<rust.HttpResponse> post(
+  static Future<HttpTextResponse> post(
     String url, {
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
@@ -199,7 +264,7 @@ class Rhttp {
   }
 
   /// Makes an HTTP PUT request.
-  static Future<rust.HttpResponse> put(
+  static Future<HttpTextResponse> put(
     String url, {
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
@@ -217,7 +282,7 @@ class Rhttp {
   }
 
   /// Makes an HTTP DELETE request.
-  static Future<rust.HttpResponse> delete(
+  static Future<HttpTextResponse> delete(
     String url, {
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
@@ -235,7 +300,7 @@ class Rhttp {
   }
 
   /// Makes an HTTP HEAD request.
-  static Future<rust.HttpResponse> head(
+  static Future<HttpTextResponse> head(
     String url, {
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
@@ -249,7 +314,7 @@ class Rhttp {
   }
 
   /// Makes an HTTP PATCH request.
-  static Future<rust.HttpResponse> patch(
+  static Future<HttpTextResponse> patch(
     String url, {
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
@@ -267,7 +332,7 @@ class Rhttp {
   }
 
   /// Makes an HTTP OPTIONS request.
-  static Future<rust.HttpResponse> options(
+  static Future<HttpTextResponse> options(
     String url, {
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
@@ -285,7 +350,7 @@ class Rhttp {
   }
 
   /// Makes an HTTP TRACE request.
-  static Future<rust.HttpResponse> trace(
+  static Future<HttpTextResponse> trace(
     String url, {
     HttpVersionPref? httpVersion,
     Map<String, String>? query,

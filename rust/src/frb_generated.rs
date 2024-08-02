@@ -75,6 +75,7 @@ fn wire__crate__api__http__make_http_request_impl(
             let api_headers =
                 <Option<crate::api::http::HttpHeaders>>::sse_decode(&mut deserializer);
             let api_body = <Option<crate::api::http::HttpBody>>::sse_decode(&mut deserializer);
+            let api_expect_body = <crate::api::http::HttpExpectBody>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
@@ -86,6 +87,7 @@ fn wire__crate__api__http__make_http_request_impl(
                             api_query,
                             api_headers,
                             api_body,
+                            api_expect_body,
                         )
                         .await?;
                         Ok(output_ok)
@@ -267,6 +269,19 @@ impl SseDecode for crate::api::http::HttpBody {
     }
 }
 
+impl SseDecode for crate::api::http::HttpExpectBody {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::http::HttpExpectBody::Text,
+            1 => crate::api::http::HttpExpectBody::Bytes,
+            2 => crate::api::http::HttpExpectBody::Stream,
+            _ => unreachable!("Invalid variant for HttpExpectBody: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for crate::api::http_types::HttpHeaderName {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -407,13 +422,36 @@ impl SseDecode for crate::api::http::HttpResponse {
         let mut var_headers = <Vec<(String, String)>>::sse_decode(deserializer);
         let mut var_version = <crate::api::http::HttpVersion>::sse_decode(deserializer);
         let mut var_statusCode = <u16>::sse_decode(deserializer);
-        let mut var_body = <String>::sse_decode(deserializer);
+        let mut var_body = <crate::api::http::HttpResponseBody>::sse_decode(deserializer);
         return crate::api::http::HttpResponse {
             headers: var_headers,
             version: var_version,
             status_code: var_statusCode,
             body: var_body,
         };
+    }
+}
+
+impl SseDecode for crate::api::http::HttpResponseBody {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::http::HttpResponseBody::Text(var_field0);
+            }
+            1 => {
+                let mut var_field0 = <Vec<u8>>::sse_decode(deserializer);
+                return crate::api::http::HttpResponseBody::Bytes(var_field0);
+            }
+            2 => {
+                return crate::api::http::HttpResponseBody::Stream;
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -624,6 +662,28 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpBody> for crate::ap
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::http::HttpExpectBody {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Text => 0.into_dart(),
+            Self::Bytes => 1.into_dart(),
+            Self::Stream => 2.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::http::HttpExpectBody
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpExpectBody>
+    for crate::api::http::HttpExpectBody
+{
+    fn into_into_dart(self) -> crate::api::http::HttpExpectBody {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::http_types::HttpHeaderName {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -796,6 +856,34 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpResponse>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::http::HttpResponseBody {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::http::HttpResponseBody::Text(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::http::HttpResponseBody::Bytes(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::http::HttpResponseBody::Stream => [2.into_dart()].into_dart(),
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::http::HttpResponseBody
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpResponseBody>
+    for crate::api::http::HttpResponseBody
+{
+    fn into_into_dart(self) -> crate::api::http::HttpResponseBody {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::http::HttpVersion {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -899,6 +987,23 @@ impl SseEncode for crate::api::http::HttpBody {
                 unimplemented!("");
             }
         }
+    }
+}
+
+impl SseEncode for crate::api::http::HttpExpectBody {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::http::HttpExpectBody::Text => 0,
+                crate::api::http::HttpExpectBody::Bytes => 1,
+                crate::api::http::HttpExpectBody::Stream => 2,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
     }
 }
 
@@ -1045,7 +1150,29 @@ impl SseEncode for crate::api::http::HttpResponse {
         <Vec<(String, String)>>::sse_encode(self.headers, serializer);
         <crate::api::http::HttpVersion>::sse_encode(self.version, serializer);
         <u16>::sse_encode(self.status_code, serializer);
-        <String>::sse_encode(self.body, serializer);
+        <crate::api::http::HttpResponseBody>::sse_encode(self.body, serializer);
+    }
+}
+
+impl SseEncode for crate::api::http::HttpResponseBody {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::http::HttpResponseBody::Text(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::http::HttpResponseBody::Bytes(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <Vec<u8>>::sse_encode(field0, serializer);
+            }
+            crate::api::http::HttpResponseBody::Stream => {
+                <i32>::sse_encode(2, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 

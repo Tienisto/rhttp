@@ -46,6 +46,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   HttpBody dco_decode_http_body(dynamic raw);
 
   @protected
+  HttpExpectBody dco_decode_http_expect_body(dynamic raw);
+
+  @protected
   HttpHeaderName dco_decode_http_header_name(dynamic raw);
 
   @protected
@@ -56,6 +59,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   HttpResponse dco_decode_http_response(dynamic raw);
+
+  @protected
+  HttpResponseBody dco_decode_http_response_body(dynamic raw);
 
   @protected
   HttpVersion dco_decode_http_version(dynamic raw);
@@ -129,6 +135,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   HttpBody sse_decode_http_body(SseDeserializer deserializer);
 
   @protected
+  HttpExpectBody sse_decode_http_expect_body(SseDeserializer deserializer);
+
+  @protected
   HttpHeaderName sse_decode_http_header_name(SseDeserializer deserializer);
 
   @protected
@@ -139,6 +148,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   HttpResponse sse_decode_http_response(SseDeserializer deserializer);
+
+  @protected
+  HttpResponseBody sse_decode_http_response_body(SseDeserializer deserializer);
 
   @protected
   HttpVersion sse_decode_http_version(SseDeserializer deserializer);
@@ -222,6 +234,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_http_body(HttpBody self, SseSerializer serializer);
 
   @protected
+  void sse_encode_http_expect_body(
+      HttpExpectBody self, SseSerializer serializer);
+
+  @protected
   void sse_encode_http_header_name(
       HttpHeaderName self, SseSerializer serializer);
 
@@ -233,6 +249,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_http_response(HttpResponse self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_http_response_body(
+      HttpResponseBody self, SseSerializer serializer);
 
   @protected
   void sse_encode_http_version(HttpVersion self, SseSerializer serializer);

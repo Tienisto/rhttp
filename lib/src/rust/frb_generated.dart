@@ -77,7 +77,8 @@ abstract class RustLibApi extends BaseApi {
       required String url,
       List<(String, String)>? query,
       HttpHeaders? headers,
-      HttpBody? body});
+      HttpBody? body,
+      required HttpExpectBody expectBody});
 
   Future<void> crateApiInitInitApp();
 
@@ -101,7 +102,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       required String url,
       List<(String, String)>? query,
       HttpHeaders? headers,
-      HttpBody? body}) {
+      HttpBody? body,
+      required HttpExpectBody expectBody}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
@@ -111,6 +113,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_opt_list_record_string_string(query, serializer);
         sse_encode_opt_box_autoadd_http_headers(headers, serializer);
         sse_encode_opt_box_autoadd_http_body(body, serializer);
+        sse_encode_http_expect_body(expectBody, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 1, port: port_);
       },
@@ -119,7 +122,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: sse_decode_AnyhowException,
       ),
       constMeta: kCrateApiHttpMakeHttpRequestConstMeta,
-      argValues: [httpVersion, method, url, query, headers, body],
+      argValues: [httpVersion, method, url, query, headers, body, expectBody],
       apiImpl: this,
     ));
   }
@@ -127,7 +130,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiHttpMakeHttpRequestConstMeta =>
       const TaskConstMeta(
         debugName: "make_http_request",
-        argNames: ["httpVersion", "method", "url", "query", "headers", "body"],
+        argNames: [
+          "httpVersion",
+          "method",
+          "url",
+          "query",
+          "headers",
+          "body",
+          "expectBody"
+        ],
       );
 
   @override
@@ -269,6 +280,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  HttpExpectBody dco_decode_http_expect_body(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return HttpExpectBody.values[raw as int];
+  }
+
+  @protected
   HttpHeaderName dco_decode_http_header_name(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return HttpHeaderName.values[raw as int];
@@ -307,8 +324,27 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       headers: dco_decode_list_record_string_string(arr[0]),
       version: dco_decode_http_version(arr[1]),
       statusCode: dco_decode_u_16(arr[2]),
-      body: dco_decode_String(arr[3]),
+      body: dco_decode_http_response_body(arr[3]),
     );
+  }
+
+  @protected
+  HttpResponseBody dco_decode_http_response_body(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return HttpResponseBody_Text(
+          dco_decode_String(raw[1]),
+        );
+      case 1:
+        return HttpResponseBody_Bytes(
+          dco_decode_list_prim_u_8_strict(raw[1]),
+        );
+      case 2:
+        return HttpResponseBody_Stream();
+      default:
+        throw Exception("unreachable");
+    }
   }
 
   @protected
@@ -485,6 +521,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  HttpExpectBody sse_decode_http_expect_body(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return HttpExpectBody.values[inner];
+  }
+
+  @protected
   HttpHeaderName sse_decode_http_header_name(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_i_32(deserializer);
@@ -521,12 +564,31 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_headers = sse_decode_list_record_string_string(deserializer);
     var var_version = sse_decode_http_version(deserializer);
     var var_statusCode = sse_decode_u_16(deserializer);
-    var var_body = sse_decode_String(deserializer);
+    var var_body = sse_decode_http_response_body(deserializer);
     return HttpResponse(
         headers: var_headers,
         version: var_version,
         statusCode: var_statusCode,
         body: var_body);
+  }
+
+  @protected
+  HttpResponseBody sse_decode_http_response_body(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_String(deserializer);
+        return HttpResponseBody_Text(var_field0);
+      case 1:
+        var var_field0 = sse_decode_list_prim_u_8_strict(deserializer);
+        return HttpResponseBody_Bytes(var_field0);
+      case 2:
+        return HttpResponseBody_Stream();
+      default:
+        throw UnimplementedError('');
+    }
   }
 
   @protected
@@ -733,6 +795,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_http_expect_body(
+      HttpExpectBody self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
   void sse_encode_http_header_name(
       HttpHeaderName self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -766,7 +835,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_list_record_string_string(self.headers, serializer);
     sse_encode_http_version(self.version, serializer);
     sse_encode_u_16(self.statusCode, serializer);
-    sse_encode_String(self.body, serializer);
+    sse_encode_http_response_body(self.body, serializer);
+  }
+
+  @protected
+  void sse_encode_http_response_body(
+      HttpResponseBody self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case HttpResponseBody_Text(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_String(field0, serializer);
+      case HttpResponseBody_Bytes(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_list_prim_u_8_strict(field0, serializer);
+      case HttpResponseBody_Stream():
+        sse_encode_i_32(2, serializer);
+      default:
+        throw UnimplementedError('');
+    }
   }
 
   @protected

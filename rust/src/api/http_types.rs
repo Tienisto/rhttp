@@ -1,5 +1,6 @@
 use http::{header, HeaderName};
 
+#[derive(Eq, Hash, PartialEq)]
 pub enum HttpHeaderName {
     Accept,
     AcceptCharset,

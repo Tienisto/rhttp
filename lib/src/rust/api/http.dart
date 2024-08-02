@@ -17,14 +17,16 @@ Future<HttpResponse> makeHttpRequest(
         required String url,
         List<(String, String)>? query,
         HttpHeaders? headers,
-        HttpBody? body}) =>
+        HttpBody? body,
+        required HttpExpectBody expectBody}) =>
     RustLib.instance.api.crateApiHttpMakeHttpRequest(
         httpVersion: httpVersion,
         method: method,
         url: url,
         query: query,
         headers: headers,
-        body: body);
+        body: body,
+        expectBody: expectBody);
 
 @freezed
 sealed class HttpBody with _$HttpBody {
@@ -39,6 +41,13 @@ sealed class HttpBody with _$HttpBody {
   const factory HttpBody.form(
     Map<String, String> field0,
   ) = HttpBody_Form;
+}
+
+enum HttpExpectBody {
+  text,
+  bytes,
+  stream,
+  ;
 }
 
 @freezed
@@ -70,7 +79,7 @@ class HttpResponse {
   final List<(String, String)> headers;
   final HttpVersion version;
   final int statusCode;
-  final String body;
+  final HttpResponseBody body;
 
   const HttpResponse({
     required this.headers,
@@ -92,6 +101,19 @@ class HttpResponse {
           version == other.version &&
           statusCode == other.statusCode &&
           body == other.body;
+}
+
+@freezed
+sealed class HttpResponseBody with _$HttpResponseBody {
+  const HttpResponseBody._();
+
+  const factory HttpResponseBody.text(
+    String field0,
+  ) = HttpResponseBody_Text;
+  const factory HttpResponseBody.bytes(
+    Uint8List field0,
+  ) = HttpResponseBody_Bytes;
+  const factory HttpResponseBody.stream() = HttpResponseBody_Stream;
 }
 
 enum HttpVersion {

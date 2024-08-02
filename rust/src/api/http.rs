@@ -51,6 +51,12 @@ pub enum HttpVersionPref {
     All,
 }
 
+pub enum HttpExpectBody {
+    Text,
+    Bytes,
+    Stream,
+}
+
 pub enum HttpVersion {
     Http09,
     Http10,
@@ -64,7 +70,13 @@ pub struct HttpResponse {
     pub headers: Vec<(String, String)>,
     pub version: HttpVersion,
     pub status_code: u16,
-    pub body: String,
+    pub body: HttpResponseBody,
+}
+
+pub enum HttpResponseBody {
+    Text(String),
+    Bytes(Vec<u8>),
+    Stream,
 }
 
 pub async fn make_http_request(
@@ -74,6 +86,7 @@ pub async fn make_http_request(
     query: Option<Vec<(String, String)>>,
     headers: Option<HttpHeaders>,
     body: Option<HttpBody>,
+    expect_body: HttpExpectBody,
 ) -> Result<HttpResponse> {
     let client = {
         let client = reqwest::Client::builder();
@@ -140,6 +153,10 @@ pub async fn make_http_request(
             _ => HttpVersion::Other,
         },
         status_code: response.status().as_u16(),
-        body: response.text().await?,
+        body: match expect_body {
+            HttpExpectBody::Text => HttpResponseBody::Text(response.text().await?),
+            HttpExpectBody::Bytes => HttpResponseBody::Bytes(response.bytes().await?.to_vec()),
+            HttpExpectBody::Stream => HttpResponseBody::Stream,
+        },
     })
 }
