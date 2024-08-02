@@ -14,36 +14,38 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  HttpResponse? response;
+  HttpBytesResponse? response;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Test Page'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () async {
-                final res = await Rhttp.request(
-                  method: HttpMethod.get,
-                  url: 'https://reqres.in/api/users',
-                  query: {'page': '5'},
-                );
-                setState(() {
-                  response = res;
-                });
-              },
-              child: const Text('Test'),
-            ),
-            if (response != null) Text(response!.version.toString()),
-            if (response != null) Text(response!.statusCode.toString()),
-            if (response != null) Text(response!.body.substring(0, 100)),
-            if (response != null) Text(response!.headers.toString()),
-          ],
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Test Page'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              ElevatedButton(
+                onPressed: () async {
+                  final res = await Rhttp.requestBytes(
+                    method: HttpMethod.get,
+                    url: 'https://reqres.in/api/users',
+                    query: {'page': '5'},
+                  );
+                  setState(() {
+                    response = res;
+                  });
+                },
+                child: const Text('Test'),
+              ),
+              if (response != null) Text(response!.version.toString()),
+              if (response != null) Text(response!.statusCode.toString()),
+              if (response != null) Text(response!.body.sublist(0, 100).toString()),
+              if (response != null) Text(response!.headers.toString()),
+            ],
+          ),
         ),
       ),
     );
