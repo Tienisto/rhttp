@@ -16,6 +16,7 @@ enum HttpExpectBody {
   ;
 }
 
+/// The HTTP method to use.
 enum HttpMethod {
   options,
   get,
@@ -30,8 +31,11 @@ enum HttpMethod {
 }
 
 enum HttpVersionPref {
-  /// Only use HTTP/1.
-  http1,
+  /// Only use HTTP/1.0.
+  http1_0,
+
+  /// Only use HTTP/1.1.
+  http1_1,
 
   /// Only use HTTP/2.
   http2,

@@ -722,10 +722,11 @@ impl SseDecode for crate::api::http::HttpVersionPref {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <i32>::sse_decode(deserializer);
         return match inner {
-            0 => crate::api::http::HttpVersionPref::Http1,
-            1 => crate::api::http::HttpVersionPref::Http2,
-            2 => crate::api::http::HttpVersionPref::Http3,
-            3 => crate::api::http::HttpVersionPref::All,
+            0 => crate::api::http::HttpVersionPref::Http10,
+            1 => crate::api::http::HttpVersionPref::Http11,
+            2 => crate::api::http::HttpVersionPref::Http2,
+            3 => crate::api::http::HttpVersionPref::Http3,
+            4 => crate::api::http::HttpVersionPref::All,
             _ => unreachable!("Invalid variant for HttpVersionPref: {}", inner),
         };
     }
@@ -1242,10 +1243,11 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpVersion>
 impl flutter_rust_bridge::IntoDart for crate::api::http::HttpVersionPref {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
-            Self::Http1 => 0.into_dart(),
-            Self::Http2 => 1.into_dart(),
-            Self::Http3 => 2.into_dart(),
-            Self::All => 3.into_dart(),
+            Self::Http10 => 0.into_dart(),
+            Self::Http11 => 1.into_dart(),
+            Self::Http2 => 2.into_dart(),
+            Self::Http3 => 3.into_dart(),
+            Self::All => 4.into_dart(),
             _ => unreachable!(),
         }
     }
@@ -1571,10 +1573,11 @@ impl SseEncode for crate::api::http::HttpVersionPref {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i32>::sse_encode(
             match self {
-                crate::api::http::HttpVersionPref::Http1 => 0,
-                crate::api::http::HttpVersionPref::Http2 => 1,
-                crate::api::http::HttpVersionPref::Http3 => 2,
-                crate::api::http::HttpVersionPref::All => 3,
+                crate::api::http::HttpVersionPref::Http10 => 0,
+                crate::api::http::HttpVersionPref::Http11 => 1,
+                crate::api::http::HttpVersionPref::Http2 => 2,
+                crate::api::http::HttpVersionPref::Http3 => 3,
+                crate::api::http::HttpVersionPref::All => 4,
                 _ => {
                     unimplemented!("");
                 }

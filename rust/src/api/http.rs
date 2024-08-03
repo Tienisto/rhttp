@@ -54,7 +54,8 @@ pub enum HttpBody {
 
 #[derive(Clone, Copy)]
 pub enum HttpVersionPref {
-    Http1,
+    Http10,
+    Http11,
     Http2,
     Http3,
     All,
@@ -199,7 +200,8 @@ async fn make_http_request_helper(
         let mut request = client.client.request(method.to_method(), Url::parse(&url)?);
 
         request = match client.http_version_pref {
-            HttpVersionPref::Http1 => request.version(Version::HTTP_10),
+            HttpVersionPref::Http10 => request.version(Version::HTTP_10),
+            HttpVersionPref::Http11 => request.version(Version::HTTP_11),
             HttpVersionPref::Http2 => request.version(Version::HTTP_2),
             HttpVersionPref::Http3 => request.version(Version::HTTP_3),
             HttpVersionPref::All => request,

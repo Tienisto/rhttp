@@ -39,7 +39,8 @@ extension ClientSettingsExt on ClientSettings {
 extension on HttpVersionPref {
   rust.HttpVersionPref _toRustType() {
     return switch (this) {
-      HttpVersionPref.http1 => rust.HttpVersionPref.http1,
+      HttpVersionPref.http1_0 => rust.HttpVersionPref.http10,
+      HttpVersionPref.http1_1 => rust.HttpVersionPref.http11,
       HttpVersionPref.http2 => rust.HttpVersionPref.http2,
       HttpVersionPref.http3 => rust.HttpVersionPref.http3,
       HttpVersionPref.all => rust.HttpVersionPref.all,
