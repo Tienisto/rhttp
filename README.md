@@ -164,12 +164,36 @@ HttpStreamResponse response = await Rhttp.getStream('https://example.com');
 Stream<Uint8List> body = response.body;
 ```
 
+### ➤ Connection Reuse
+
+To improve performance, it is recommended to create a client and reuse it for multiple requests.
+
+This allows you to reuse connections (with same servers).
+Furthermore, it avoids the overhead of creating a new client for each request.
+
+```dart
+final client = await RhttpClient.create();
+
+await client.get('https://example.com');
+```
+
+You can dispose the client when you are done with it:
+
+```dart
+client.dispose();
+```
+
 ### ➤ HTTP version
 
 You can specify the HTTP version to use for the request:
 
 ```dart
-await Rhttp.get('https://example.com', httpVersion: HttpVersionPref.http3);
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    httpVersionPref: HttpVersionPref.http3,
+  ),
+);
 ```
 
 ## License

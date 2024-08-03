@@ -1,24 +1,57 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:rhttp/src/client.dart';
+import 'package:meta/meta.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
+import 'package:rhttp/src/rust/api/client.dart' as rust_client;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
-import 'package:rhttp/src/rust/frb_generated.dart';
 import 'package:rhttp/src/util/digest_headers.dart';
 
-export 'package:rhttp/src/rust/api/http_types.dart' show HttpHeaderName;
+class ClientSettings {
+  /// The preferred HTTP version to use.
+  final HttpVersionPref httpVersionPref;
 
-class Rhttp {
-  /// Initializes the Rust library.
-  static Future<void> init() async {
-    await RustLib.init();
+  /// The timeout for the request including time to establish a connection.
+  final Duration? timeout;
+
+  /// The timeout for establishing a connection.
+  /// See [timeout] for the total timeout.
+  final Duration? connectTimeout;
+
+  const ClientSettings({
+    this.httpVersionPref = HttpVersionPref.all,
+    this.timeout,
+    this.connectTimeout,
+  });
+}
+
+class RhttpClient {
+  /// Settings for the client.
+  final ClientSettings settings;
+
+  /// Internal reference to the Rust client.
+  final int _ref;
+
+  RhttpClient._(this.settings, this._ref);
+
+  static Future<RhttpClient> create({ClientSettings? settings}) async {
+    settings ??= const ClientSettings();
+    final ref = await rust.registerClient(
+      settings: settings.toRustType(),
+    );
+    return RhttpClient._(settings, ref);
+  }
+
+  /// Disposes the client.
+  /// This frees the resources associated with the client.
+  /// After calling this method, the client should not be used anymore.
+  void dispose() {
+    rust.removeClient(address: _ref);
   }
 
   /// Makes an HTTP request.
-  static Future<HttpResponse> requestGeneric({
-    ClientSettings? settings,
+  Future<HttpResponse> requestGeneric({
     required HttpMethod method,
     required String url,
     Map<String, String>? query,
@@ -34,7 +67,7 @@ class Rhttp {
     if (expectBody == HttpExpectBody.stream) {
       final responseCompleter = Completer<rust.HttpResponse>();
       final stream = rust.makeHttpRequestReceiveStream(
-        settings: settings?.toRustType(),
+        clientAddress: _ref,
         method: method._toRustType(),
         url: url,
         query: query?.entries.map((e) => (e.key, e.value)).toList(),
@@ -51,7 +84,7 @@ class Rhttp {
       );
     } else {
       final response = await rust.makeHttpRequest(
-        settings: settings?.toRustType(),
+        clientAddress: _ref,
         method: method._toRustType(),
         url: url,
         query: query?.entries.map((e) => (e.key, e.value)).toList(),
@@ -65,8 +98,7 @@ class Rhttp {
   }
 
   /// Alias for [requestText].
-  static Future<HttpTextResponse> request({
-    ClientSettings? settings,
+  Future<HttpTextResponse> request({
     required HttpMethod method,
     required String url,
     Map<String, String>? query,
@@ -74,7 +106,6 @@ class Rhttp {
     HttpBody? body,
   }) async {
     return await requestText(
-      settings: settings,
       method: method,
       url: url,
       query: query,
@@ -83,8 +114,7 @@ class Rhttp {
     );
   }
 
-  static Future<HttpTextResponse> requestText({
-    ClientSettings? settings,
+  Future<HttpTextResponse> requestText({
     required HttpMethod method,
     required String url,
     Map<String, String>? query,
@@ -92,7 +122,6 @@ class Rhttp {
     HttpBody? body,
   }) async {
     final response = await requestGeneric(
-      settings: settings,
       method: method,
       url: url,
       query: query,
@@ -103,8 +132,7 @@ class Rhttp {
     return response as HttpTextResponse;
   }
 
-  static Future<HttpBytesResponse> requestBytes({
-    ClientSettings? settings,
+  Future<HttpBytesResponse> requestBytes({
     required HttpMethod method,
     required String url,
     Map<String, String>? query,
@@ -112,7 +140,6 @@ class Rhttp {
     HttpBody? body,
   }) async {
     final response = await requestGeneric(
-      settings: settings,
       method: method,
       url: url,
       query: query,
@@ -123,8 +150,8 @@ class Rhttp {
     return response as HttpBytesResponse;
   }
 
-  static Future<HttpStreamResponse> requestStream({
-    ClientSettings? settings,
+  Future<HttpStreamResponse> requestStream({
+    HttpVersionPref? httpVersion,
     required HttpMethod method,
     required String url,
     Map<String, String>? query,
@@ -132,7 +159,6 @@ class Rhttp {
     HttpBody? body,
   }) async {
     final response = await requestGeneric(
-      settings: settings,
       method: method,
       url: url,
       query: query,
@@ -144,15 +170,13 @@ class Rhttp {
   }
 
   /// Makes an HTTP GET request.
-  static Future<HttpTextResponse> get(
+  Future<HttpTextResponse> get(
     String url, {
-    ClientSettings? settings,
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
   }) async {
     return await request(
-      settings: settings,
       method: HttpMethod.get,
       url: url,
       query: query,
@@ -161,16 +185,14 @@ class Rhttp {
   }
 
   /// Makes an HTTP POST request.
-  static Future<HttpTextResponse> post(
+  Future<HttpTextResponse> post(
     String url, {
-    ClientSettings? settings,
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
   }) async {
     return await request(
-      settings: settings,
       method: HttpMethod.post,
       url: url,
       query: query,
@@ -180,16 +202,14 @@ class Rhttp {
   }
 
   /// Makes an HTTP PUT request.
-  static Future<HttpTextResponse> put(
+  Future<HttpTextResponse> put(
     String url, {
-    ClientSettings? settings,
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
   }) async {
     return await request(
-      settings: settings,
       method: HttpMethod.put,
       url: url,
       query: query,
@@ -199,16 +219,14 @@ class Rhttp {
   }
 
   /// Makes an HTTP DELETE request.
-  static Future<HttpTextResponse> delete(
+  Future<HttpTextResponse> delete(
     String url, {
-    ClientSettings? settings,
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
   }) async {
     return await request(
-      settings: settings,
       method: HttpMethod.delete,
       url: url,
       query: query,
@@ -218,14 +236,12 @@ class Rhttp {
   }
 
   /// Makes an HTTP HEAD request.
-  static Future<HttpTextResponse> head(
+  Future<HttpTextResponse> head(
     String url, {
-    ClientSettings? settings,
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
   }) async {
     return await request(
-      settings: settings,
       method: HttpMethod.head,
       url: url,
       query: query,
@@ -233,16 +249,14 @@ class Rhttp {
   }
 
   /// Makes an HTTP PATCH request.
-  static Future<HttpTextResponse> patch(
+  Future<HttpTextResponse> patch(
     String url, {
-    ClientSettings? settings,
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
   }) async {
     return await request(
-      settings: settings,
       method: HttpMethod.patch,
       url: url,
       query: query,
@@ -252,16 +266,14 @@ class Rhttp {
   }
 
   /// Makes an HTTP OPTIONS request.
-  static Future<HttpTextResponse> options(
+  Future<HttpTextResponse> options(
     String url, {
-    ClientSettings? settings,
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
   }) async {
     return await request(
-      settings: settings,
       method: HttpMethod.options,
       url: url,
       query: query,
@@ -271,21 +283,30 @@ class Rhttp {
   }
 
   /// Makes an HTTP TRACE request.
-  static Future<HttpTextResponse> trace(
+  Future<HttpTextResponse> trace(
     String url, {
-    ClientSettings? settings,
     HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
   }) async {
     return await request(
-      settings: settings,
       method: HttpMethod.trace,
       url: url,
       query: query,
       headers: headers,
       body: body,
+    );
+  }
+}
+
+@internal
+extension ClientSettingsExt on ClientSettings {
+  rust_client.ClientSettings toRustType() {
+    return rust_client.ClientSettings(
+      httpVersionPref: httpVersionPref._toRustType(),
+      timeout: timeout,
+      connectTimeout: connectTimeout,
     );
   }
 }
@@ -302,6 +323,17 @@ extension on HttpMethod {
       HttpMethod.trace => rust.HttpMethod.trace,
       HttpMethod.connect => rust.HttpMethod.connect,
       HttpMethod.patch => rust.HttpMethod.patch,
+    };
+  }
+}
+
+extension on HttpVersionPref {
+  rust.HttpVersionPref _toRustType() {
+    return switch (this) {
+      HttpVersionPref.http1 => rust.HttpVersionPref.http1,
+      HttpVersionPref.http2 => rust.HttpVersionPref.http2,
+      HttpVersionPref.http3 => rust.HttpVersionPref.http3,
+      HttpVersionPref.all => rust.HttpVersionPref.all,
     };
   }
 }

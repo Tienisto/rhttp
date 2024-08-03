@@ -3,6 +3,7 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
+import 'api/client.dart';
 import 'api/http.dart';
 import 'api/http_types.dart';
 import 'api/simple.dart';
@@ -60,7 +61,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.1.0';
 
   @override
-  int get rustContentHash => -1359568954;
+  int get rustContentHash => -431873127;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -71,8 +72,11 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  Future<ClientSettings> crateApiClientClientSettingsDefault();
+
   Future<HttpResponse> crateApiHttpMakeHttpRequest(
-      {required HttpVersionPref httpVersion,
+      {PlatformInt64? clientAddress,
+      ClientSettings? settings,
       required HttpMethod method,
       required String url,
       List<(String, String)>? query,
@@ -81,13 +85,19 @@ abstract class RustLibApi extends BaseApi {
       required HttpExpectBody expectBody});
 
   Stream<Uint8List> crateApiHttpMakeHttpRequestReceiveStream(
-      {required HttpVersionPref httpVersion,
+      {PlatformInt64? clientAddress,
+      ClientSettings? settings,
       required HttpMethod method,
       required String url,
       List<(String, String)>? query,
       HttpHeaders? headers,
       HttpBody? body,
       required FutureOr<void> Function(HttpResponse) onResponse});
+
+  Future<PlatformInt64> crateApiHttpRegisterClient(
+      {required ClientSettings settings});
+
+  Future<void> crateApiHttpRemoveClient({required PlatformInt64 address});
 
   Future<void> crateApiInitInitApp();
 
@@ -105,8 +115,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
+  Future<ClientSettings> crateApiClientClientSettingsDefault() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 1, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_client_settings,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiClientClientSettingsDefaultConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiClientClientSettingsDefaultConstMeta =>
+      const TaskConstMeta(
+        debugName: "client_settings_default",
+        argNames: [],
+      );
+
+  @override
   Future<HttpResponse> crateApiHttpMakeHttpRequest(
-      {required HttpVersionPref httpVersion,
+      {PlatformInt64? clientAddress,
+      ClientSettings? settings,
       required HttpMethod method,
       required String url,
       List<(String, String)>? query,
@@ -116,7 +151,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_http_version_pref(httpVersion, serializer);
+        sse_encode_opt_box_autoadd_i_64(clientAddress, serializer);
+        sse_encode_opt_box_autoadd_client_settings(settings, serializer);
         sse_encode_http_method(method, serializer);
         sse_encode_String(url, serializer);
         sse_encode_opt_list_record_string_string(query, serializer);
@@ -124,14 +160,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_opt_box_autoadd_http_body(body, serializer);
         sse_encode_http_expect_body(expectBody, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 1, port: port_);
+            funcId: 2, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_http_response,
         decodeErrorData: sse_decode_AnyhowException,
       ),
       constMeta: kCrateApiHttpMakeHttpRequestConstMeta,
-      argValues: [httpVersion, method, url, query, headers, body, expectBody],
+      argValues: [
+        clientAddress,
+        settings,
+        method,
+        url,
+        query,
+        headers,
+        body,
+        expectBody
+      ],
       apiImpl: this,
     ));
   }
@@ -140,7 +185,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "make_http_request",
         argNames: [
-          "httpVersion",
+          "clientAddress",
+          "settings",
           "method",
           "url",
           "query",
@@ -152,7 +198,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Stream<Uint8List> crateApiHttpMakeHttpRequestReceiveStream(
-      {required HttpVersionPref httpVersion,
+      {PlatformInt64? clientAddress,
+      ClientSettings? settings,
       required HttpMethod method,
       required String url,
       List<(String, String)>? query,
@@ -163,7 +210,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     unawaited(handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_http_version_pref(httpVersion, serializer);
+        sse_encode_opt_box_autoadd_i_64(clientAddress, serializer);
+        sse_encode_opt_box_autoadd_client_settings(settings, serializer);
         sse_encode_http_method(method, serializer);
         sse_encode_String(url, serializer);
         sse_encode_opt_list_record_string_string(query, serializer);
@@ -173,7 +221,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
             onResponse, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 2, port: port_);
+            funcId: 3, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -181,7 +229,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ),
       constMeta: kCrateApiHttpMakeHttpRequestReceiveStreamConstMeta,
       argValues: [
-        httpVersion,
+        clientAddress,
+        settings,
         method,
         url,
         query,
@@ -199,7 +248,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "make_http_request_receive_stream",
         argNames: [
-          "httpVersion",
+          "clientAddress",
+          "settings",
           "method",
           "url",
           "query",
@@ -211,12 +261,61 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<PlatformInt64> crateApiHttpRegisterClient(
+      {required ClientSettings settings}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_box_autoadd_client_settings(settings, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 4, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_i_64,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta: kCrateApiHttpRegisterClientConstMeta,
+      argValues: [settings],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiHttpRegisterClientConstMeta => const TaskConstMeta(
+        debugName: "register_client",
+        argNames: ["settings"],
+      );
+
+  @override
+  Future<void> crateApiHttpRemoveClient({required PlatformInt64 address}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_i_64(address, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 5, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiHttpRemoveClientConstMeta,
+      argValues: [address],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiHttpRemoveClientConstMeta => const TaskConstMeta(
+        debugName: "remove_client",
+        argNames: ["address"],
+      );
+
+  @override
   Future<void> crateApiInitInitApp() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 3, port: port_);
+            funcId: 6, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -239,7 +338,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(name, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -264,7 +363,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_StreamSink_i_32_Sse(sink, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 5, port: port_);
+            funcId: 8, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -322,6 +421,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Duration dco_decode_Chrono_Duration(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeDuration(dco_decode_i_64(raw).toInt());
+  }
+
+  @protected
   FutureOr<void> Function(HttpResponse)
       dco_decode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
           dynamic raw) {
@@ -370,6 +475,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Duration dco_decode_box_autoadd_Chrono_Duration(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_Chrono_Duration(raw);
+  }
+
+  @protected
+  ClientSettings dco_decode_box_autoadd_client_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_client_settings(raw);
+  }
+
+  @protected
   HttpBody dco_decode_box_autoadd_http_body(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_http_body(raw);
@@ -379,6 +496,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   HttpHeaders dco_decode_box_autoadd_http_headers(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_http_headers(raw);
+  }
+
+  @protected
+  PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_i_64(raw);
+  }
+
+  @protected
+  ClientSettings dco_decode_client_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return ClientSettings(
+      httpVersionPref: dco_decode_http_version_pref(arr[0]),
+      timeout: dco_decode_opt_box_autoadd_Chrono_Duration(arr[1]),
+      connectTimeout: dco_decode_opt_box_autoadd_Chrono_Duration(arr[2]),
+    );
   }
 
   @protected
@@ -493,6 +629,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  PlatformInt64 dco_decode_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeI64(raw);
+  }
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
@@ -514,6 +656,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Duration? dco_decode_opt_box_autoadd_Chrono_Duration(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_Chrono_Duration(raw);
+  }
+
+  @protected
+  ClientSettings? dco_decode_opt_box_autoadd_client_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_client_settings(raw);
+  }
+
+  @protected
   HttpBody? dco_decode_opt_box_autoadd_http_body(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_http_body(raw);
@@ -523,6 +677,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   HttpHeaders? dco_decode_opt_box_autoadd_http_headers(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_http_headers(raw);
+  }
+
+  @protected
+  PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_i_64(raw);
   }
 
   @protected
@@ -591,6 +751,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Duration sse_decode_Chrono_Duration(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_64(deserializer);
+    return Duration(microseconds: inner.toInt());
+  }
+
+  @protected
   Object sse_decode_DartOpaque(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_usize(deserializer);
@@ -635,6 +802,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Duration sse_decode_box_autoadd_Chrono_Duration(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_Chrono_Duration(deserializer));
+  }
+
+  @protected
+  ClientSettings sse_decode_box_autoadd_client_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_client_settings(deserializer));
+  }
+
+  @protected
   HttpBody sse_decode_box_autoadd_http_body(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_http_body(deserializer));
@@ -645,6 +826,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_http_headers(deserializer));
+  }
+
+  @protected
+  PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_i_64(deserializer));
+  }
+
+  @protected
+  ClientSettings sse_decode_client_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_httpVersionPref = sse_decode_http_version_pref(deserializer);
+    var var_timeout = sse_decode_opt_box_autoadd_Chrono_Duration(deserializer);
+    var var_connectTimeout =
+        sse_decode_opt_box_autoadd_Chrono_Duration(deserializer);
+    return ClientSettings(
+        httpVersionPref: var_httpVersionPref,
+        timeout: var_timeout,
+        connectTimeout: var_connectTimeout);
   }
 
   @protected
@@ -762,6 +962,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  PlatformInt64 sse_decode_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getPlatformInt64();
+  }
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
@@ -795,6 +1001,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Duration? sse_decode_opt_box_autoadd_Chrono_Duration(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_Chrono_Duration(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  ClientSettings? sse_decode_opt_box_autoadd_client_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_client_settings(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   HttpBody? sse_decode_opt_box_autoadd_http_body(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -812,6 +1042,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_box_autoadd_http_headers(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_i_64(deserializer));
     } else {
       return null;
     }
@@ -884,6 +1125,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_Chrono_Duration(Duration self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_64(PlatformInt64Util.from(self.inMicroseconds), serializer);
+  }
+
+  @protected
   void sse_encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
       FutureOr<void> Function(HttpResponse) self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -951,6 +1198,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_Chrono_Duration(
+      Duration self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_Chrono_Duration(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_client_settings(
+      ClientSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_client_settings(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_http_body(
       HttpBody self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -962,6 +1223,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       HttpHeaders self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_http_headers(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_i_64(
+      PlatformInt64 self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_64(self, serializer);
+  }
+
+  @protected
+  void sse_encode_client_settings(
+      ClientSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_http_version_pref(self.httpVersionPref, serializer);
+    sse_encode_opt_box_autoadd_Chrono_Duration(self.timeout, serializer);
+    sse_encode_opt_box_autoadd_Chrono_Duration(self.connectTimeout, serializer);
   }
 
   @protected
@@ -1067,6 +1344,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putPlatformInt64(self);
+  }
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1095,6 +1378,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_Chrono_Duration(
+      Duration? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_Chrono_Duration(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_client_settings(
+      ClientSettings? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_client_settings(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_http_body(
       HttpBody? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1113,6 +1418,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
       sse_encode_box_autoadd_http_headers(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_i_64(
+      PlatformInt64? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_i_64(self, serializer);
     }
   }
 

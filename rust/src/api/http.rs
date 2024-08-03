@@ -1,3 +1,9 @@
+use std::collections::HashMap;
+use std::str::FromStr;
+
+use crate::api::client::ClientSettings;
+use crate::api::client_pool;
+use crate::api::client_pool::RequestClient;
 use crate::api::http_types::HttpHeaderName;
 use crate::frb_generated::StreamSink;
 use anyhow::Result;
@@ -5,8 +11,6 @@ use flutter_rust_bridge::DartFnFuture;
 use futures_util::StreamExt;
 use reqwest::header::{HeaderName, HeaderValue};
 use reqwest::{Method, Response, Url, Version};
-use std::collections::HashMap;
-use std::str::FromStr;
 
 pub enum HttpMethod {
     Options,
@@ -48,6 +52,7 @@ pub enum HttpBody {
     Form(HashMap<String, String>),
 }
 
+#[derive(Clone, Copy)]
 pub enum HttpVersionPref {
     Http1,
     Http2,
@@ -95,8 +100,19 @@ pub enum HttpResponseBody {
     Stream,
 }
 
+pub fn register_client(settings: ClientSettings) -> Result<i64> {
+    let (address, _) = client_pool::register_client(settings)?;
+
+    Ok(address)
+}
+
+pub fn remove_client(address: i64) {
+    client_pool::remove_client(address);
+}
+
 pub async fn make_http_request(
-    http_version: HttpVersionPref,
+    client_address: Option<i64>,
+    settings: Option<ClientSettings>,
     method: HttpMethod,
     url: String,
     query: Option<Vec<(String, String)>>,
@@ -105,7 +121,8 @@ pub async fn make_http_request(
     expect_body: HttpExpectBody,
 ) -> Result<HttpResponse> {
     let response =
-        make_http_request_helper(http_version, method, url, query, headers, body).await?;
+        make_http_request_helper(client_address, settings, method, url, query, headers, body)
+            .await?;
 
     Ok(HttpResponse {
         headers: header_to_vec(response.headers()),
@@ -119,7 +136,8 @@ pub async fn make_http_request(
 }
 
 pub async fn make_http_request_receive_stream(
-    http_version: HttpVersionPref,
+    client_address: Option<i64>,
+    settings: Option<ClientSettings>,
     method: HttpMethod,
     url: String,
     query: Option<Vec<(String, String)>>,
@@ -129,7 +147,8 @@ pub async fn make_http_request_receive_stream(
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
 ) -> Result<()> {
     let response =
-        make_http_request_helper(http_version, method, url, query, headers, body).await?;
+        make_http_request_helper(client_address, settings, method, url, query, headers, body)
+            .await?;
 
     let http_response = HttpResponse {
         headers: header_to_vec(response.headers()),
@@ -140,7 +159,7 @@ pub async fn make_http_request_receive_stream(
 
     on_response(http_response).await;
 
-    let mut stream_sink = stream_sink;
+    let stream_sink = stream_sink;
     let mut stream = response.bytes_stream();
 
     while let Some(chunk) = stream.next().await {
@@ -155,28 +174,31 @@ pub async fn make_http_request_receive_stream(
 
 /// This function is used to make an HTTP request without any response handling.
 async fn make_http_request_helper(
-    http_version: HttpVersionPref,
+    client_address: Option<i64>,
+    settings: Option<ClientSettings>,
     method: HttpMethod,
     url: String,
     query: Option<Vec<(String, String)>>,
     headers: Option<HttpHeaders>,
     body: Option<HttpBody>,
 ) -> Result<Response> {
-    let client = {
-        let client = reqwest::Client::builder();
-        match http_version {
-            HttpVersionPref::Http1 => client.http1_only(),
-            HttpVersionPref::Http2 => client.http2_prior_knowledge(),
-            HttpVersionPref::Http3 => client.http3_prior_knowledge(),
-            HttpVersionPref::All => client,
+    let client: RequestClient = match client_address {
+        Some(address) => {
+            let client = client_pool::get_client(address)
+                .ok_or_else(|| anyhow::anyhow!("Client with address {} not found", address))?;
+            println!("Reusing client with address {}", address);
+            client
         }
-        .build()?
+        None => match settings {
+            Some(settings) => client_pool::create_client(settings)?,
+            None => RequestClient::new_default(),
+        },
     };
 
     let request = {
-        let mut request = client.request(method.to_method(), Url::parse(&url)?);
+        let mut request = client.client.request(method.to_method(), Url::parse(&url)?);
 
-        request = match http_version {
+        request = match client.http_version_pref {
             HttpVersionPref::Http1 => request.version(Version::HTTP_10),
             HttpVersionPref::Http2 => request.version(Version::HTTP_2),
             HttpVersionPref::Http3 => request.version(Version::HTTP_3),
@@ -222,7 +244,7 @@ async fn make_http_request_helper(
         request.build()?
     };
 
-    let response = client.execute(request).await?;
+    let response = client.client.execute(request).await?;
 
     Ok(response)
 }

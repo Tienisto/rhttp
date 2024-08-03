@@ -44,7 +44,9 @@ class _MyAppState extends State<MyApp> {
                     headers: HttpHeaders.map({
                       HttpHeaderName.lastModified: 'application/json',
                     }),
-                    httpVersion: HttpVersionPref.http3,
+                    settings: ClientSettings(
+                      httpVersionPref: HttpVersionPref.http3,
+                    ),
                   );
 
                   print('Got response: $res');

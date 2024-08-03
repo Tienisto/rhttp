@@ -3,6 +3,7 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
+import 'api/client.dart';
 import 'api/http.dart';
 import 'api/http_types.dart';
 import 'api/simple.dart';
@@ -22,6 +23,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
+
+  @protected
+  Duration dco_decode_Chrono_Duration(dynamic raw);
 
   @protected
   FutureOr<void> Function(HttpResponse)
@@ -49,10 +53,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String dco_decode_String(dynamic raw);
 
   @protected
+  Duration dco_decode_box_autoadd_Chrono_Duration(dynamic raw);
+
+  @protected
+  ClientSettings dco_decode_box_autoadd_client_settings(dynamic raw);
+
+  @protected
   HttpBody dco_decode_box_autoadd_http_body(dynamic raw);
 
   @protected
   HttpHeaders dco_decode_box_autoadd_http_headers(dynamic raw);
+
+  @protected
+  PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw);
+
+  @protected
+  ClientSettings dco_decode_client_settings(dynamic raw);
 
   @protected
   HttpBody dco_decode_http_body(dynamic raw);
@@ -85,6 +101,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int dco_decode_i_32(dynamic raw);
 
   @protected
+  PlatformInt64 dco_decode_i_64(dynamic raw);
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
@@ -95,10 +114,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
 
   @protected
+  Duration? dco_decode_opt_box_autoadd_Chrono_Duration(dynamic raw);
+
+  @protected
+  ClientSettings? dco_decode_opt_box_autoadd_client_settings(dynamic raw);
+
+  @protected
   HttpBody? dco_decode_opt_box_autoadd_http_body(dynamic raw);
 
   @protected
   HttpHeaders? dco_decode_opt_box_autoadd_http_headers(dynamic raw);
+
+  @protected
+  PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
 
   @protected
   List<(String, String)>? dco_decode_opt_list_record_string_string(dynamic raw);
@@ -126,6 +154,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
   @protected
+  Duration sse_decode_Chrono_Duration(SseDeserializer deserializer);
+
+  @protected
   Object sse_decode_DartOpaque(SseDeserializer deserializer);
 
   @protected
@@ -148,10 +179,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
+  Duration sse_decode_box_autoadd_Chrono_Duration(SseDeserializer deserializer);
+
+  @protected
+  ClientSettings sse_decode_box_autoadd_client_settings(
+      SseDeserializer deserializer);
+
+  @protected
   HttpBody sse_decode_box_autoadd_http_body(SseDeserializer deserializer);
 
   @protected
   HttpHeaders sse_decode_box_autoadd_http_headers(SseDeserializer deserializer);
+
+  @protected
+  PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer);
+
+  @protected
+  ClientSettings sse_decode_client_settings(SseDeserializer deserializer);
 
   @protected
   HttpBody sse_decode_http_body(SseDeserializer deserializer);
@@ -184,6 +228,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
+  PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
@@ -195,11 +242,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  Duration? sse_decode_opt_box_autoadd_Chrono_Duration(
+      SseDeserializer deserializer);
+
+  @protected
+  ClientSettings? sse_decode_opt_box_autoadd_client_settings(
+      SseDeserializer deserializer);
+
+  @protected
   HttpBody? sse_decode_opt_box_autoadd_http_body(SseDeserializer deserializer);
 
   @protected
   HttpHeaders? sse_decode_opt_box_autoadd_http_headers(
       SseDeserializer deserializer);
+
+  @protected
+  PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
   List<(String, String)>? sse_decode_opt_list_record_string_string(
@@ -233,6 +291,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       AnyhowException self, SseSerializer serializer);
 
   @protected
+  void sse_encode_Chrono_Duration(Duration self, SseSerializer serializer);
+
+  @protected
   void sse_encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
       FutureOr<void> Function(HttpResponse) self, SseSerializer serializer);
 
@@ -259,12 +320,28 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_Chrono_Duration(
+      Duration self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_client_settings(
+      ClientSettings self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_http_body(
       HttpBody self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_http_headers(
       HttpHeaders self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_i_64(
+      PlatformInt64 self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_client_settings(
+      ClientSettings self, SseSerializer serializer);
 
   @protected
   void sse_encode_http_body(HttpBody self, SseSerializer serializer);
@@ -301,6 +378,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_i_32(int self, SseSerializer serializer);
 
   @protected
+  void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer);
 
@@ -313,12 +393,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<(String, String)> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_Chrono_Duration(
+      Duration? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_client_settings(
+      ClientSettings? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_opt_box_autoadd_http_body(
       HttpBody? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_http_headers(
       HttpHeaders? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_i_64(
+      PlatformInt64? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_list_record_string_string(

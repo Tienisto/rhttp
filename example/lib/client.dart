@@ -14,7 +14,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  HttpBytesResponse? response;
+  RhttpClient? _client;
+  HttpTextResponse? response;
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +30,11 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               ElevatedButton(
                 onPressed: () async {
-                  final res = await Rhttp.requestBytes(
-                    method: HttpMethod.get,
-                    url: 'https://reqres.in/api/users',
+                  _client ??= await RhttpClient.create();
+
+                  final res = await _client!.get(
+                    'https://reqres.in/api/users',
                     query: {'page': '5'},
-                    settings: const ClientSettings(
-                      httpVersionPref: HttpVersionPref.http3,
-                    ),
                   );
                   setState(() {
                     response = res;
@@ -45,7 +44,7 @@ class _MyAppState extends State<MyApp> {
               ),
               if (response != null) Text(response!.version.toString()),
               if (response != null) Text(response!.statusCode.toString()),
-              if (response != null) Text(response!.body.sublist(0, 100).toString()),
+              if (response != null) Text(response!.body.substring(0, 100).toString()),
               if (response != null) Text(response!.headers.toString()),
             ],
           ),

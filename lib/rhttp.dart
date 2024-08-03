@@ -1,5 +1,6 @@
 library rhttp;
 
+export 'src/client.dart' show ClientSettings, RhttpClient;
 export 'src/model/request.dart'
     show
         HttpExpectBody,

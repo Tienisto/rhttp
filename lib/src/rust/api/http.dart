@@ -4,16 +4,24 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
+import 'client.dart';
 import 'http_types.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
-
 part 'http.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `from_version`, `header_to_vec`, `make_http_request_helper`, `to_method`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`
+
+Future<PlatformInt64> registerClient({required ClientSettings settings}) =>
+    RustLib.instance.api.crateApiHttpRegisterClient(settings: settings);
+
+Future<void> removeClient({required PlatformInt64 address}) =>
+    RustLib.instance.api.crateApiHttpRemoveClient(address: address);
 
 Future<HttpResponse> makeHttpRequest(
-        {required HttpVersionPref httpVersion,
+        {PlatformInt64? clientAddress,
+        ClientSettings? settings,
         required HttpMethod method,
         required String url,
         List<(String, String)>? query,
@@ -21,7 +29,8 @@ Future<HttpResponse> makeHttpRequest(
         HttpBody? body,
         required HttpExpectBody expectBody}) =>
     RustLib.instance.api.crateApiHttpMakeHttpRequest(
-        httpVersion: httpVersion,
+        clientAddress: clientAddress,
+        settings: settings,
         method: method,
         url: url,
         query: query,
@@ -30,7 +39,8 @@ Future<HttpResponse> makeHttpRequest(
         expectBody: expectBody);
 
 Stream<Uint8List> makeHttpRequestReceiveStream(
-        {required HttpVersionPref httpVersion,
+        {PlatformInt64? clientAddress,
+        ClientSettings? settings,
         required HttpMethod method,
         required String url,
         List<(String, String)>? query,
@@ -38,7 +48,8 @@ Stream<Uint8List> makeHttpRequestReceiveStream(
         HttpBody? body,
         required FutureOr<void> Function(HttpResponse) onResponse}) =>
     RustLib.instance.api.crateApiHttpMakeHttpRequestReceiveStream(
-        httpVersion: httpVersion,
+        clientAddress: clientAddress,
+        settings: settings,
         method: method,
         url: url,
         query: query,
@@ -53,11 +64,9 @@ sealed class HttpBody with _$HttpBody {
   const factory HttpBody.text(
     String field0,
   ) = HttpBody_Text;
-
   const factory HttpBody.bytes(
     Uint8List field0,
   ) = HttpBody_Bytes;
-
   const factory HttpBody.form(
     Map<String, String> field0,
   ) = HttpBody_Form;
@@ -76,11 +85,9 @@ sealed class HttpHeaders with _$HttpHeaders {
   const factory HttpHeaders.map(
     Map<HttpHeaderName, String> field0,
   ) = HttpHeaders_Map;
-
   const factory HttpHeaders.rawMap(
     Map<String, String> field0,
   ) = HttpHeaders_RawMap;
-
   const factory HttpHeaders.list(
     List<(String, String)> field0,
   ) = HttpHeaders_List;
@@ -134,11 +141,9 @@ sealed class HttpResponseBody with _$HttpResponseBody {
   const factory HttpResponseBody.text(
     String field0,
   ) = HttpResponseBody_Text;
-
   const factory HttpResponseBody.bytes(
     Uint8List field0,
   ) = HttpResponseBody_Bytes;
-
   const factory HttpResponseBody.stream() = HttpResponseBody_Stream;
 }
 
