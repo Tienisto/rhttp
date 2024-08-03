@@ -41,10 +41,10 @@ class _MyAppState extends State<MyApp> {
                     method: HttpMethod.get,
                     url: 'https://reqres.in/api/users',
                     query: {'page': '5'},
-                    headers: HttpHeaders.map({
+                    headers: const HttpHeaders.map({
                       HttpHeaderName.lastModified: 'application/json',
                     }),
-                    settings: ClientSettings(
+                    settings: const ClientSettings(
                       httpVersionPref: HttpVersionPref.http3,
                     ),
                   );

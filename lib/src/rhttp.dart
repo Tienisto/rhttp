@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:rhttp/src/client.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
-import 'package:rhttp/src/rust/api/http.dart' as rust;
+import 'package:rhttp/src/model/settings.dart';
+import 'package:rhttp/src/request.dart';
 import 'package:rhttp/src/rust/frb_generated.dart';
-import 'package:rhttp/src/util/digest_headers.dart';
-
 export 'package:rhttp/src/rust/api/http_types.dart' show HttpHeaderName;
 
 class Rhttp {
@@ -25,44 +22,14 @@ class Rhttp {
     HttpHeaders? headers,
     HttpBody? body,
     required HttpExpectBody expectBody,
-  }) async {
-    headers = digestHeaders(
-      headers: headers,
-      body: body,
-    );
-
-    if (expectBody == HttpExpectBody.stream) {
-      final responseCompleter = Completer<rust.HttpResponse>();
-      final stream = rust.makeHttpRequestReceiveStream(
-        settings: settings?.toRustType(),
-        method: method._toRustType(),
+  }) =>
+      requestInternalGeneric(
+        ref: null,
+        settings: settings,
+        method: method,
         url: url,
-        query: query?.entries.map((e) => (e.key, e.value)).toList(),
-        headers: headers?._toRustType(),
-        body: body?._toRustType(),
-        onResponse: (r) => responseCompleter.complete(r),
+        expectBody: expectBody,
       );
-
-      final response = await responseCompleter.future;
-
-      return parseHttpResponse(
-        response,
-        bodyStream: stream,
-      );
-    } else {
-      final response = await rust.makeHttpRequest(
-        settings: settings?.toRustType(),
-        method: method._toRustType(),
-        url: url,
-        query: query?.entries.map((e) => (e.key, e.value)).toList(),
-        headers: headers?._toRustType(),
-        body: body?._toRustType(),
-        expectBody: expectBody.toRustType(),
-      );
-
-      return parseHttpResponse(response);
-    }
-  }
 
   /// Alias for [requestText].
   static Future<HttpTextResponse> request({
@@ -72,17 +39,17 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
-  }) async {
-    return await requestText(
-      settings: settings,
-      method: method,
-      url: url,
-      query: query,
-      headers: headers,
-      body: body,
-    );
-  }
+  }) =>
+      requestText(
+        settings: settings,
+        method: method,
+        url: url,
+        query: query,
+        headers: headers,
+        body: body,
+      );
 
+  /// Makes an HTTP request and returns the response as text.
   static Future<HttpTextResponse> requestText({
     ClientSettings? settings,
     required HttpMethod method,
@@ -103,6 +70,7 @@ class Rhttp {
     return response as HttpTextResponse;
   }
 
+  /// Makes an HTTP request and returns the response as bytes.
   static Future<HttpBytesResponse> requestBytes({
     ClientSettings? settings,
     required HttpMethod method,
@@ -123,6 +91,7 @@ class Rhttp {
     return response as HttpBytesResponse;
   }
 
+  /// Makes an HTTP request and returns the response as a stream.
   static Future<HttpStreamResponse> requestStream({
     ClientSettings? settings,
     required HttpMethod method,
@@ -143,186 +112,187 @@ class Rhttp {
     return response as HttpStreamResponse;
   }
 
-  /// Makes an HTTP GET request.
+  /// Alias for [getText].
   static Future<HttpTextResponse> get(
     String url, {
     ClientSettings? settings,
-    HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
-  }) async {
-    return await request(
-      settings: settings,
-      method: HttpMethod.get,
-      url: url,
-      query: query,
-      headers: headers,
-    );
-  }
+  }) =>
+      request(
+        settings: settings,
+        method: HttpMethod.get,
+        url: url,
+        query: query,
+        headers: headers,
+      );
 
-  /// Makes an HTTP POST request.
+  /// Makes an HTTP GET request and returns the response as text.
+  static Future<HttpTextResponse> getText(
+    String url, {
+    ClientSettings? settings,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+  }) =>
+      requestText(
+        settings: settings,
+        method: HttpMethod.get,
+        url: url,
+        query: query,
+        headers: headers,
+      );
+
+  /// Makes an HTTP GET request and returns the response as bytes.
+  static Future<HttpBytesResponse> getBytes(
+    String url, {
+    ClientSettings? settings,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+  }) =>
+      requestBytes(
+        settings: settings,
+        method: HttpMethod.get,
+        url: url,
+        query: query,
+        headers: headers,
+      );
+
+  /// Makes an HTTP GET request and returns the response as a stream.
+  static Future<HttpStreamResponse> getStream(
+    String url, {
+    ClientSettings? settings,
+    Map<String, String>? query,
+    HttpHeaders? headers,
+  }) =>
+      requestStream(
+        settings: settings,
+        method: HttpMethod.get,
+        url: url,
+        query: query,
+        headers: headers,
+      );
+
+  /// Makes an HTTP POST request and returns the response as text.
+  /// Use [requestBytes], or [requestStream] for other response types.
   static Future<HttpTextResponse> post(
     String url, {
     ClientSettings? settings,
-    HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
-  }) async {
-    return await request(
-      settings: settings,
-      method: HttpMethod.post,
-      url: url,
-      query: query,
-      headers: headers,
-      body: body,
-    );
-  }
+  }) =>
+      request(
+        settings: settings,
+        method: HttpMethod.post,
+        url: url,
+        query: query,
+        headers: headers,
+        body: body,
+      );
 
-  /// Makes an HTTP PUT request.
+  /// Makes an HTTP PUT request and returns the response as text.
+  /// Use [requestBytes], or [requestStream] for other response types.
   static Future<HttpTextResponse> put(
     String url, {
     ClientSettings? settings,
-    HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
-  }) async {
-    return await request(
-      settings: settings,
-      method: HttpMethod.put,
-      url: url,
-      query: query,
-      headers: headers,
-      body: body,
-    );
-  }
+  }) =>
+      request(
+        settings: settings,
+        method: HttpMethod.put,
+        url: url,
+        query: query,
+        headers: headers,
+        body: body,
+      );
 
-  /// Makes an HTTP DELETE request.
+  /// Makes an HTTP DELETE request and returns the response as text.
+  /// Use [requestBytes], or [requestStream] for other response types.
   static Future<HttpTextResponse> delete(
     String url, {
     ClientSettings? settings,
-    HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
-  }) async {
-    return await request(
-      settings: settings,
-      method: HttpMethod.delete,
-      url: url,
-      query: query,
-      headers: headers,
-      body: body,
-    );
-  }
+  }) =>
+      request(
+        settings: settings,
+        method: HttpMethod.delete,
+        url: url,
+        query: query,
+        headers: headers,
+        body: body,
+      );
 
-  /// Makes an HTTP HEAD request.
+  /// Makes an HTTP HEAD request and returns the response as text.
+  /// Use [requestBytes], or [requestStream] for other response types.
   static Future<HttpTextResponse> head(
     String url, {
     ClientSettings? settings,
-    HttpVersionPref? httpVersion,
     Map<String, String>? query,
-  }) async {
-    return await request(
-      settings: settings,
-      method: HttpMethod.head,
-      url: url,
-      query: query,
-    );
-  }
+    HttpHeaders? headers,
+  }) =>
+      request(
+        settings: settings,
+        method: HttpMethod.head,
+        url: url,
+        query: query,
+        headers: headers,
+      );
 
-  /// Makes an HTTP PATCH request.
+  /// Makes an HTTP PATCH request and returns the response as text.
+  /// Use [requestBytes], or [requestStream] for other response types.
   static Future<HttpTextResponse> patch(
     String url, {
     ClientSettings? settings,
-    HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
-  }) async {
-    return await request(
-      settings: settings,
-      method: HttpMethod.patch,
-      url: url,
-      query: query,
-      headers: headers,
-      body: body,
-    );
-  }
+  }) =>
+      request(
+        settings: settings,
+        method: HttpMethod.patch,
+        url: url,
+        query: query,
+        headers: headers,
+        body: body,
+      );
 
-  /// Makes an HTTP OPTIONS request.
+  /// Makes an HTTP OPTIONS request and returns the response as text.
+  /// Use [requestBytes], or [requestStream] for other response types.
   static Future<HttpTextResponse> options(
     String url, {
     ClientSettings? settings,
-    HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
-  }) async {
-    return await request(
-      settings: settings,
-      method: HttpMethod.options,
-      url: url,
-      query: query,
-      headers: headers,
-      body: body,
-    );
-  }
+  }) =>
+      request(
+        settings: settings,
+        method: HttpMethod.options,
+        url: url,
+        query: query,
+        headers: headers,
+        body: body,
+      );
 
-  /// Makes an HTTP TRACE request.
+  /// Makes an HTTP TRACE request and returns the response as text.
+  /// Use [requestBytes], or [requestStream] for other response types.
   static Future<HttpTextResponse> trace(
     String url, {
     ClientSettings? settings,
-    HttpVersionPref? httpVersion,
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
-  }) async {
-    return await request(
-      settings: settings,
-      method: HttpMethod.trace,
-      url: url,
-      query: query,
-      headers: headers,
-      body: body,
-    );
-  }
-}
-
-extension on HttpMethod {
-  rust.HttpMethod _toRustType() {
-    return switch (this) {
-      HttpMethod.options => rust.HttpMethod.options,
-      HttpMethod.get => rust.HttpMethod.get_,
-      HttpMethod.post => rust.HttpMethod.post,
-      HttpMethod.put => rust.HttpMethod.put,
-      HttpMethod.delete => rust.HttpMethod.delete,
-      HttpMethod.head => rust.HttpMethod.head,
-      HttpMethod.trace => rust.HttpMethod.trace,
-      HttpMethod.connect => rust.HttpMethod.connect,
-      HttpMethod.patch => rust.HttpMethod.patch,
-    };
-  }
-}
-
-extension on HttpHeaders {
-  rust.HttpHeaders _toRustType() {
-    return switch (this) {
-      HttpHeaderMap map => rust.HttpHeaders.map(map.map),
-      HttpHeaderRawMap rawMap => rust.HttpHeaders.rawMap(rawMap.map),
-      HttpHeaderList list => rust.HttpHeaders.list(list.list),
-    };
-  }
-}
-
-extension on HttpBody {
-  rust.HttpBody _toRustType() {
-    return switch (this) {
-      HttpBodyText text => rust.HttpBody.text(text.text),
-      HttpBodyJson json => rust.HttpBody.text(jsonEncode(json.json)),
-      HttpBodyBytes bytes => rust.HttpBody.bytes(bytes.bytes),
-      HttpBodyForm form => rust.HttpBody.form(form.form),
-    };
-  }
+  }) =>
+      request(
+        settings: settings,
+        method: HttpMethod.trace,
+        url: url,
+        query: query,
+        headers: headers,
+        body: body,
+      );
 }
