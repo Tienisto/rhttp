@@ -2,15 +2,16 @@ use std::collections::HashMap;
 use std::str::FromStr;
 
 use crate::api::client::ClientSettings;
-use crate::api::client_pool;
 use crate::api::client_pool::RequestClient;
 use crate::api::http_types::HttpHeaderName;
+use crate::api::{client_pool, request_pool};
 use crate::frb_generated::StreamSink;
 use anyhow::Result;
 use flutter_rust_bridge::DartFnFuture;
 use futures_util::StreamExt;
 use reqwest::header::{HeaderName, HeaderValue};
 use reqwest::{Method, Response, Url, Version};
+use tokio_util::sync::CancellationToken;
 
 pub enum HttpMethod {
     Options,
@@ -112,6 +113,48 @@ pub fn remove_client(address: i64) {
 }
 
 pub async fn make_http_request(
+    client_address: Option<i64>,
+    settings: Option<ClientSettings>,
+    method: HttpMethod,
+    url: String,
+    query: Option<Vec<(String, String)>>,
+    headers: Option<HttpHeaders>,
+    body: Option<HttpBody>,
+    expect_body: HttpExpectBody,
+    on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
+    cancelable: bool,
+) -> Result<HttpResponse> {
+    if cancelable {
+        let token = CancellationToken::new();
+        let cloned_token = token.clone();
+
+        let address = request_pool::register_token(token);
+        on_cancel_token(address).await;
+
+        tokio::select! {
+            _ = cloned_token.cancelled() => Err(anyhow::anyhow!("Request cancelled")),
+            response = make_http_request_inner(client_address, settings, method, url, query, headers, body, expect_body) => {
+                request_pool::remove_token(address);
+                response
+            },
+        }
+    } else {
+        // request is not cancelable
+        make_http_request_inner(
+            client_address,
+            settings,
+            method,
+            url,
+            query,
+            headers,
+            body,
+            expect_body,
+        )
+        .await
+    }
+}
+
+async fn make_http_request_inner(
     client_address: Option<i64>,
     settings: Option<ClientSettings>,
     method: HttpMethod,
@@ -253,4 +296,11 @@ fn header_to_vec(headers: &reqwest::header::HeaderMap) -> Vec<(String, String)> 
         .iter()
         .map(|(k, v)| (k.as_str().to_string(), v.to_str().unwrap().to_string()))
         .collect()
+}
+
+pub fn cancel_request(address: i64) {
+    if let Some(token) = request_pool::get_token(address) {
+        token.cancel();
+        request_pool::remove_token(address);
+    }
 }

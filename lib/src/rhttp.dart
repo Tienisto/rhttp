@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:rhttp/src/model/cancel_token.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
@@ -22,13 +23,18 @@ class Rhttp {
     HttpHeaders? headers,
     HttpBody? body,
     required HttpExpectBody expectBody,
+    CancelToken? cancelToken,
   }) =>
       requestInternalGeneric(
-        ref: null,
+        clientRef: null,
         settings: settings,
         method: method,
         url: url,
+        query: query,
+        headers: headers,
+        body: body,
         expectBody: expectBody,
+        cancelToken: cancelToken,
       );
 
   /// Alias for [requestText].
@@ -39,6 +45,7 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    CancelToken? cancelToken,
   }) =>
       requestText(
         settings: settings,
@@ -47,6 +54,7 @@ class Rhttp {
         query: query,
         headers: headers,
         body: body,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP request and returns the response as text.
@@ -57,6 +65,7 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    CancelToken? cancelToken,
   }) async {
     final response = await requestGeneric(
       settings: settings,
@@ -66,6 +75,7 @@ class Rhttp {
       headers: headers,
       body: body,
       expectBody: HttpExpectBody.text,
+      cancelToken: cancelToken,
     );
     return response as HttpTextResponse;
   }
@@ -78,6 +88,7 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    CancelToken? cancelToken,
   }) async {
     final response = await requestGeneric(
       settings: settings,
@@ -87,6 +98,7 @@ class Rhttp {
       headers: headers,
       body: body,
       expectBody: HttpExpectBody.bytes,
+      cancelToken: cancelToken,
     );
     return response as HttpBytesResponse;
   }
@@ -99,6 +111,7 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    CancelToken? cancelToken,
   }) async {
     final response = await requestGeneric(
       settings: settings,
@@ -108,6 +121,7 @@ class Rhttp {
       headers: headers,
       body: body,
       expectBody: HttpExpectBody.stream,
+      cancelToken: cancelToken,
     );
     return response as HttpStreamResponse;
   }
@@ -118,6 +132,7 @@ class Rhttp {
     ClientSettings? settings,
     Map<String, String>? query,
     HttpHeaders? headers,
+    CancelToken? cancelToken,
   }) =>
       request(
         settings: settings,
@@ -125,6 +140,7 @@ class Rhttp {
         url: url,
         query: query,
         headers: headers,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP GET request and returns the response as text.
@@ -133,6 +149,7 @@ class Rhttp {
     ClientSettings? settings,
     Map<String, String>? query,
     HttpHeaders? headers,
+    CancelToken? cancelToken,
   }) =>
       requestText(
         settings: settings,
@@ -140,6 +157,7 @@ class Rhttp {
         url: url,
         query: query,
         headers: headers,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP GET request and returns the response as bytes.
@@ -148,6 +166,7 @@ class Rhttp {
     ClientSettings? settings,
     Map<String, String>? query,
     HttpHeaders? headers,
+    CancelToken? cancelToken,
   }) =>
       requestBytes(
         settings: settings,
@@ -155,6 +174,7 @@ class Rhttp {
         url: url,
         query: query,
         headers: headers,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP GET request and returns the response as a stream.
@@ -163,6 +183,7 @@ class Rhttp {
     ClientSettings? settings,
     Map<String, String>? query,
     HttpHeaders? headers,
+    CancelToken? cancelToken,
   }) =>
       requestStream(
         settings: settings,
@@ -170,6 +191,7 @@ class Rhttp {
         url: url,
         query: query,
         headers: headers,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP POST request and returns the response as text.
@@ -180,6 +202,7 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    CancelToken? cancelToken,
   }) =>
       request(
         settings: settings,
@@ -188,6 +211,7 @@ class Rhttp {
         query: query,
         headers: headers,
         body: body,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP PUT request and returns the response as text.
@@ -198,6 +222,7 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    CancelToken? cancelToken,
   }) =>
       request(
         settings: settings,
@@ -206,6 +231,7 @@ class Rhttp {
         query: query,
         headers: headers,
         body: body,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP DELETE request and returns the response as text.
@@ -216,6 +242,7 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    CancelToken? cancelToken,
   }) =>
       request(
         settings: settings,
@@ -224,6 +251,7 @@ class Rhttp {
         query: query,
         headers: headers,
         body: body,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP HEAD request and returns the response as text.
@@ -233,6 +261,7 @@ class Rhttp {
     ClientSettings? settings,
     Map<String, String>? query,
     HttpHeaders? headers,
+    CancelToken? cancelToken,
   }) =>
       request(
         settings: settings,
@@ -240,6 +269,7 @@ class Rhttp {
         url: url,
         query: query,
         headers: headers,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP PATCH request and returns the response as text.
@@ -250,6 +280,7 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    CancelToken? cancelToken,
   }) =>
       request(
         settings: settings,
@@ -258,6 +289,7 @@ class Rhttp {
         query: query,
         headers: headers,
         body: body,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP OPTIONS request and returns the response as text.
@@ -268,6 +300,7 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    CancelToken? cancelToken,
   }) =>
       request(
         settings: settings,
@@ -276,6 +309,7 @@ class Rhttp {
         query: query,
         headers: headers,
         body: body,
+        cancelToken: cancelToken,
       );
 
   /// Makes an HTTP TRACE request and returns the response as text.
@@ -286,6 +320,7 @@ class Rhttp {
     Map<String, String>? query,
     HttpHeaders? headers,
     HttpBody? body,
+    CancelToken? cancelToken,
   }) =>
       request(
         settings: settings,
@@ -294,5 +329,6 @@ class Rhttp {
         query: query,
         headers: headers,
         body: body,
+        cancelToken: cancelToken,
       );
 }

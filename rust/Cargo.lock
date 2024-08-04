@@ -1079,6 +1079,7 @@ dependencies = [
  "http",
  "reqwest",
  "tokio",
+ "tokio-util",
 ]
 
 [[package]]

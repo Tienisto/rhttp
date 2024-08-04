@@ -16,6 +16,7 @@ On Rust's side, the [reqwest](https://crates.io/crates/reqwest) crate is used to
 ### ➤ Installation
 
 1. Install Rust via [rustup](https://rustup.rs/).
+   - Rust 1.80.0 or later is required.
 2. Add `rhttp` to `pubspec.yaml`:
 
 ```yaml
@@ -51,7 +52,7 @@ void main() async {
 }
 ```
 
-## Configuration
+## Features
 
 ### ➤ HTTP methods
 
@@ -181,6 +182,24 @@ You can dispose the client when you are done with it:
 
 ```dart
 client.dispose();
+```
+
+### ➤ Cancel Requests
+
+You can cancel a request by providing a `CancelToken`:
+
+```dart
+final cancelToken = CancelToken();
+final request = Rhttp.get(
+   'https://example.com',
+   cancelToken: cancelToken,
+);
+
+// Cancel the request
+cancelToken.cancel();
+
+// Will throw a `RequestCancelledException`
+await request;
 ```
 
 ### ➤ HTTP version

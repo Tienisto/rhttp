@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:meta/meta.dart';
+import 'package:rhttp/src/model/cancel_token.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
@@ -9,15 +11,17 @@ import 'package:rhttp/src/rust/api/http.dart' as rust;
 
 /// Non-Generated helper function that is used by
 /// the client and also by the static class.
+@internal
 Future<HttpResponse> requestInternalGeneric({
-  required int? ref,
+  required int? clientRef,
   required ClientSettings? settings,
   required HttpMethod method,
   required String url,
-  Map<String, String>? query,
-  HttpHeaders? headers,
-  HttpBody? body,
+  required Map<String, String>? query,
+  required HttpHeaders? headers,
+  required HttpBody? body,
   required HttpExpectBody expectBody,
+  required CancelToken? cancelToken,
 }) async {
   headers = _digestHeaders(
     headers: headers,
@@ -27,7 +31,7 @@ Future<HttpResponse> requestInternalGeneric({
   if (expectBody == HttpExpectBody.stream) {
     final responseCompleter = Completer<rust.HttpResponse>();
     final stream = rust.makeHttpRequestReceiveStream(
-      clientAddress: ref,
+      clientAddress: clientRef,
       settings: settings?.toRustType(),
       method: method._toRustType(),
       url: url,
@@ -44,8 +48,9 @@ Future<HttpResponse> requestInternalGeneric({
       bodyStream: stream,
     );
   } else {
-    final response = await rust.makeHttpRequest(
-      clientAddress: ref,
+    final cancelRefCompleter = Completer<int>();
+    final responseFuture = rust.makeHttpRequest(
+      clientAddress: clientRef,
       settings: settings?.toRustType(),
       method: method._toRustType(),
       url: url,
@@ -53,9 +58,16 @@ Future<HttpResponse> requestInternalGeneric({
       headers: headers?._toRustType(),
       body: body?._toRustType(),
       expectBody: expectBody.toRustType(),
+      onCancelToken: (int cancelRef) => cancelRefCompleter.complete(cancelRef),
+      cancelable: cancelToken != null,
     );
 
-    return parseHttpResponse(response);
+    if (cancelToken != null) {
+      final cancelRef = await cancelRefCompleter.future;
+      cancelToken.setRef(cancelRef);
+    }
+
+    return parseHttpResponse(await responseFuture);
   }
 }
 
