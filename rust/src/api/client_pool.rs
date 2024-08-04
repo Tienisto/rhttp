@@ -1,5 +1,6 @@
 use crate::api::client::ClientSettings;
 use crate::api::http::HttpVersionPref;
+use crate::util::i64_address::get_i64_address;
 use anyhow::Result;
 use std::collections::HashMap;
 use std::sync::{Arc, LazyLock, Mutex};
@@ -48,7 +49,7 @@ pub(crate) fn register_client(settings: ClientSettings) -> Result<(i64, RequestC
     let request_client = create_client(settings)?;
     let request_client_cloned = request_client.clone();
 
-    let address = &request_client as *const RequestClient as i64;
+    let address = get_i64_address(&request_client);
 
     let mut map = HTTP_CLIENTS.lock().unwrap();
     map.insert(address, request_client);

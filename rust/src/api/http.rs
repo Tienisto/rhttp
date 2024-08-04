@@ -184,12 +184,9 @@ async fn make_http_request_helper(
     body: Option<HttpBody>,
 ) -> Result<Response> {
     let client: RequestClient = match client_address {
-        Some(address) => {
-            let client = client_pool::get_client(address)
-                .ok_or_else(|| anyhow::anyhow!("Client with address {} not found", address))?;
-            println!("Reusing client with address {}", address);
-            client
-        }
+        Some(address) => client_pool::get_client(address)
+            .ok_or_else(|| anyhow::anyhow!("Client with address {} not found", address))?,
+
         None => match settings {
             Some(settings) => client_pool::create_client(settings)?,
             None => RequestClient::new_default(),
