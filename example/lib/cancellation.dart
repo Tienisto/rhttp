@@ -36,9 +36,7 @@ class _MyAppState extends State<MyApp> {
                     cancelToken: cancelToken,
                   );
 
-                  Future.delayed(const Duration(seconds: 1), () {
-                    cancelToken.cancel();
-                  });
+                  await cancelToken.cancel();
 
                   final res = await resFuture;
 
