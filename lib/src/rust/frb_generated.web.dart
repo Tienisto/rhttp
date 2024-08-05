@@ -9,7 +9,6 @@
 import 'api/client.dart';
 import 'api/http.dart';
 import 'api/http_types.dart';
-import 'api/simple.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -47,9 +46,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   Map<HttpHeaderName, String> dco_decode_Map_http_header_name_String(
       dynamic raw);
-
-  @protected
-  RustStreamSink<int> dco_decode_StreamSink_i_32_Sse(dynamic raw);
 
   @protected
   RustStreamSink<Uint8List> dco_decode_StreamSink_list_prim_u_8_strict_Sse(
@@ -174,10 +170,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Map<HttpHeaderName, String> sse_decode_Map_http_header_name_String(
-      SseDeserializer deserializer);
-
-  @protected
-  RustStreamSink<int> sse_decode_StreamSink_i_32_Sse(
       SseDeserializer deserializer);
 
   @protected
@@ -320,10 +312,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_Map_http_header_name_String(
       Map<HttpHeaderName, String> self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_StreamSink_i_32_Sse(
-      RustStreamSink<int> self, SseSerializer serializer);
 
   @protected
   void sse_encode_StreamSink_list_prim_u_8_strict_Sse(
