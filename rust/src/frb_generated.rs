@@ -212,6 +212,10 @@ fn wire__crate__api__http__make_http_request_receive_stream_impl(
             let api_on_response = decode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
                 <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
             );
+            let api_on_cancel_token = decode_DartFn_Inputs_i_64_Output_unit_AnyhowException(
+                <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
+            );
+            let api_cancelable = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
                 transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
@@ -226,6 +230,8 @@ fn wire__crate__api__http__make_http_request_receive_stream_impl(
                             api_body,
                             api_stream_sink,
                             api_on_response,
+                            api_on_cancel_token,
+                            api_cancelable,
                         )
                         .await?;
                         Ok(output_ok)

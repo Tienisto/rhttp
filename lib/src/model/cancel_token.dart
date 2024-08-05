@@ -21,6 +21,8 @@ class CancelToken {
   }
 
   /// Cancels the HTTP request.
+  /// If the [CancelToken] is not passed to the request method,
+  /// this method never finishes.
   Future<void> cancel() async {
     // We need to wait for the ref to be set.
     final ref = await _ref.future;

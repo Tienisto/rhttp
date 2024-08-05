@@ -29,6 +29,7 @@ Future<HttpResponse> requestInternalGeneric({
   );
 
   if (expectBody == HttpExpectBody.stream) {
+    final cancelRefCompleter = Completer<int>();
     final responseCompleter = Completer<rust.HttpResponse>();
     final stream = rust.makeHttpRequestReceiveStream(
       clientAddress: clientRef,
@@ -39,7 +40,14 @@ Future<HttpResponse> requestInternalGeneric({
       headers: headers?._toRustType(),
       body: body?._toRustType(),
       onResponse: (r) => responseCompleter.complete(r),
+      onCancelToken: (int cancelRef) => cancelRefCompleter.complete(cancelRef),
+      cancelable: cancelToken != null,
     );
+
+    if (cancelToken != null) {
+      final cancelRef = await cancelRefCompleter.future;
+      cancelToken.setRef(cancelRef);
+    }
 
     final response = await responseCompleter.future;
 

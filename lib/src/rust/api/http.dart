@@ -10,7 +10,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'http.freezed.dart';
 
-// These functions are ignored because they are not marked as `pub`: `from_version`, `header_to_vec`, `make_http_request_helper`, `make_http_request_inner`, `to_method`
+// These functions are ignored because they are not marked as `pub`: `from_version`, `header_to_vec`, `make_http_request_helper`, `make_http_request_inner`, `make_http_request_receive_stream_inner`, `to_method`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`
 
 Future<PlatformInt64> registerClient({required ClientSettings settings}) =>
@@ -50,7 +50,9 @@ Stream<Uint8List> makeHttpRequestReceiveStream(
         List<(String, String)>? query,
         HttpHeaders? headers,
         HttpBody? body,
-        required FutureOr<void> Function(HttpResponse) onResponse}) =>
+        required FutureOr<void> Function(HttpResponse) onResponse,
+        required FutureOr<void> Function(PlatformInt64) onCancelToken,
+        required bool cancelable}) =>
     RustLib.instance.api.crateApiHttpMakeHttpRequestReceiveStream(
         clientAddress: clientAddress,
         settings: settings,
@@ -59,7 +61,9 @@ Stream<Uint8List> makeHttpRequestReceiveStream(
         query: query,
         headers: headers,
         body: body,
-        onResponse: onResponse);
+        onResponse: onResponse,
+        onCancelToken: onCancelToken,
+        cancelable: cancelable);
 
 Future<void> cancelRequest({required PlatformInt64 address}) =>
     RustLib.instance.api.crateApiHttpCancelRequest(address: address);

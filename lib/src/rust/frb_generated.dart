@@ -95,7 +95,9 @@ abstract class RustLibApi extends BaseApi {
       List<(String, String)>? query,
       HttpHeaders? headers,
       HttpBody? body,
-      required FutureOr<void> Function(HttpResponse) onResponse});
+      required FutureOr<void> Function(HttpResponse) onResponse,
+      required FutureOr<void> Function(PlatformInt64) onCancelToken,
+      required bool cancelable});
 
   Future<PlatformInt64> crateApiHttpRegisterClient(
       {required ClientSettings settings});
@@ -237,7 +239,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       List<(String, String)>? query,
       HttpHeaders? headers,
       HttpBody? body,
-      required FutureOr<void> Function(HttpResponse) onResponse}) {
+      required FutureOr<void> Function(HttpResponse) onResponse,
+      required FutureOr<void> Function(PlatformInt64) onCancelToken,
+      required bool cancelable}) {
     final streamSink = RustStreamSink<Uint8List>();
     unawaited(handler.executeNormal(NormalTask(
       callFfi: (port_) {
@@ -252,6 +256,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_StreamSink_list_prim_u_8_strict_Sse(streamSink, serializer);
         sse_encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
             onResponse, serializer);
+        sse_encode_DartFn_Inputs_i_64_Output_unit_AnyhowException(
+            onCancelToken, serializer);
+        sse_encode_bool(cancelable, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 4, port: port_);
       },
@@ -269,7 +276,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         headers,
         body,
         streamSink,
-        onResponse
+        onResponse,
+        onCancelToken,
+        cancelable
       ],
       apiImpl: this,
     )));
@@ -288,7 +297,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           "headers",
           "body",
           "streamSink",
-          "onResponse"
+          "onResponse",
+          "onCancelToken",
+          "cancelable"
         ],
       );
 

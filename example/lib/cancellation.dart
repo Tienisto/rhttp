@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:rhttp/rhttp.dart';
 
@@ -14,7 +16,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  HttpBytesResponse? response;
+  HttpResponse? response;
 
   @override
   Widget build(BuildContext context) {
@@ -29,26 +31,31 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               ElevatedButton(
                 onPressed: () async {
-                  final cancelToken = CancelToken();
-                  final resFuture = Rhttp.requestBytes(
-                    method: HttpMethod.get,
-                    url: 'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
-                    cancelToken: cancelToken,
-                  );
+                  try {
+                    final cancelToken = CancelToken();
+                    final resFuture = Rhttp.requestStream(
+                      method: HttpMethod.get,
+                      url: 'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
+                      cancelToken: cancelToken,
+                    );
 
-                  await cancelToken.cancel();
+                    Future.delayed(const Duration(seconds: 1), () async {
+                      await cancelToken.cancel();
+                    });
 
-                  final res = await resFuture;
+                    final res = await resFuture;
 
-                  setState(() {
-                    response = res;
-                  });
+                    setState(() {
+                      response = res;
+                    });
+                  } catch (e) {
+                    print(e);
+                  }
                 },
                 child: const Text('Test'),
               ),
               if (response != null) Text(response!.version.toString()),
               if (response != null) Text(response!.statusCode.toString()),
-              if (response != null) Text(response!.body.sublist(0, 100).toString()),
               if (response != null) Text(response!.headers.toString()),
             ],
           ),

@@ -189,6 +189,60 @@ pub async fn make_http_request_receive_stream(
     body: Option<HttpBody>,
     stream_sink: StreamSink<Vec<u8>>,
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
+    on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
+    cancelable: bool,
+) -> Result<()> {
+    if cancelable {
+        let token = CancellationToken::new();
+        let cloned_token = token.clone();
+
+        let address = request_pool::register_token(token);
+        on_cancel_token(address).await;
+
+        tokio::select! {
+            _ = cloned_token.cancelled() => Err(anyhow::anyhow!("Request cancelled")),
+            _ = make_http_request_receive_stream_inner(
+                client_address,
+                settings,
+                method,
+                url,
+                query,
+                headers,
+                body,
+                stream_sink,
+                on_response,
+            ) => {
+                request_pool::remove_token(address);
+                Ok(())
+            },
+        }
+    } else {
+        // request is not cancelable
+        make_http_request_receive_stream_inner(
+            client_address,
+            settings,
+            method,
+            url,
+            query,
+            headers,
+            body,
+            stream_sink,
+            on_response,
+        )
+        .await
+    }
+}
+
+async fn make_http_request_receive_stream_inner(
+    client_address: Option<i64>,
+    settings: Option<ClientSettings>,
+    method: HttpMethod,
+    url: String,
+    query: Option<Vec<(String, String)>>,
+    headers: Option<HttpHeaders>,
+    body: Option<HttpBody>,
+    stream_sink: StreamSink<Vec<u8>>,
+    on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
 ) -> Result<()> {
     let response =
         make_http_request_helper(client_address, settings, method, url, query, headers, body)
