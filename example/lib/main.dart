@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:rhttp/rhttp.dart';
 
@@ -14,7 +16,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  HttpBytesResponse? response;
+  HttpTextResponse? response;
 
   @override
   Widget build(BuildContext context) {
@@ -29,24 +31,29 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               ElevatedButton(
                 onPressed: () async {
-                  final res = await Rhttp.requestBytes(
-                    method: HttpMethod.get,
-                    url: 'https://reqres.in/api/users',
-                    query: {'page': '5'},
-                    settings: const ClientSettings(
-                      httpVersionPref: HttpVersionPref.http3,
-                    ),
-                  );
-                  setState(() {
-                    response = res;
-                  });
+                  try {
+                    final res = await Rhttp.request(
+                      method: HttpMethod.get,
+                      url: 'https://reqres.in/apis/userse',
+                      query: {'page': '5'},
+                      settings: const ClientSettings(
+                        httpVersionPref: HttpVersionPref.http3,
+                      ),
+                    );
+                    setState(() {
+                      response = res;
+                    });
+                  } catch (e, st) {
+                    print(e);
+                    print(st);
+                  }
                 },
                 child: const Text('Test'),
               ),
               if (response != null) Text(response!.version.toString()),
               if (response != null) Text(response!.statusCode.toString()),
-              if (response != null) Text(response!.body.sublist(0, 100).toString()),
-              if (response != null) Text(response!.headers.toString()),
+              if (response != null) Text(response!.body.substring(0, 100).toString()),
+              // if (response != null) Text(response!.headers.toString()),
             ],
           ),
         ),
