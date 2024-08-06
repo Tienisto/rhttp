@@ -1,6 +1,6 @@
-## 0.1.1
+## 0.2.0
 
-- feat: add `RhttpStatusCodeException`
+- feat: add `RhttpStatusCodeException`, `RhttpInvalidCertificateException`
 - feat: add `TlsSettings`
 
 ## 0.1.0

@@ -278,7 +278,7 @@ await Rhttp.get(
 
 ### ➤ Disable TLS verification
 
-This is very insecure and should only be used for rare cases.
+This is very insecure and should only be used for testing purposes.
 
 ```dart
 await Rhttp.get(
