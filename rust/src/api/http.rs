@@ -1,17 +1,18 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
-use crate::api::client::ClientSettings;
-use crate::api::client_pool::RequestClient;
-use crate::api::http_types::HttpHeaderName;
-use crate::api::{client_pool, request_pool};
-use crate::frb_generated::StreamSink;
-use anyhow::Result;
 use flutter_rust_bridge::DartFnFuture;
 use futures_util::StreamExt;
 use reqwest::header::{HeaderName, HeaderValue};
 use reqwest::{Method, Response, Url, Version};
 use tokio_util::sync::CancellationToken;
+
+use crate::api::client::ClientSettings;
+use crate::api::client_pool::RequestClient;
+use crate::api::error::RhttpError;
+use crate::api::http_types::HttpHeaderName;
+use crate::api::{client_pool, request_pool};
+use crate::frb_generated::StreamSink;
 
 pub enum HttpMethod {
     Options,
@@ -102,7 +103,7 @@ pub enum HttpResponseBody {
     Stream,
 }
 
-pub fn register_client(settings: ClientSettings) -> Result<i64> {
+pub fn register_client(settings: ClientSettings) -> Result<i64, RhttpError> {
     let (address, _) = client_pool::register_client(settings)?;
 
     Ok(address)
@@ -123,7 +124,7 @@ pub async fn make_http_request(
     expect_body: HttpExpectBody,
     on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
     cancelable: bool,
-) -> Result<HttpResponse> {
+) -> Result<HttpResponse, RhttpError> {
     if cancelable {
         let token = CancellationToken::new();
         let cloned_token = token.clone();
@@ -132,8 +133,8 @@ pub async fn make_http_request(
         on_cancel_token(address).await;
 
         tokio::select! {
-            _ = cloned_token.cancelled() => Err(anyhow::anyhow!("Request cancelled")),
-            response = make_http_request_inner(client_address, settings, method, url, query, headers, body, expect_body) => {
+            _ = cloned_token.cancelled() => Err(RhttpError::RhttpCancelError(url.to_owned())),
+            response = make_http_request_inner(client_address, settings, method, url.to_owned(), query, headers, body, expect_body) => {
                 request_pool::remove_token(address);
                 response
             },
@@ -163,7 +164,7 @@ async fn make_http_request_inner(
     headers: Option<HttpHeaders>,
     body: Option<HttpBody>,
     expect_body: HttpExpectBody,
-) -> Result<HttpResponse> {
+) -> Result<HttpResponse, RhttpError> {
     let response =
         make_http_request_helper(client_address, settings, method, url, query, headers, body)
             .await?;
@@ -173,8 +174,19 @@ async fn make_http_request_inner(
         version: HttpVersion::from_version(response.version()),
         status_code: response.status().as_u16(),
         body: match expect_body {
-            HttpExpectBody::Text => HttpResponseBody::Text(response.text().await?),
-            HttpExpectBody::Bytes => HttpResponseBody::Bytes(response.bytes().await?.to_vec()),
+            HttpExpectBody::Text => HttpResponseBody::Text(
+                response
+                    .text()
+                    .await
+                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
+            ),
+            HttpExpectBody::Bytes => HttpResponseBody::Bytes(
+                response
+                    .bytes()
+                    .await
+                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?
+                    .to_vec(),
+            ),
         },
     })
 }
@@ -191,7 +203,7 @@ pub async fn make_http_request_receive_stream(
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
     on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
     cancelable: bool,
-) -> Result<()> {
+) -> Result<(), RhttpError> {
     if cancelable {
         let token = CancellationToken::new();
         let cloned_token = token.clone();
@@ -200,12 +212,12 @@ pub async fn make_http_request_receive_stream(
         on_cancel_token(address).await;
 
         tokio::select! {
-            _ = cloned_token.cancelled() => Err(anyhow::anyhow!("Request cancelled")),
+            _ = cloned_token.cancelled() => Err(RhttpError::RhttpCancelError(url.to_owned())),
             _ = make_http_request_receive_stream_inner(
                 client_address,
                 settings,
                 method,
-                url,
+                url.to_owned(),
                 query,
                 headers,
                 body,
@@ -243,7 +255,7 @@ async fn make_http_request_receive_stream_inner(
     body: Option<HttpBody>,
     stream_sink: StreamSink<Vec<u8>>,
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
-) -> Result<()> {
+) -> Result<(), RhttpError> {
     let response =
         make_http_request_helper(client_address, settings, method, url, query, headers, body)
             .await?;
@@ -261,10 +273,10 @@ async fn make_http_request_receive_stream_inner(
     let mut stream = response.bytes_stream();
 
     while let Some(chunk) = stream.next().await {
-        let chunk = chunk?;
+        let chunk = chunk.map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
         stream_sink
             .add(chunk.to_vec())
-            .map_err(|e| anyhow::anyhow!(e.to_string()))?;
+            .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
     }
 
     Ok(())
@@ -279,19 +291,24 @@ async fn make_http_request_helper(
     query: Option<Vec<(String, String)>>,
     headers: Option<HttpHeaders>,
     body: Option<HttpBody>,
-) -> Result<Response> {
+) -> Result<Response, RhttpError> {
     let client: RequestClient = match client_address {
-        Some(address) => client_pool::get_client(address)
-            .ok_or_else(|| anyhow::anyhow!("Client with address {} not found", address))?,
+        Some(address) => {
+            client_pool::get_client(address).ok_or_else(|| RhttpError::RhttpInvalidClientError)?
+        }
 
         None => match settings {
-            Some(settings) => client_pool::create_client(settings)?,
+            Some(settings) => client_pool::create_client(settings)
+                .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
             None => RequestClient::new_default(),
         },
     };
 
     let request = {
-        let mut request = client.client.request(method.to_method(), Url::parse(&url)?);
+        let mut request = client.client.request(
+            method.to_method(),
+            Url::parse(&url).map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
+        );
 
         request = match client.http_version_pref {
             HttpVersionPref::Http10 => request.version(Version::HTTP_10),
@@ -309,21 +326,26 @@ async fn make_http_request_helper(
             Some(HttpHeaders::Map(map)) => {
                 for (k, v) in map {
                     let header_name = k.to_actual_header_name();
-                    let header_value = HeaderValue::from_str(&v)?;
+                    let header_value = HeaderValue::from_str(&v)
+                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
                     request = request.header(header_name, header_value);
                 }
             }
             Some(HttpHeaders::RawMap(map)) => {
                 for (k, v) in map {
-                    let header_name = HeaderName::from_str(&k)?;
-                    let header_value = HeaderValue::from_str(&v)?;
+                    let header_name = HeaderName::from_str(&k)
+                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
+                    let header_value = HeaderValue::from_str(&v)
+                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
                     request = request.header(header_name, header_value);
                 }
             }
             Some(HttpHeaders::List(list)) => {
                 for (k, v) in list {
-                    let header_name = HeaderName::from_str(&k)?;
-                    let header_value = HeaderValue::from_str(&v)?;
+                    let header_name = HeaderName::from_str(&k)
+                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
+                    let header_value = HeaderValue::from_str(&v)
+                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
                     request = request.header(header_name, header_value);
                 }
             }
@@ -337,10 +359,18 @@ async fn make_http_request_helper(
             None => request,
         };
 
-        request.build()?
+        request
+            .build()
+            .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?
     };
 
-    let response = client.client.execute(request).await?;
+    let response = client.client.execute(request).await.map_err(|e| {
+        if e.is_timeout() {
+            RhttpError::RhttpTimeoutError(url.to_owned())
+        } else {
+            RhttpError::RhttpUnknownError(e.to_string())
+        }
+    })?;
 
     Ok(response)
 }

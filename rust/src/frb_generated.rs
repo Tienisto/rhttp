@@ -151,7 +151,7 @@ fn wire__crate__api__http__make_http_request_impl(
             let api_cancelable = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                transform_result_sse::<_, crate::api::error::RhttpError>(
                     (move || async move {
                         let output_ok = crate::api::http::make_http_request(
                             api_client_address,
@@ -218,7 +218,7 @@ fn wire__crate__api__http__make_http_request_receive_stream_impl(
             let api_cancelable = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| async move {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                transform_result_sse::<_, crate::api::error::RhttpError>(
                     (move || async move {
                         let output_ok = crate::api::http::make_http_request_receive_stream(
                             api_client_address,
@@ -267,12 +267,10 @@ fn wire__crate__api__http__register_client_impl(
             let api_settings = <crate::api::client::ClientSettings>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
-                    (move || {
-                        let output_ok = crate::api::http::register_client(api_settings)?;
-                        Ok(output_ok)
-                    })(),
-                )
+                transform_result_sse::<_, crate::api::error::RhttpError>((move || {
+                    let output_ok = crate::api::http::register_client(api_settings)?;
+                    Ok(output_ok)
+                })())
             }
         },
     )
@@ -878,6 +876,33 @@ impl SseDecode for (String, String) {
     }
 }
 
+impl SseDecode for crate::api::error::RhttpError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::error::RhttpError::RhttpCancelError(var_field0);
+            }
+            1 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::error::RhttpError::RhttpTimeoutError(var_field0);
+            }
+            2 => {
+                return crate::api::error::RhttpError::RhttpInvalidClientError;
+            }
+            3 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::error::RhttpError::RhttpUnknownError(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for u16 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1262,6 +1287,34 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpVersionPref>
     for crate::api::http::HttpVersionPref
 {
     fn into_into_dart(self) -> crate::api::http::HttpVersionPref {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::error::RhttpError {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::error::RhttpError::RhttpCancelError(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::error::RhttpError::RhttpTimeoutError(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::error::RhttpError::RhttpInvalidClientError => [2.into_dart()].into_dart(),
+            crate::api::error::RhttpError::RhttpUnknownError(field0) => {
+                [3.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::error::RhttpError {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::error::RhttpError>
+    for crate::api::error::RhttpError
+{
+    fn into_into_dart(self) -> crate::api::error::RhttpError {
         self
     }
 }
@@ -1706,6 +1759,32 @@ impl SseEncode for (String, String) {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.0, serializer);
         <String>::sse_encode(self.1, serializer);
+    }
+}
+
+impl SseEncode for crate::api::error::RhttpError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::error::RhttpError::RhttpCancelError(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::error::RhttpError::RhttpTimeoutError(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::error::RhttpError::RhttpInvalidClientError => {
+                <i32>::sse_encode(2, serializer);
+            }
+            crate::api::error::RhttpError::RhttpUnknownError(field0) => {
+                <i32>::sse_encode(3, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 

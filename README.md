@@ -152,7 +152,7 @@ await Rhttp.request(
 
 To let Rust do most of the work, you must specify the expected response body type before making the request.
 
-Functions without a specified type will return a `HttpTextResponse`. (e.g. `Rhttp.get`, `Rhttp.request`, etc.)
+Most convenience functions (e.g. `Rhttp.get`, `Rhttp.request`) return a `HttpTextResponse`.
 
 ```dart
 HttpTextResponse response = await Rhttp.getText('https://example.com');
@@ -198,9 +198,20 @@ final request = Rhttp.get(
 // Cancel the request
 cancelToken.cancel();
 
-// Will throw a `RequestCancelledException`
+// Will throw a `RhttpCancelException`
 await request;
 ```
+
+### ➤ Error Handling
+
+The following exceptions can be thrown:
+
+| Exception                     | Description                               |
+|-------------------------------|-------------------------------------------|
+| `RhttpCancelException`        | A request was canceled.                   |
+| `RhttpTimeoutException`       | A request timed out.                      |
+| `RhttpInvalidClientException` | A request is made with an invalid client. |
+| `RhttpUnknownException`       | An unknown error occurred.                |
 
 ### ➤ HTTP version
 

@@ -33,10 +33,13 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   try {
                     final cancelToken = CancelToken();
-                    final resFuture = Rhttp.requestStream(
+                    final resFuture = Rhttp.requestBytes(
                       method: HttpMethod.get,
                       url: 'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
                       cancelToken: cancelToken,
+                      settings: ClientSettings(
+                        timeout: const Duration(milliseconds: 1),
+                      ),
                     );
 
                     Future.delayed(const Duration(seconds: 1), () async {

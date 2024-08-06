@@ -3,10 +3,12 @@ import 'dart:convert';
 
 import 'package:meta/meta.dart';
 import 'package:rhttp/src/model/cancel_token.dart';
+import 'package:rhttp/src/model/exception.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/rust/api/http_types.dart';
+import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 
 /// Non-Generated helper function that is used by
@@ -28,54 +30,64 @@ Future<HttpResponse> requestInternalGeneric({
     body: body,
   );
 
-  if (expectBody == HttpExpectBody.stream) {
-    final cancelRefCompleter = Completer<int>();
-    final responseCompleter = Completer<rust.HttpResponse>();
-    final stream = rust.makeHttpRequestReceiveStream(
-      clientAddress: clientRef,
-      settings: settings?.toRustType(),
-      method: method._toRustType(),
-      url: url,
-      query: query?.entries.map((e) => (e.key, e.value)).toList(),
-      headers: headers?._toRustType(),
-      body: body?._toRustType(),
-      onResponse: (r) => responseCompleter.complete(r),
-      onCancelToken: (int cancelRef) => cancelRefCompleter.complete(cancelRef),
-      cancelable: cancelToken != null,
-    );
+  try {
+    if (expectBody == HttpExpectBody.stream) {
+      final cancelRefCompleter = Completer<int>();
+      final responseCompleter = Completer<rust.HttpResponse>();
+      final stream = rust.makeHttpRequestReceiveStream(
+        clientAddress: clientRef,
+        settings: settings?.toRustType(),
+        method: method._toRustType(),
+        url: url,
+        query: query?.entries.map((e) => (e.key, e.value)).toList(),
+        headers: headers?._toRustType(),
+        body: body?._toRustType(),
+        onResponse: (r) => responseCompleter.complete(r),
+        onCancelToken: (int cancelRef) =>
+            cancelRefCompleter.complete(cancelRef),
+        cancelable: cancelToken != null,
+      );
 
-    if (cancelToken != null) {
-      final cancelRef = await cancelRefCompleter.future;
-      cancelToken.setRef(cancelRef);
+      if (cancelToken != null) {
+        final cancelRef = await cancelRefCompleter.future;
+        cancelToken.setRef(cancelRef);
+      }
+
+      final response = await responseCompleter.future;
+
+      return parseHttpResponse(
+        response,
+        bodyStream: stream,
+      );
+    } else {
+      final cancelRefCompleter = Completer<int>();
+      final responseFuture = rust.makeHttpRequest(
+        clientAddress: clientRef,
+        settings: settings?.toRustType(),
+        method: method._toRustType(),
+        url: url,
+        query: query?.entries.map((e) => (e.key, e.value)).toList(),
+        headers: headers?._toRustType(),
+        body: body?._toRustType(),
+        expectBody: expectBody.toRustType(),
+        onCancelToken: (int cancelRef) =>
+            cancelRefCompleter.complete(cancelRef),
+        cancelable: cancelToken != null,
+      );
+
+      if (cancelToken != null) {
+        final cancelRef = await cancelRefCompleter.future;
+        cancelToken.setRef(cancelRef);
+      }
+
+      return parseHttpResponse(await responseFuture);
     }
-
-    final response = await responseCompleter.future;
-
-    return parseHttpResponse(
-      response,
-      bodyStream: stream,
-    );
-  } else {
-    final cancelRefCompleter = Completer<int>();
-    final responseFuture = rust.makeHttpRequest(
-      clientAddress: clientRef,
-      settings: settings?.toRustType(),
-      method: method._toRustType(),
-      url: url,
-      query: query?.entries.map((e) => (e.key, e.value)).toList(),
-      headers: headers?._toRustType(),
-      body: body?._toRustType(),
-      expectBody: expectBody.toRustType(),
-      onCancelToken: (int cancelRef) => cancelRefCompleter.complete(cancelRef),
-      cancelable: cancelToken != null,
-    );
-
-    if (cancelToken != null) {
-      final cancelRef = await cancelRefCompleter.future;
-      cancelToken.setRef(cancelRef);
+  } catch (e) {
+    if (e is rust_error.RhttpError) {
+      throw parseError(e);
+    } else {
+      rethrow;
     }
-
-    return parseHttpResponse(await responseFuture);
   }
 }
 

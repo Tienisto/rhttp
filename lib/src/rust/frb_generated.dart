@@ -4,6 +4,7 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/client.dart';
+import 'api/error.dart';
 import 'api/http.dart';
 import 'api/http_types.dart';
 import 'dart:async';
@@ -194,7 +195,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_http_response,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_rhttp_error,
       ),
       constMeta: kCrateApiHttpMakeHttpRequestConstMeta,
       argValues: [
@@ -264,7 +265,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_rhttp_error,
       ),
       constMeta: kCrateApiHttpMakeHttpRequestReceiveStreamConstMeta,
       argValues: [
@@ -315,7 +316,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_i_64,
-        decodeErrorData: sse_decode_AnyhowException,
+        decodeErrorData: sse_decode_rhttp_error,
       ),
       constMeta: kCrateApiHttpRegisterClientConstMeta,
       argValues: [settings],
@@ -754,6 +755,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RhttpError dco_decode_rhttp_error(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return RhttpError_RhttpCancelError(
+          dco_decode_String(raw[1]),
+        );
+      case 1:
+        return RhttpError_RhttpTimeoutError(
+          dco_decode_String(raw[1]),
+        );
+      case 2:
+        return RhttpError_RhttpInvalidClientError();
+      case 3:
+        return RhttpError_RhttpUnknownError(
+          dco_decode_String(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
   int dco_decode_u_16(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -1122,6 +1146,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RhttpError sse_decode_rhttp_error(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_String(deserializer);
+        return RhttpError_RhttpCancelError(var_field0);
+      case 1:
+        var var_field0 = sse_decode_String(deserializer);
+        return RhttpError_RhttpTimeoutError(var_field0);
+      case 2:
+        return RhttpError_RhttpInvalidClientError();
+      case 3:
+        var var_field0 = sse_decode_String(deserializer);
+        return RhttpError_RhttpUnknownError(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
   int sse_decode_u_16(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint16();
@@ -1486,6 +1532,26 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.$1, serializer);
     sse_encode_String(self.$2, serializer);
+  }
+
+  @protected
+  void sse_encode_rhttp_error(RhttpError self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case RhttpError_RhttpCancelError(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_String(field0, serializer);
+      case RhttpError_RhttpTimeoutError(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_String(field0, serializer);
+      case RhttpError_RhttpInvalidClientError():
+        sse_encode_i_32(2, serializer);
+      case RhttpError_RhttpUnknownError(field0: final field0):
+        sse_encode_i_32(3, serializer);
+        sse_encode_String(field0, serializer);
+      default:
+        throw UnimplementedError('');
+    }
   }
 
   @protected

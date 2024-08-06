@@ -1,7 +1,7 @@
 use crate::api::client::ClientSettings;
+use crate::api::error::RhttpError;
 use crate::api::http::HttpVersionPref;
 use crate::util::i64_address::get_i64_address;
-use anyhow::Result;
 use std::collections::HashMap;
 use std::sync::{Arc, LazyLock, Mutex};
 
@@ -20,14 +20,22 @@ impl RequestClient {
     }
 }
 
-pub(crate) fn create_client(settings: ClientSettings) -> Result<RequestClient> {
+pub(crate) fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> {
     let client: reqwest::Client = {
         let mut client = reqwest::Client::builder();
         if let Some(timeout) = settings.timeout {
-            client = client.timeout(timeout.to_std()?);
+            client = client.timeout(
+                timeout
+                    .to_std()
+                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
+            );
         }
         if let Some(timeout) = settings.connect_timeout {
-            client = client.connect_timeout(timeout.to_std()?);
+            client = client.connect_timeout(
+                timeout
+                    .to_std()
+                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
+            );
         }
         client = match settings.http_version_pref {
             HttpVersionPref::Http10 | HttpVersionPref::Http11 => client.http1_only(),
@@ -36,7 +44,9 @@ pub(crate) fn create_client(settings: ClientSettings) -> Result<RequestClient> {
             HttpVersionPref::All => client,
         };
 
-        client.build()?
+        client
+            .build()
+            .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?
     };
 
     Ok(RequestClient {
@@ -45,7 +55,9 @@ pub(crate) fn create_client(settings: ClientSettings) -> Result<RequestClient> {
     })
 }
 
-pub(crate) fn register_client(settings: ClientSettings) -> Result<(i64, RequestClient)> {
+pub(crate) fn register_client(
+    settings: ClientSettings,
+) -> Result<(i64, RequestClient), RhttpError> {
     let request_client = create_client(settings)?;
     let request_client_cloned = request_client.clone();
 
