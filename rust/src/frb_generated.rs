@@ -926,9 +926,16 @@ impl SseDecode for crate::api::error::RhttpError {
                 );
             }
             3 => {
-                return crate::api::error::RhttpError::RhttpInvalidClientError;
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                let mut var_field1 = <String>::sse_decode(deserializer);
+                return crate::api::error::RhttpError::RhttpInvalidCertificateError(
+                    var_field0, var_field1,
+                );
             }
             4 => {
+                return crate::api::error::RhttpError::RhttpInvalidClientError;
+            }
+            5 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::error::RhttpError::RhttpUnknownError(var_field0);
             }
@@ -1376,9 +1383,15 @@ impl flutter_rust_bridge::IntoDart for crate::api::error::RhttpError {
                 ]
                 .into_dart()
             }
-            crate::api::error::RhttpError::RhttpInvalidClientError => [3.into_dart()].into_dart(),
+            crate::api::error::RhttpError::RhttpInvalidCertificateError(field0, field1) => [
+                3.into_dart(),
+                field0.into_into_dart().into_dart(),
+                field1.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::error::RhttpError::RhttpInvalidClientError => [4.into_dart()].into_dart(),
             crate::api::error::RhttpError::RhttpUnknownError(field0) => {
-                [4.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+                [5.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -1922,11 +1935,16 @@ impl SseEncode for crate::api::error::RhttpError {
                 <Vec<(String, String)>>::sse_encode(field2, serializer);
                 <crate::api::http::HttpResponseBody>::sse_encode(field3, serializer);
             }
-            crate::api::error::RhttpError::RhttpInvalidClientError => {
+            crate::api::error::RhttpError::RhttpInvalidCertificateError(field0, field1) => {
                 <i32>::sse_encode(3, serializer);
+                <String>::sse_encode(field0, serializer);
+                <String>::sse_encode(field1, serializer);
+            }
+            crate::api::error::RhttpError::RhttpInvalidClientError => {
+                <i32>::sse_encode(4, serializer);
             }
             crate::api::error::RhttpError::RhttpUnknownError(field0) => {
-                <i32>::sse_encode(4, serializer);
+                <i32>::sse_encode(5, serializer);
                 <String>::sse_encode(field0, serializer);
             }
             _ => {

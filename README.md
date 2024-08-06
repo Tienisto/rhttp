@@ -208,13 +208,14 @@ All exceptions are subclasses of `RhttpException`.
 
 The following exceptions can be thrown:
 
-| Exception                     | Description                             |
-|-------------------------------|-----------------------------------------|
-| `RhttpCancelException`        | Request was canceled.                   |
-| `RhttpTimeoutException`       | Request timed out.                      |
-| `RhttpStatusCodeException`    | Response has 4xx or 5xx status code.    |
-| `RhttpInvalidClientException` | Request is made with an invalid client. |
-| `RhttpUnknownException`       | Unknown error occurred.                 |
+| Exception                          | Description                             |
+|------------------------------------|-----------------------------------------|
+| `RhttpCancelException`             | Request was canceled.                   |
+| `RhttpTimeoutException`            | Request timed out.                      |
+| `RhttpStatusCodeException`         | Response has 4xx or 5xx status code.    |
+| `RhttpInvalidCertificateException` | Server certificate is invalid.          |
+| `RhttpInvalidClientException`      | Request is made with an invalid client. |
+| `RhttpUnknownException`            | Unknown error occurred.                 |
 
 ### ➤ Timeout
 
@@ -270,6 +271,21 @@ await Rhttp.get(
     tlsSettings: TlsSettings(
       minTlsVersion: TlsVersion.tls12,
       maxTlsVersion: TlsVersion.tls13,
+    ),
+  ),
+);
+```
+
+### ➤ Disable TLS verification
+
+This is very insecure and should only be used for rare cases.
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    tlsSettings: TlsSettings(
+      verifyCerts: false,
     ),
   ),
 );

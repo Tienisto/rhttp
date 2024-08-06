@@ -45,7 +45,7 @@ class TlsSettings {
   /// The maximum TLS version to use.
   final rust_client.TlsVersion? maxTlsVersion;
 
-  TlsSettings({
+  const TlsSettings({
     this.verifyCerts = true,
     this.minTlsVersion,
     this.maxTlsVersion,

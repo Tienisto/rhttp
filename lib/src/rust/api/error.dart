@@ -27,6 +27,10 @@ sealed class RhttpError with _$RhttpError implements FrbException {
     List<(String, String)> field2,
     HttpResponseBody field3,
   ) = RhttpError_RhttpStatusCodeError;
+  const factory RhttpError.rhttpInvalidCertificateError(
+    String field0,
+    String field1,
+  ) = RhttpError_RhttpInvalidCertificateError;
   const factory RhttpError.rhttpInvalidClientError() =
       RhttpError_RhttpInvalidClientError;
   const factory RhttpError.rhttpUnknownError(

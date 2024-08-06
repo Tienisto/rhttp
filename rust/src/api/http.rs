@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::error::Error;
 use std::str::FromStr;
 
 use flutter_rust_bridge::DartFnFuture;
@@ -167,9 +168,17 @@ async fn make_http_request_inner(
     body: Option<HttpBody>,
     expect_body: HttpExpectBody,
 ) -> Result<HttpResponse, RhttpError> {
-    let response =
-        make_http_request_helper(client_address, settings, method, url, query, headers, body, Some(expect_body))
-            .await?;
+    let response = make_http_request_helper(
+        client_address,
+        settings,
+        method,
+        url,
+        query,
+        headers,
+        body,
+        Some(expect_body),
+    )
+    .await?;
 
     Ok(HttpResponse {
         headers: header_to_vec(response.headers()),
@@ -258,9 +267,17 @@ async fn make_http_request_receive_stream_inner(
     stream_sink: StreamSink<Vec<u8>>,
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
 ) -> Result<(), RhttpError> {
-    let response =
-        make_http_request_helper(client_address, settings, method, url, query, headers, body, None)
-            .await?;
+    let response = make_http_request_helper(
+        client_address,
+        settings,
+        method,
+        url,
+        query,
+        headers,
+        body,
+        None,
+    )
+    .await?;
 
     let http_response = HttpResponse {
         headers: header_to_vec(response.headers()),
@@ -371,7 +388,25 @@ async fn make_http_request_helper(
         if e.is_timeout() {
             RhttpError::RhttpTimeoutError(url.to_owned())
         } else {
-            RhttpError::RhttpUnknownError(e.to_string())
+            // We use the debug string because it contains more information
+            let inner = e.source();
+            let is_cert_error = match inner {
+                // TODO: This is a hacky way to check if the error is a certificate error
+                Some(inner) => format!("{:?}", inner).contains("InvalidCertificate"),
+                None => false,
+            };
+
+            if is_cert_error {
+                RhttpError::RhttpInvalidCertificateError(
+                    url.to_owned(),
+                    format!("{:?}", inner.unwrap()),
+                )
+            } else {
+                RhttpError::RhttpUnknownError(match inner {
+                    Some(inner) => format!("{inner:?}"),
+                    None => format!("{e:?}"),
+                })
+            }
         }
     })?;
 

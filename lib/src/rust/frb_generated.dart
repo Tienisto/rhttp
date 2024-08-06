@@ -806,8 +806,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_box_autoadd_http_response_body(raw[4]),
         );
       case 3:
-        return RhttpError_RhttpInvalidClientError();
+        return RhttpError_RhttpInvalidCertificateError(
+          dco_decode_String(raw[1]),
+          dco_decode_String(raw[2]),
+        );
       case 4:
+        return RhttpError_RhttpInvalidClientError();
+      case 5:
         return RhttpError_RhttpUnknownError(
           dco_decode_String(raw[1]),
         );
@@ -1272,8 +1277,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return RhttpError_RhttpStatusCodeError(
             var_field0, var_field1, var_field2, var_field3);
       case 3:
-        return RhttpError_RhttpInvalidClientError();
+        var var_field0 = sse_decode_String(deserializer);
+        var var_field1 = sse_decode_String(deserializer);
+        return RhttpError_RhttpInvalidCertificateError(var_field0, var_field1);
       case 4:
+        return RhttpError_RhttpInvalidClientError();
+      case 5:
         var var_field0 = sse_decode_String(deserializer);
         return RhttpError_RhttpUnknownError(var_field0);
       default:
@@ -1735,10 +1744,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_u_16(field1, serializer);
         sse_encode_list_record_string_string(field2, serializer);
         sse_encode_box_autoadd_http_response_body(field3, serializer);
-      case RhttpError_RhttpInvalidClientError():
+      case RhttpError_RhttpInvalidCertificateError(
+          field0: final field0,
+          field1: final field1
+        ):
         sse_encode_i_32(3, serializer);
-      case RhttpError_RhttpUnknownError(field0: final field0):
+        sse_encode_String(field0, serializer);
+        sse_encode_String(field1, serializer);
+      case RhttpError_RhttpInvalidClientError():
         sse_encode_i_32(4, serializer);
+      case RhttpError_RhttpUnknownError(field0: final field0):
+        sse_encode_i_32(5, serializer);
         sse_encode_String(field0, serializer);
       default:
         throw UnimplementedError('');

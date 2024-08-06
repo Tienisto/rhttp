@@ -62,6 +62,23 @@ class RhttpStatusCodeException extends RhttpException {
   String toString() => '[$runtimeType] Status code: $statusCode. URL: $url';
 }
 
+/// An exception thrown when the server's certificate is invalid.
+class RhttpInvalidCertificateException extends RhttpException {
+  /// The URL of the request that failed.
+  final String url;
+
+  /// The more detailed error message.
+  final String message;
+
+  const RhttpInvalidCertificateException({
+    required this.url,
+    required this.message,
+  });
+
+  @override
+  String toString() => '[$runtimeType] Invalid certificate. $message URL: $url';
+}
+
 /// An exception thrown a request is made with an invalid client.
 class RhttpInvalidClientException extends RhttpException {
   const RhttpInvalidClientException();
@@ -98,6 +115,8 @@ RhttpException parseError(rust.RhttpError error) {
         rust_http.HttpResponseBody_Stream() => null,
       },
     ),
+    rhttpInvalidCertificateError: (url, message) =>
+        RhttpInvalidCertificateException(url: url, message: message),
     rhttpInvalidClientError: () => const RhttpInvalidClientException(),
     rhttpUnknownError: (message) => RhttpUnknownException(message),
   );
