@@ -204,24 +204,73 @@ await request;
 
 ### ➤ Error Handling
 
+All exceptions are subclasses of `RhttpException`.
+
 The following exceptions can be thrown:
 
-| Exception                     | Description                               |
-|-------------------------------|-------------------------------------------|
-| `RhttpCancelException`        | A request was canceled.                   |
-| `RhttpTimeoutException`       | A request timed out.                      |
-| `RhttpInvalidClientException` | A request is made with an invalid client. |
-| `RhttpUnknownException`       | An unknown error occurred.                |
+| Exception                     | Description                             |
+|-------------------------------|-----------------------------------------|
+| `RhttpCancelException`        | Request was canceled.                   |
+| `RhttpTimeoutException`       | Request timed out.                      |
+| `RhttpStatusCodeException`    | Response has 4xx or 5xx status code.    |
+| `RhttpInvalidClientException` | Request is made with an invalid client. |
+| `RhttpUnknownException`       | Unknown error occurred.                 |
+
+### ➤ Timeout
+
+You can specify the timeout for the request:
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    timeout: Duration(seconds: 10),
+    connectTimeout: Duration(seconds: 5),
+  ),
+);
+```
+
+### ➤ Throw on Status Code
+
+By default, an exception is thrown if the response has a 4xx or 5xx status code.
+You can disable this behavior by setting `throwOnStatusCode` to `false`.
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    throwOnStatusCode: false,
+  ),
+);
+```
 
 ### ➤ HTTP version
 
-You can specify the HTTP version to use for the request:
+You can specify the HTTP version to use for the request.
+HTTP/1, HTTP/1.1, HTTP/2, and HTTP/3 are currently supported.
 
 ```dart
 await Rhttp.get(
   'https://example.com',
   settings: const ClientSettings(
     httpVersionPref: HttpVersionPref.http3,
+  ),
+);
+```
+
+### ➤ TLS version
+
+You can specify the TLS version to use for the request.
+Only TLS 1.2 and 1.3 are currently supported.
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    tlsSettings: TlsSettings(
+      minTlsVersion: TlsVersion.tls12,
+      maxTlsVersion: TlsVersion.tls13,
+    ),
   ),
 );
 ```

@@ -11,11 +11,15 @@ class ClientSettings {
   final HttpVersionPref httpVersionPref;
   final Duration? timeout;
   final Duration? connectTimeout;
+  final bool throwOnStatusCode;
+  final TlsSettings? tlsSettings;
 
   const ClientSettings({
     required this.httpVersionPref,
     this.timeout,
     this.connectTimeout,
+    required this.throwOnStatusCode,
+    this.tlsSettings,
   });
 
   static Future<ClientSettings> default_() =>
@@ -23,7 +27,11 @@ class ClientSettings {
 
   @override
   int get hashCode =>
-      httpVersionPref.hashCode ^ timeout.hashCode ^ connectTimeout.hashCode;
+      httpVersionPref.hashCode ^
+      timeout.hashCode ^
+      connectTimeout.hashCode ^
+      throwOnStatusCode.hashCode ^
+      tlsSettings.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -32,5 +40,38 @@ class ClientSettings {
           runtimeType == other.runtimeType &&
           httpVersionPref == other.httpVersionPref &&
           timeout == other.timeout &&
-          connectTimeout == other.connectTimeout;
+          connectTimeout == other.connectTimeout &&
+          throwOnStatusCode == other.throwOnStatusCode &&
+          tlsSettings == other.tlsSettings;
+}
+
+class TlsSettings {
+  final bool verifyCerts;
+  final TlsVersion? minTlsVersion;
+  final TlsVersion? maxTlsVersion;
+
+  const TlsSettings({
+    required this.verifyCerts,
+    this.minTlsVersion,
+    this.maxTlsVersion,
+  });
+
+  @override
+  int get hashCode =>
+      verifyCerts.hashCode ^ minTlsVersion.hashCode ^ maxTlsVersion.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TlsSettings &&
+          runtimeType == other.runtimeType &&
+          verifyCerts == other.verifyCerts &&
+          minTlsVersion == other.minTlsVersion &&
+          maxTlsVersion == other.maxTlsVersion;
+}
+
+enum TlsVersion {
+  tls12,
+  tls13,
+  ;
 }

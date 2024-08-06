@@ -534,21 +534,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  HttpResponseBody dco_decode_box_autoadd_http_response_body(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_http_response_body(raw);
+  }
+
+  @protected
   PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_i_64(raw);
   }
 
   @protected
+  TlsSettings dco_decode_box_autoadd_tls_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_tls_settings(raw);
+  }
+
+  @protected
+  TlsVersion dco_decode_box_autoadd_tls_version(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_tls_version(raw);
+  }
+
+  @protected
   ClientSettings dco_decode_client_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return ClientSettings(
       httpVersionPref: dco_decode_http_version_pref(arr[0]),
       timeout: dco_decode_opt_box_autoadd_Chrono_Duration(arr[1]),
       connectTimeout: dco_decode_opt_box_autoadd_Chrono_Duration(arr[2]),
+      throwOnStatusCode: dco_decode_bool(arr[3]),
+      tlsSettings: dco_decode_opt_box_autoadd_tls_settings(arr[4]),
     );
   }
 
@@ -721,6 +741,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  TlsSettings? dco_decode_opt_box_autoadd_tls_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_tls_settings(raw);
+  }
+
+  @protected
+  TlsVersion? dco_decode_opt_box_autoadd_tls_version(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_tls_version(raw);
+  }
+
+  @protected
   List<(String, String)>? dco_decode_opt_list_record_string_string(
       dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -767,14 +799,40 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_String(raw[1]),
         );
       case 2:
-        return RhttpError_RhttpInvalidClientError();
+        return RhttpError_RhttpStatusCodeError(
+          dco_decode_String(raw[1]),
+          dco_decode_u_16(raw[2]),
+          dco_decode_list_record_string_string(raw[3]),
+          dco_decode_box_autoadd_http_response_body(raw[4]),
+        );
       case 3:
+        return RhttpError_RhttpInvalidClientError();
+      case 4:
         return RhttpError_RhttpUnknownError(
           dco_decode_String(raw[1]),
         );
       default:
         throw Exception("unreachable");
     }
+  }
+
+  @protected
+  TlsSettings dco_decode_tls_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return TlsSettings(
+      verifyCerts: dco_decode_bool(arr[0]),
+      minTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[1]),
+      maxTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[2]),
+    );
+  }
+
+  @protected
+  TlsVersion dco_decode_tls_version(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return TlsVersion.values[raw as int];
   }
 
   @protected
@@ -886,9 +944,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  HttpResponseBody sse_decode_box_autoadd_http_response_body(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_http_response_body(deserializer));
+  }
+
+  @protected
   PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_i_64(deserializer));
+  }
+
+  @protected
+  TlsSettings sse_decode_box_autoadd_tls_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_tls_settings(deserializer));
+  }
+
+  @protected
+  TlsVersion sse_decode_box_autoadd_tls_version(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_tls_version(deserializer));
   }
 
   @protected
@@ -898,10 +976,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_timeout = sse_decode_opt_box_autoadd_Chrono_Duration(deserializer);
     var var_connectTimeout =
         sse_decode_opt_box_autoadd_Chrono_Duration(deserializer);
+    var var_throwOnStatusCode = sse_decode_bool(deserializer);
+    var var_tlsSettings = sse_decode_opt_box_autoadd_tls_settings(deserializer);
     return ClientSettings(
         httpVersionPref: var_httpVersionPref,
         timeout: var_timeout,
-        connectTimeout: var_connectTimeout);
+        connectTimeout: var_connectTimeout,
+        throwOnStatusCode: var_throwOnStatusCode,
+        tlsSettings: var_tlsSettings);
   }
 
   @protected
@@ -1116,6 +1198,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  TlsSettings? sse_decode_opt_box_autoadd_tls_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_tls_settings(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  TlsVersion? sse_decode_opt_box_autoadd_tls_version(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_tls_version(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   List<(String, String)>? sse_decode_opt_list_record_string_string(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1158,13 +1264,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_String(deserializer);
         return RhttpError_RhttpTimeoutError(var_field0);
       case 2:
-        return RhttpError_RhttpInvalidClientError();
+        var var_field0 = sse_decode_String(deserializer);
+        var var_field1 = sse_decode_u_16(deserializer);
+        var var_field2 = sse_decode_list_record_string_string(deserializer);
+        var var_field3 =
+            sse_decode_box_autoadd_http_response_body(deserializer);
+        return RhttpError_RhttpStatusCodeError(
+            var_field0, var_field1, var_field2, var_field3);
       case 3:
+        return RhttpError_RhttpInvalidClientError();
+      case 4:
         var var_field0 = sse_decode_String(deserializer);
         return RhttpError_RhttpUnknownError(var_field0);
       default:
         throw UnimplementedError('');
     }
+  }
+
+  @protected
+  TlsSettings sse_decode_tls_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_verifyCerts = sse_decode_bool(deserializer);
+    var var_minTlsVersion =
+        sse_decode_opt_box_autoadd_tls_version(deserializer);
+    var var_maxTlsVersion =
+        sse_decode_opt_box_autoadd_tls_version(deserializer);
+    return TlsSettings(
+        verifyCerts: var_verifyCerts,
+        minTlsVersion: var_minTlsVersion,
+        maxTlsVersion: var_maxTlsVersion);
+  }
+
+  @protected
+  TlsVersion sse_decode_tls_version(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return TlsVersion.values[inner];
   }
 
   @protected
@@ -1301,10 +1436,31 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_http_response_body(
+      HttpResponseBody self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_http_response_body(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_i_64(
       PlatformInt64 self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_64(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_tls_settings(
+      TlsSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_tls_settings(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_tls_version(
+      TlsVersion self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_tls_version(self, serializer);
   }
 
   @protected
@@ -1314,6 +1470,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_http_version_pref(self.httpVersionPref, serializer);
     sse_encode_opt_box_autoadd_Chrono_Duration(self.timeout, serializer);
     sse_encode_opt_box_autoadd_Chrono_Duration(self.connectTimeout, serializer);
+    sse_encode_bool(self.throwOnStatusCode, serializer);
+    sse_encode_opt_box_autoadd_tls_settings(self.tlsSettings, serializer);
   }
 
   @protected
@@ -1508,6 +1666,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_tls_settings(
+      TlsSettings? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_tls_settings(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_tls_version(
+      TlsVersion? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_tls_version(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_list_record_string_string(
       List<(String, String)>? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1544,14 +1724,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case RhttpError_RhttpTimeoutError(field0: final field0):
         sse_encode_i_32(1, serializer);
         sse_encode_String(field0, serializer);
-      case RhttpError_RhttpInvalidClientError():
+      case RhttpError_RhttpStatusCodeError(
+          field0: final field0,
+          field1: final field1,
+          field2: final field2,
+          field3: final field3
+        ):
         sse_encode_i_32(2, serializer);
-      case RhttpError_RhttpUnknownError(field0: final field0):
+        sse_encode_String(field0, serializer);
+        sse_encode_u_16(field1, serializer);
+        sse_encode_list_record_string_string(field2, serializer);
+        sse_encode_box_autoadd_http_response_body(field3, serializer);
+      case RhttpError_RhttpInvalidClientError():
         sse_encode_i_32(3, serializer);
+      case RhttpError_RhttpUnknownError(field0: final field0):
+        sse_encode_i_32(4, serializer);
         sse_encode_String(field0, serializer);
       default:
         throw UnimplementedError('');
     }
+  }
+
+  @protected
+  void sse_encode_tls_settings(TlsSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_bool(self.verifyCerts, serializer);
+    sse_encode_opt_box_autoadd_tls_version(self.minTlsVersion, serializer);
+    sse_encode_opt_box_autoadd_tls_version(self.maxTlsVersion, serializer);
+  }
+
+  @protected
+  void sse_encode_tls_version(TlsVersion self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
   }
 
   @protected

@@ -487,10 +487,15 @@ impl SseDecode for crate::api::client::ClientSettings {
         let mut var_httpVersionPref = <crate::api::http::HttpVersionPref>::sse_decode(deserializer);
         let mut var_timeout = <Option<chrono::Duration>>::sse_decode(deserializer);
         let mut var_connectTimeout = <Option<chrono::Duration>>::sse_decode(deserializer);
+        let mut var_throwOnStatusCode = <bool>::sse_decode(deserializer);
+        let mut var_tlsSettings =
+            <Option<crate::api::client::TlsSettings>>::sse_decode(deserializer);
         return crate::api::client::ClientSettings {
             http_version_pref: var_httpVersionPref,
             timeout: var_timeout,
             connect_timeout: var_connectTimeout,
+            throw_on_status_code: var_throwOnStatusCode,
+            tls_settings: var_tlsSettings,
         };
     }
 }
@@ -847,6 +852,28 @@ impl SseDecode for Option<i64> {
     }
 }
 
+impl SseDecode for Option<crate::api::client::TlsSettings> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::client::TlsSettings>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::client::TlsVersion> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::client::TlsVersion>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<Vec<(String, String)>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -890,9 +917,18 @@ impl SseDecode for crate::api::error::RhttpError {
                 return crate::api::error::RhttpError::RhttpTimeoutError(var_field0);
             }
             2 => {
-                return crate::api::error::RhttpError::RhttpInvalidClientError;
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                let mut var_field1 = <u16>::sse_decode(deserializer);
+                let mut var_field2 = <Vec<(String, String)>>::sse_decode(deserializer);
+                let mut var_field3 = <crate::api::http::HttpResponseBody>::sse_decode(deserializer);
+                return crate::api::error::RhttpError::RhttpStatusCodeError(
+                    var_field0, var_field1, var_field2, var_field3,
+                );
             }
             3 => {
+                return crate::api::error::RhttpError::RhttpInvalidClientError;
+            }
+            4 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::error::RhttpError::RhttpUnknownError(var_field0);
             }
@@ -900,6 +936,34 @@ impl SseDecode for crate::api::error::RhttpError {
                 unimplemented!("");
             }
         }
+    }
+}
+
+impl SseDecode for crate::api::client::TlsSettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_verifyCerts = <bool>::sse_decode(deserializer);
+        let mut var_minTlsVersion =
+            <Option<crate::api::client::TlsVersion>>::sse_decode(deserializer);
+        let mut var_maxTlsVersion =
+            <Option<crate::api::client::TlsVersion>>::sse_decode(deserializer);
+        return crate::api::client::TlsSettings {
+            verify_certs: var_verifyCerts,
+            min_tls_version: var_minTlsVersion,
+            max_tls_version: var_maxTlsVersion,
+        };
+    }
+}
+
+impl SseDecode for crate::api::client::TlsVersion {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::client::TlsVersion::Tls1_2,
+            1 => crate::api::client::TlsVersion::Tls1_3,
+            _ => unreachable!("Invalid variant for TlsVersion: {}", inner),
+        };
     }
 }
 
@@ -980,6 +1044,8 @@ impl flutter_rust_bridge::IntoDart for crate::api::client::ClientSettings {
             self.http_version_pref.into_into_dart().into_dart(),
             self.timeout.into_into_dart().into_dart(),
             self.connect_timeout.into_into_dart().into_dart(),
+            self.throw_on_status_code.into_into_dart().into_dart(),
+            self.tls_settings.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -1300,9 +1366,19 @@ impl flutter_rust_bridge::IntoDart for crate::api::error::RhttpError {
             crate::api::error::RhttpError::RhttpTimeoutError(field0) => {
                 [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
-            crate::api::error::RhttpError::RhttpInvalidClientError => [2.into_dart()].into_dart(),
+            crate::api::error::RhttpError::RhttpStatusCodeError(field0, field1, field2, field3) => {
+                [
+                    2.into_dart(),
+                    field0.into_into_dart().into_dart(),
+                    field1.into_into_dart().into_dart(),
+                    field2.into_into_dart().into_dart(),
+                    field3.into_into_dart().into_dart(),
+                ]
+                .into_dart()
+            }
+            crate::api::error::RhttpError::RhttpInvalidClientError => [3.into_dart()].into_dart(),
             crate::api::error::RhttpError::RhttpUnknownError(field0) => {
-                [3.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+                [4.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -1315,6 +1391,49 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::error::RhttpError>
     for crate::api::error::RhttpError
 {
     fn into_into_dart(self) -> crate::api::error::RhttpError {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::client::TlsSettings {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.verify_certs.into_into_dart().into_dart(),
+            self.min_tls_version.into_into_dart().into_dart(),
+            self.max_tls_version.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::client::TlsSettings
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::client::TlsSettings>
+    for crate::api::client::TlsSettings
+{
+    fn into_into_dart(self) -> crate::api::client::TlsSettings {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::client::TlsVersion {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Tls1_2 => 0.into_dart(),
+            Self::Tls1_3 => 1.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::client::TlsVersion
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::client::TlsVersion>
+    for crate::api::client::TlsVersion
+{
+    fn into_into_dart(self) -> crate::api::client::TlsVersion {
         self
     }
 }
@@ -1388,6 +1507,8 @@ impl SseEncode for crate::api::client::ClientSettings {
         <crate::api::http::HttpVersionPref>::sse_encode(self.http_version_pref, serializer);
         <Option<chrono::Duration>>::sse_encode(self.timeout, serializer);
         <Option<chrono::Duration>>::sse_encode(self.connect_timeout, serializer);
+        <bool>::sse_encode(self.throw_on_status_code, serializer);
+        <Option<crate::api::client::TlsSettings>>::sse_encode(self.tls_settings, serializer);
     }
 }
 
@@ -1736,6 +1857,26 @@ impl SseEncode for Option<i64> {
     }
 }
 
+impl SseEncode for Option<crate::api::client::TlsSettings> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::client::TlsSettings>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::client::TlsVersion> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::client::TlsVersion>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<Vec<(String, String)>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1774,17 +1915,49 @@ impl SseEncode for crate::api::error::RhttpError {
                 <i32>::sse_encode(1, serializer);
                 <String>::sse_encode(field0, serializer);
             }
-            crate::api::error::RhttpError::RhttpInvalidClientError => {
+            crate::api::error::RhttpError::RhttpStatusCodeError(field0, field1, field2, field3) => {
                 <i32>::sse_encode(2, serializer);
+                <String>::sse_encode(field0, serializer);
+                <u16>::sse_encode(field1, serializer);
+                <Vec<(String, String)>>::sse_encode(field2, serializer);
+                <crate::api::http::HttpResponseBody>::sse_encode(field3, serializer);
+            }
+            crate::api::error::RhttpError::RhttpInvalidClientError => {
+                <i32>::sse_encode(3, serializer);
             }
             crate::api::error::RhttpError::RhttpUnknownError(field0) => {
-                <i32>::sse_encode(3, serializer);
+                <i32>::sse_encode(4, serializer);
                 <String>::sse_encode(field0, serializer);
             }
             _ => {
                 unimplemented!("");
             }
         }
+    }
+}
+
+impl SseEncode for crate::api::client::TlsSettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.verify_certs, serializer);
+        <Option<crate::api::client::TlsVersion>>::sse_encode(self.min_tls_version, serializer);
+        <Option<crate::api::client::TlsVersion>>::sse_encode(self.max_tls_version, serializer);
+    }
+}
+
+impl SseEncode for crate::api::client::TlsVersion {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::client::TlsVersion::Tls1_2 => 0,
+                crate::api::client::TlsVersion::Tls1_3 => 1,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
     }
 }
 

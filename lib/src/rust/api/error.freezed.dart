@@ -20,6 +20,9 @@ mixin _$RhttpError {
   TResult when<TResult extends Object?>({
     required TResult Function(String field0) rhttpCancelError,
     required TResult Function(String field0) rhttpTimeoutError,
+    required TResult Function(String field0, int field1,
+            List<(String, String)> field2, HttpResponseBody field3)
+        rhttpStatusCodeError,
     required TResult Function() rhttpInvalidClientError,
     required TResult Function(String field0) rhttpUnknownError,
   }) =>
@@ -28,6 +31,9 @@ mixin _$RhttpError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? rhttpCancelError,
     TResult? Function(String field0)? rhttpTimeoutError,
+    TResult? Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
     TResult? Function()? rhttpInvalidClientError,
     TResult? Function(String field0)? rhttpUnknownError,
   }) =>
@@ -36,6 +42,9 @@ mixin _$RhttpError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? rhttpCancelError,
     TResult Function(String field0)? rhttpTimeoutError,
+    TResult Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
     TResult Function()? rhttpInvalidClientError,
     TResult Function(String field0)? rhttpUnknownError,
     required TResult orElse(),
@@ -47,6 +56,8 @@ mixin _$RhttpError {
         rhttpCancelError,
     required TResult Function(RhttpError_RhttpTimeoutError value)
         rhttpTimeoutError,
+    required TResult Function(RhttpError_RhttpStatusCodeError value)
+        rhttpStatusCodeError,
     required TResult Function(RhttpError_RhttpInvalidClientError value)
         rhttpInvalidClientError,
     required TResult Function(RhttpError_RhttpUnknownError value)
@@ -57,6 +68,8 @@ mixin _$RhttpError {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
     TResult? Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult? Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
     TResult? Function(RhttpError_RhttpInvalidClientError value)?
         rhttpInvalidClientError,
     TResult? Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
@@ -66,6 +79,8 @@ mixin _$RhttpError {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
     TResult Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
     TResult Function(RhttpError_RhttpInvalidClientError value)?
         rhttpInvalidClientError,
     TResult Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
@@ -161,6 +176,9 @@ class _$RhttpError_RhttpCancelErrorImpl extends RhttpError_RhttpCancelError {
   TResult when<TResult extends Object?>({
     required TResult Function(String field0) rhttpCancelError,
     required TResult Function(String field0) rhttpTimeoutError,
+    required TResult Function(String field0, int field1,
+            List<(String, String)> field2, HttpResponseBody field3)
+        rhttpStatusCodeError,
     required TResult Function() rhttpInvalidClientError,
     required TResult Function(String field0) rhttpUnknownError,
   }) {
@@ -172,6 +190,9 @@ class _$RhttpError_RhttpCancelErrorImpl extends RhttpError_RhttpCancelError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? rhttpCancelError,
     TResult? Function(String field0)? rhttpTimeoutError,
+    TResult? Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
     TResult? Function()? rhttpInvalidClientError,
     TResult? Function(String field0)? rhttpUnknownError,
   }) {
@@ -183,6 +204,9 @@ class _$RhttpError_RhttpCancelErrorImpl extends RhttpError_RhttpCancelError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? rhttpCancelError,
     TResult Function(String field0)? rhttpTimeoutError,
+    TResult Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
     TResult Function()? rhttpInvalidClientError,
     TResult Function(String field0)? rhttpUnknownError,
     required TResult orElse(),
@@ -200,6 +224,8 @@ class _$RhttpError_RhttpCancelErrorImpl extends RhttpError_RhttpCancelError {
         rhttpCancelError,
     required TResult Function(RhttpError_RhttpTimeoutError value)
         rhttpTimeoutError,
+    required TResult Function(RhttpError_RhttpStatusCodeError value)
+        rhttpStatusCodeError,
     required TResult Function(RhttpError_RhttpInvalidClientError value)
         rhttpInvalidClientError,
     required TResult Function(RhttpError_RhttpUnknownError value)
@@ -213,6 +239,8 @@ class _$RhttpError_RhttpCancelErrorImpl extends RhttpError_RhttpCancelError {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
     TResult? Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult? Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
     TResult? Function(RhttpError_RhttpInvalidClientError value)?
         rhttpInvalidClientError,
     TResult? Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
@@ -225,6 +253,8 @@ class _$RhttpError_RhttpCancelErrorImpl extends RhttpError_RhttpCancelError {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
     TResult Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
     TResult Function(RhttpError_RhttpInvalidClientError value)?
         rhttpInvalidClientError,
     TResult Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
@@ -318,6 +348,9 @@ class _$RhttpError_RhttpTimeoutErrorImpl extends RhttpError_RhttpTimeoutError {
   TResult when<TResult extends Object?>({
     required TResult Function(String field0) rhttpCancelError,
     required TResult Function(String field0) rhttpTimeoutError,
+    required TResult Function(String field0, int field1,
+            List<(String, String)> field2, HttpResponseBody field3)
+        rhttpStatusCodeError,
     required TResult Function() rhttpInvalidClientError,
     required TResult Function(String field0) rhttpUnknownError,
   }) {
@@ -329,6 +362,9 @@ class _$RhttpError_RhttpTimeoutErrorImpl extends RhttpError_RhttpTimeoutError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? rhttpCancelError,
     TResult? Function(String field0)? rhttpTimeoutError,
+    TResult? Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
     TResult? Function()? rhttpInvalidClientError,
     TResult? Function(String field0)? rhttpUnknownError,
   }) {
@@ -340,6 +376,9 @@ class _$RhttpError_RhttpTimeoutErrorImpl extends RhttpError_RhttpTimeoutError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? rhttpCancelError,
     TResult Function(String field0)? rhttpTimeoutError,
+    TResult Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
     TResult Function()? rhttpInvalidClientError,
     TResult Function(String field0)? rhttpUnknownError,
     required TResult orElse(),
@@ -357,6 +396,8 @@ class _$RhttpError_RhttpTimeoutErrorImpl extends RhttpError_RhttpTimeoutError {
         rhttpCancelError,
     required TResult Function(RhttpError_RhttpTimeoutError value)
         rhttpTimeoutError,
+    required TResult Function(RhttpError_RhttpStatusCodeError value)
+        rhttpStatusCodeError,
     required TResult Function(RhttpError_RhttpInvalidClientError value)
         rhttpInvalidClientError,
     required TResult Function(RhttpError_RhttpUnknownError value)
@@ -370,6 +411,8 @@ class _$RhttpError_RhttpTimeoutErrorImpl extends RhttpError_RhttpTimeoutError {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
     TResult? Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult? Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
     TResult? Function(RhttpError_RhttpInvalidClientError value)?
         rhttpInvalidClientError,
     TResult? Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
@@ -382,6 +425,8 @@ class _$RhttpError_RhttpTimeoutErrorImpl extends RhttpError_RhttpTimeoutError {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
     TResult Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
     TResult Function(RhttpError_RhttpInvalidClientError value)?
         rhttpInvalidClientError,
     TResult Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
@@ -403,6 +448,235 @@ abstract class RhttpError_RhttpTimeoutError extends RhttpError {
   @JsonKey(ignore: true)
   _$$RhttpError_RhttpTimeoutErrorImplCopyWith<
           _$RhttpError_RhttpTimeoutErrorImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$RhttpError_RhttpStatusCodeErrorImplCopyWith<$Res> {
+  factory _$$RhttpError_RhttpStatusCodeErrorImplCopyWith(
+          _$RhttpError_RhttpStatusCodeErrorImpl value,
+          $Res Function(_$RhttpError_RhttpStatusCodeErrorImpl) then) =
+      __$$RhttpError_RhttpStatusCodeErrorImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call(
+      {String field0,
+      int field1,
+      List<(String, String)> field2,
+      HttpResponseBody field3});
+
+  $HttpResponseBodyCopyWith<$Res> get field3;
+}
+
+/// @nodoc
+class __$$RhttpError_RhttpStatusCodeErrorImplCopyWithImpl<$Res>
+    extends _$RhttpErrorCopyWithImpl<$Res,
+        _$RhttpError_RhttpStatusCodeErrorImpl>
+    implements _$$RhttpError_RhttpStatusCodeErrorImplCopyWith<$Res> {
+  __$$RhttpError_RhttpStatusCodeErrorImplCopyWithImpl(
+      _$RhttpError_RhttpStatusCodeErrorImpl _value,
+      $Res Function(_$RhttpError_RhttpStatusCodeErrorImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+    Object? field1 = null,
+    Object? field2 = null,
+    Object? field3 = null,
+  }) {
+    return _then(_$RhttpError_RhttpStatusCodeErrorImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == field1
+          ? _value.field1
+          : field1 // ignore: cast_nullable_to_non_nullable
+              as int,
+      null == field2
+          ? _value._field2
+          : field2 // ignore: cast_nullable_to_non_nullable
+              as List<(String, String)>,
+      null == field3
+          ? _value.field3
+          : field3 // ignore: cast_nullable_to_non_nullable
+              as HttpResponseBody,
+    ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $HttpResponseBodyCopyWith<$Res> get field3 {
+    return $HttpResponseBodyCopyWith<$Res>(_value.field3, (value) {
+      return _then(_value.copyWith(field3: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$RhttpError_RhttpStatusCodeErrorImpl
+    extends RhttpError_RhttpStatusCodeError {
+  const _$RhttpError_RhttpStatusCodeErrorImpl(this.field0, this.field1,
+      final List<(String, String)> field2, this.field3)
+      : _field2 = field2,
+        super._();
+
+  @override
+  final String field0;
+  @override
+  final int field1;
+  final List<(String, String)> _field2;
+  @override
+  List<(String, String)> get field2 {
+    if (_field2 is EqualUnmodifiableListView) return _field2;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_field2);
+  }
+
+  @override
+  final HttpResponseBody field3;
+
+  @override
+  String toString() {
+    return 'RhttpError.rhttpStatusCodeError(field0: $field0, field1: $field1, field2: $field2, field3: $field3)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RhttpError_RhttpStatusCodeErrorImpl &&
+            (identical(other.field0, field0) || other.field0 == field0) &&
+            (identical(other.field1, field1) || other.field1 == field1) &&
+            const DeepCollectionEquality().equals(other._field2, _field2) &&
+            (identical(other.field3, field3) || other.field3 == field3));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0, field1,
+      const DeepCollectionEquality().hash(_field2), field3);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RhttpError_RhttpStatusCodeErrorImplCopyWith<
+          _$RhttpError_RhttpStatusCodeErrorImpl>
+      get copyWith => __$$RhttpError_RhttpStatusCodeErrorImplCopyWithImpl<
+          _$RhttpError_RhttpStatusCodeErrorImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String field0) rhttpCancelError,
+    required TResult Function(String field0) rhttpTimeoutError,
+    required TResult Function(String field0, int field1,
+            List<(String, String)> field2, HttpResponseBody field3)
+        rhttpStatusCodeError,
+    required TResult Function() rhttpInvalidClientError,
+    required TResult Function(String field0) rhttpUnknownError,
+  }) {
+    return rhttpStatusCodeError(field0, field1, field2, field3);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String field0)? rhttpCancelError,
+    TResult? Function(String field0)? rhttpTimeoutError,
+    TResult? Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
+    TResult? Function()? rhttpInvalidClientError,
+    TResult? Function(String field0)? rhttpUnknownError,
+  }) {
+    return rhttpStatusCodeError?.call(field0, field1, field2, field3);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String field0)? rhttpCancelError,
+    TResult Function(String field0)? rhttpTimeoutError,
+    TResult Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
+    TResult Function()? rhttpInvalidClientError,
+    TResult Function(String field0)? rhttpUnknownError,
+    required TResult orElse(),
+  }) {
+    if (rhttpStatusCodeError != null) {
+      return rhttpStatusCodeError(field0, field1, field2, field3);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(RhttpError_RhttpCancelError value)
+        rhttpCancelError,
+    required TResult Function(RhttpError_RhttpTimeoutError value)
+        rhttpTimeoutError,
+    required TResult Function(RhttpError_RhttpStatusCodeError value)
+        rhttpStatusCodeError,
+    required TResult Function(RhttpError_RhttpInvalidClientError value)
+        rhttpInvalidClientError,
+    required TResult Function(RhttpError_RhttpUnknownError value)
+        rhttpUnknownError,
+  }) {
+    return rhttpStatusCodeError(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
+    TResult? Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult? Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
+    TResult? Function(RhttpError_RhttpInvalidClientError value)?
+        rhttpInvalidClientError,
+    TResult? Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
+  }) {
+    return rhttpStatusCodeError?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
+    TResult Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
+    TResult Function(RhttpError_RhttpInvalidClientError value)?
+        rhttpInvalidClientError,
+    TResult Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
+    required TResult orElse(),
+  }) {
+    if (rhttpStatusCodeError != null) {
+      return rhttpStatusCodeError(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class RhttpError_RhttpStatusCodeError extends RhttpError {
+  const factory RhttpError_RhttpStatusCodeError(
+      final String field0,
+      final int field1,
+      final List<(String, String)> field2,
+      final HttpResponseBody field3) = _$RhttpError_RhttpStatusCodeErrorImpl;
+  const RhttpError_RhttpStatusCodeError._() : super._();
+
+  String get field0;
+  int get field1;
+  List<(String, String)> get field2;
+  HttpResponseBody get field3;
+  @JsonKey(ignore: true)
+  _$$RhttpError_RhttpStatusCodeErrorImplCopyWith<
+          _$RhttpError_RhttpStatusCodeErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -451,6 +725,9 @@ class _$RhttpError_RhttpInvalidClientErrorImpl
   TResult when<TResult extends Object?>({
     required TResult Function(String field0) rhttpCancelError,
     required TResult Function(String field0) rhttpTimeoutError,
+    required TResult Function(String field0, int field1,
+            List<(String, String)> field2, HttpResponseBody field3)
+        rhttpStatusCodeError,
     required TResult Function() rhttpInvalidClientError,
     required TResult Function(String field0) rhttpUnknownError,
   }) {
@@ -462,6 +739,9 @@ class _$RhttpError_RhttpInvalidClientErrorImpl
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? rhttpCancelError,
     TResult? Function(String field0)? rhttpTimeoutError,
+    TResult? Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
     TResult? Function()? rhttpInvalidClientError,
     TResult? Function(String field0)? rhttpUnknownError,
   }) {
@@ -473,6 +753,9 @@ class _$RhttpError_RhttpInvalidClientErrorImpl
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? rhttpCancelError,
     TResult Function(String field0)? rhttpTimeoutError,
+    TResult Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
     TResult Function()? rhttpInvalidClientError,
     TResult Function(String field0)? rhttpUnknownError,
     required TResult orElse(),
@@ -490,6 +773,8 @@ class _$RhttpError_RhttpInvalidClientErrorImpl
         rhttpCancelError,
     required TResult Function(RhttpError_RhttpTimeoutError value)
         rhttpTimeoutError,
+    required TResult Function(RhttpError_RhttpStatusCodeError value)
+        rhttpStatusCodeError,
     required TResult Function(RhttpError_RhttpInvalidClientError value)
         rhttpInvalidClientError,
     required TResult Function(RhttpError_RhttpUnknownError value)
@@ -503,6 +788,8 @@ class _$RhttpError_RhttpInvalidClientErrorImpl
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
     TResult? Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult? Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
     TResult? Function(RhttpError_RhttpInvalidClientError value)?
         rhttpInvalidClientError,
     TResult? Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
@@ -515,6 +802,8 @@ class _$RhttpError_RhttpInvalidClientErrorImpl
   TResult maybeMap<TResult extends Object?>({
     TResult Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
     TResult Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
     TResult Function(RhttpError_RhttpInvalidClientError value)?
         rhttpInvalidClientError,
     TResult Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
@@ -603,6 +892,9 @@ class _$RhttpError_RhttpUnknownErrorImpl extends RhttpError_RhttpUnknownError {
   TResult when<TResult extends Object?>({
     required TResult Function(String field0) rhttpCancelError,
     required TResult Function(String field0) rhttpTimeoutError,
+    required TResult Function(String field0, int field1,
+            List<(String, String)> field2, HttpResponseBody field3)
+        rhttpStatusCodeError,
     required TResult Function() rhttpInvalidClientError,
     required TResult Function(String field0) rhttpUnknownError,
   }) {
@@ -614,6 +906,9 @@ class _$RhttpError_RhttpUnknownErrorImpl extends RhttpError_RhttpUnknownError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? rhttpCancelError,
     TResult? Function(String field0)? rhttpTimeoutError,
+    TResult? Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
     TResult? Function()? rhttpInvalidClientError,
     TResult? Function(String field0)? rhttpUnknownError,
   }) {
@@ -625,6 +920,9 @@ class _$RhttpError_RhttpUnknownErrorImpl extends RhttpError_RhttpUnknownError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? rhttpCancelError,
     TResult Function(String field0)? rhttpTimeoutError,
+    TResult Function(String field0, int field1, List<(String, String)> field2,
+            HttpResponseBody field3)?
+        rhttpStatusCodeError,
     TResult Function()? rhttpInvalidClientError,
     TResult Function(String field0)? rhttpUnknownError,
     required TResult orElse(),
@@ -642,6 +940,8 @@ class _$RhttpError_RhttpUnknownErrorImpl extends RhttpError_RhttpUnknownError {
         rhttpCancelError,
     required TResult Function(RhttpError_RhttpTimeoutError value)
         rhttpTimeoutError,
+    required TResult Function(RhttpError_RhttpStatusCodeError value)
+        rhttpStatusCodeError,
     required TResult Function(RhttpError_RhttpInvalidClientError value)
         rhttpInvalidClientError,
     required TResult Function(RhttpError_RhttpUnknownError value)
@@ -655,6 +955,8 @@ class _$RhttpError_RhttpUnknownErrorImpl extends RhttpError_RhttpUnknownError {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
     TResult? Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult? Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
     TResult? Function(RhttpError_RhttpInvalidClientError value)?
         rhttpInvalidClientError,
     TResult? Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,
@@ -667,6 +969,8 @@ class _$RhttpError_RhttpUnknownErrorImpl extends RhttpError_RhttpUnknownError {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(RhttpError_RhttpCancelError value)? rhttpCancelError,
     TResult Function(RhttpError_RhttpTimeoutError value)? rhttpTimeoutError,
+    TResult Function(RhttpError_RhttpStatusCodeError value)?
+        rhttpStatusCodeError,
     TResult Function(RhttpError_RhttpInvalidClientError value)?
         rhttpInvalidClientError,
     TResult Function(RhttpError_RhttpUnknownError value)? rhttpUnknownError,

@@ -12,7 +12,7 @@ import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'http.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `from_version`, `header_to_vec`, `make_http_request_helper`, `make_http_request_inner`, `make_http_request_receive_stream_inner`, `to_method`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`
 
 Future<PlatformInt64> registerClient({required ClientSettings settings}) =>
     RustLib.instance.api.crateApiHttpRegisterClient(settings: settings);

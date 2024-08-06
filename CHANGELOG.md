@@ -1,3 +1,8 @@
+## 0.1.1
+
+- feat: add `RhttpStatusCodeException`
+- feat: add `TlsSettings`
+
 ## 0.1.0
 
 - feat: request body types

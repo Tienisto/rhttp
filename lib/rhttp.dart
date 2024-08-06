@@ -15,7 +15,7 @@ export 'src/model/request.dart'
         HttpBodyJson,
         HttpBodyBytes,
         HttpBodyForm;
-export 'src/model/settings.dart' show ClientSettings;
+export 'src/model/settings.dart' show ClientSettings, TlsSettings;
 export 'src/model/response.dart'
     show
         HttpResponse,

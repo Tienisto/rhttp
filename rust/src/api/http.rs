@@ -63,6 +63,7 @@ pub enum HttpVersionPref {
     All,
 }
 
+#[derive(Clone, Copy)]
 pub enum HttpExpectBody {
     Text,
     Bytes,
@@ -97,6 +98,7 @@ pub struct HttpResponse {
     pub body: HttpResponseBody,
 }
 
+#[derive(Debug)]
 pub enum HttpResponseBody {
     Text(String),
     Bytes(Vec<u8>),
@@ -166,7 +168,7 @@ async fn make_http_request_inner(
     expect_body: HttpExpectBody,
 ) -> Result<HttpResponse, RhttpError> {
     let response =
-        make_http_request_helper(client_address, settings, method, url, query, headers, body)
+        make_http_request_helper(client_address, settings, method, url, query, headers, body, Some(expect_body))
             .await?;
 
     Ok(HttpResponse {
@@ -257,7 +259,7 @@ async fn make_http_request_receive_stream_inner(
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
 ) -> Result<(), RhttpError> {
     let response =
-        make_http_request_helper(client_address, settings, method, url, query, headers, body)
+        make_http_request_helper(client_address, settings, method, url, query, headers, body, None)
             .await?;
 
     let http_response = HttpResponse {
@@ -291,6 +293,7 @@ async fn make_http_request_helper(
     query: Option<Vec<(String, String)>>,
     headers: Option<HttpHeaders>,
     body: Option<HttpBody>,
+    expect_body: Option<HttpExpectBody>,
 ) -> Result<Response, RhttpError> {
     let client: RequestClient = match client_address {
         Some(address) => {
@@ -371,6 +374,33 @@ async fn make_http_request_helper(
             RhttpError::RhttpUnknownError(e.to_string())
         }
     })?;
+
+    if client.throw_on_status_code {
+        let status = response.status();
+        if status.is_client_error() || status.is_server_error() {
+            return Err(RhttpError::RhttpStatusCodeError(
+                url,
+                response.status().as_u16(),
+                header_to_vec(response.headers()),
+                match expect_body {
+                    Some(HttpExpectBody::Text) => HttpResponseBody::Text(
+                        response
+                            .text()
+                            .await
+                            .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
+                    ),
+                    Some(HttpExpectBody::Bytes) => HttpResponseBody::Bytes(
+                        response
+                            .bytes()
+                            .await
+                            .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?
+                            .to_vec(),
+                    ),
+                    _ => HttpResponseBody::Stream,
+                },
+            ));
+        }
+    }
 
     Ok(response)
 }
