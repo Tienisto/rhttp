@@ -828,7 +828,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (arr.length != 3)
       throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return TlsSettings(
-      verifyCerts: dco_decode_bool(arr[0]),
+      verifyCertificates: dco_decode_bool(arr[0]),
       minTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[1]),
       maxTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[2]),
     );
@@ -1293,13 +1293,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   TlsSettings sse_decode_tls_settings(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_verifyCerts = sse_decode_bool(deserializer);
+    var var_verifyCertificates = sse_decode_bool(deserializer);
     var var_minTlsVersion =
         sse_decode_opt_box_autoadd_tls_version(deserializer);
     var var_maxTlsVersion =
         sse_decode_opt_box_autoadd_tls_version(deserializer);
     return TlsSettings(
-        verifyCerts: var_verifyCerts,
+        verifyCertificates: var_verifyCertificates,
         minTlsVersion: var_minTlsVersion,
         maxTlsVersion: var_maxTlsVersion);
   }
@@ -1764,7 +1764,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_tls_settings(TlsSettings self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_bool(self.verifyCerts, serializer);
+    sse_encode_bool(self.verifyCertificates, serializer);
     sse_encode_opt_box_autoadd_tls_version(self.minTlsVersion, serializer);
     sse_encode_opt_box_autoadd_tls_version(self.maxTlsVersion, serializer);
   }

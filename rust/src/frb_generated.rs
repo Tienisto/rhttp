@@ -949,13 +949,13 @@ impl SseDecode for crate::api::error::RhttpError {
 impl SseDecode for crate::api::client::TlsSettings {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_verifyCerts = <bool>::sse_decode(deserializer);
+        let mut var_verifyCertificates = <bool>::sse_decode(deserializer);
         let mut var_minTlsVersion =
             <Option<crate::api::client::TlsVersion>>::sse_decode(deserializer);
         let mut var_maxTlsVersion =
             <Option<crate::api::client::TlsVersion>>::sse_decode(deserializer);
         return crate::api::client::TlsSettings {
-            verify_certs: var_verifyCerts,
+            verify_certificates: var_verifyCertificates,
             min_tls_version: var_minTlsVersion,
             max_tls_version: var_maxTlsVersion,
         };
@@ -1411,7 +1411,7 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::error::RhttpError>
 impl flutter_rust_bridge::IntoDart for crate::api::client::TlsSettings {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
-            self.verify_certs.into_into_dart().into_dart(),
+            self.verify_certificates.into_into_dart().into_dart(),
             self.min_tls_version.into_into_dart().into_dart(),
             self.max_tls_version.into_into_dart().into_dart(),
         ]
@@ -1957,7 +1957,7 @@ impl SseEncode for crate::api::error::RhttpError {
 impl SseEncode for crate::api::client::TlsSettings {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.verify_certs, serializer);
+        <bool>::sse_encode(self.verify_certificates, serializer);
         <Option<crate::api::client::TlsVersion>>::sse_encode(self.min_tls_version, serializer);
         <Option<crate::api::client::TlsVersion>>::sse_encode(self.max_tls_version, serializer);
     }

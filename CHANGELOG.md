@@ -1,3 +1,7 @@
+## 0.3.0
+
+- feat: change `TlsSettings.verifyCerts` to `TlsSettings.verifyCertificates`
+
 ## 0.2.0
 
 - feat: add `RhttpStatusCodeException`, `RhttpInvalidCertificateException`

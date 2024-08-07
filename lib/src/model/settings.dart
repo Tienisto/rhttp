@@ -37,7 +37,7 @@ class TlsSettings {
   /// Verify the server's certificate.
   /// If set to `false`, the client will accept any certificate.
   /// This is insecure and should only be used for testing.
-  final bool verifyCerts;
+  final bool verifyCertificates;
 
   /// The minimum TLS version to use.
   final rust_client.TlsVersion? minTlsVersion;
@@ -46,7 +46,7 @@ class TlsSettings {
   final rust_client.TlsVersion? maxTlsVersion;
 
   const TlsSettings({
-    this.verifyCerts = true,
+    this.verifyCertificates = true,
     this.minTlsVersion,
     this.maxTlsVersion,
   });
@@ -68,7 +68,7 @@ extension ClientSettingsExt on ClientSettings {
 extension on TlsSettings {
   rust_client.TlsSettings _toRustType() {
     return rust_client.TlsSettings(
-      verifyCerts: verifyCerts,
+      verifyCertificates: verifyCertificates,
       minTlsVersion: minTlsVersion,
       maxTlsVersion: maxTlsVersion,
     );

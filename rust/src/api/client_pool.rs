@@ -41,7 +41,7 @@ pub(crate) fn create_client(settings: ClientSettings) -> Result<RequestClient, R
         }
 
         if let Some(tls_settings) = settings.tls_settings {
-            if !tls_settings.verify_certs {
+            if !tls_settings.verify_certificates {
                 client = client.danger_accept_invalid_certs(true);
             }
 

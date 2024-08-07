@@ -10,7 +10,7 @@ pub struct ClientSettings {
 }
 
 pub struct TlsSettings {
-    pub verify_certs: bool,
+    pub verify_certificates: bool,
     pub min_tls_version: Option<TlsVersion>,
     pub max_tls_version: Option<TlsVersion>,
 }

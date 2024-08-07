@@ -46,26 +46,28 @@ class ClientSettings {
 }
 
 class TlsSettings {
-  final bool verifyCerts;
+  final bool verifyCertificates;
   final TlsVersion? minTlsVersion;
   final TlsVersion? maxTlsVersion;
 
   const TlsSettings({
-    required this.verifyCerts,
+    required this.verifyCertificates,
     this.minTlsVersion,
     this.maxTlsVersion,
   });
 
   @override
   int get hashCode =>
-      verifyCerts.hashCode ^ minTlsVersion.hashCode ^ maxTlsVersion.hashCode;
+      verifyCertificates.hashCode ^
+      minTlsVersion.hashCode ^
+      maxTlsVersion.hashCode;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is TlsSettings &&
           runtimeType == other.runtimeType &&
-          verifyCerts == other.verifyCerts &&
+          verifyCertificates == other.verifyCertificates &&
           minTlsVersion == other.minTlsVersion &&
           maxTlsVersion == other.maxTlsVersion;
 }
