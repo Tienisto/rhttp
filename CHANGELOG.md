@@ -1,5 +1,6 @@
 ## 0.3.0
 
+- feat: add `HttpBody.multipart`
 - feat: change `TlsSettings.verifyCerts` to `TlsSettings.verifyCertificates`
 
 ## 0.2.0

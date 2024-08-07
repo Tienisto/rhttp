@@ -18,11 +18,17 @@ export 'src/model/request.dart'
         HttpHeaders,
         HttpHeaderMap,
         HttpHeaderRawMap,
+        HttpHeaderList,
         HttpBody,
         HttpBodyText,
         HttpBodyJson,
         HttpBodyBytes,
-        HttpBodyForm;
+        HttpBodyForm,
+        HttpBodyMultipart,
+        MultipartItem,
+        MultiPartText,
+        MultiPartBytes,
+        MultiPartFile;
 export 'src/model/settings.dart' show ClientSettings, TlsSettings;
 export 'src/model/response.dart'
     show
@@ -31,4 +37,4 @@ export 'src/model/response.dart'
         HttpBytesResponse,
         HttpStreamResponse,
         HttpVersion;
-export 'src/rhttp.dart';
+export 'src/rhttp.dart' show Rhttp, HttpHeaderName;

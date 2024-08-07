@@ -518,6 +518,10 @@ impl SseDecode for crate::api::http::HttpBody {
                     <std::collections::HashMap<String, String>>::sse_decode(deserializer);
                 return crate::api::http::HttpBody::Form(var_field0);
             }
+            3 => {
+                let mut var_field0 = <crate::api::http::MultipartPayload>::sse_decode(deserializer);
+                return crate::api::http::HttpBody::Multipart(var_field0);
+            }
             _ => {
                 unimplemented!("");
             }
@@ -783,6 +787,20 @@ impl SseDecode for Vec<(crate::api::http_types::HttpHeaderName, String)> {
     }
 }
 
+impl SseDecode for Vec<(String, crate::api::http::MultipartItem)> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<(String, crate::api::http::MultipartItem)>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<(String, String)> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -792,6 +810,64 @@ impl SseDecode for Vec<(String, String)> {
             ans_.push(<(String, String)>::sse_decode(deserializer));
         }
         return ans_;
+    }
+}
+
+impl SseDecode for crate::api::http::MultipartItem {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_value = <crate::api::http::MultipartValue>::sse_decode(deserializer);
+        let mut var_fileName = <Option<String>>::sse_decode(deserializer);
+        let mut var_contentType = <Option<String>>::sse_decode(deserializer);
+        return crate::api::http::MultipartItem {
+            value: var_value,
+            file_name: var_fileName,
+            content_type: var_contentType,
+        };
+    }
+}
+
+impl SseDecode for crate::api::http::MultipartPayload {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_parts =
+            <Vec<(String, crate::api::http::MultipartItem)>>::sse_decode(deserializer);
+        return crate::api::http::MultipartPayload { parts: var_parts };
+    }
+}
+
+impl SseDecode for crate::api::http::MultipartValue {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::http::MultipartValue::Text(var_field0);
+            }
+            1 => {
+                let mut var_field0 = <Vec<u8>>::sse_decode(deserializer);
+                return crate::api::http::MultipartValue::Bytes(var_field0);
+            }
+            2 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::http::MultipartValue::File(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for Option<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<String>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
     }
 }
 
@@ -890,6 +966,15 @@ impl SseDecode for (crate::api::http_types::HttpHeaderName, String) {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_field0 = <crate::api::http_types::HttpHeaderName>::sse_decode(deserializer);
         let mut var_field1 = <String>::sse_decode(deserializer);
+        return (var_field0, var_field1);
+    }
+}
+
+impl SseDecode for (String, crate::api::http::MultipartItem) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_field0 = <String>::sse_decode(deserializer);
+        let mut var_field1 = <crate::api::http::MultipartItem>::sse_decode(deserializer);
         return (var_field0, var_field1);
     }
 }
@@ -1080,6 +1165,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::http::HttpBody {
             }
             crate::api::http::HttpBody::Form(field0) => {
                 [2.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::http::HttpBody::Multipart(field0) => {
+                [3.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -1364,6 +1452,75 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpVersionPref>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::http::MultipartItem {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.value.into_into_dart().into_dart(),
+            self.file_name.into_into_dart().into_dart(),
+            self.content_type.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::http::MultipartItem
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::http::MultipartItem>
+    for crate::api::http::MultipartItem
+{
+    fn into_into_dart(self) -> crate::api::http::MultipartItem {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::http::MultipartPayload {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [self.parts.into_into_dart().into_dart()].into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::http::MultipartPayload
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::http::MultipartPayload>
+    for crate::api::http::MultipartPayload
+{
+    fn into_into_dart(self) -> crate::api::http::MultipartPayload {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::http::MultipartValue {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::http::MultipartValue::Text(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::http::MultipartValue::Bytes(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::http::MultipartValue::File(field0) => {
+                [2.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::http::MultipartValue
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::http::MultipartValue>
+    for crate::api::http::MultipartValue
+{
+    fn into_into_dart(self) -> crate::api::http::MultipartValue {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::error::RhttpError {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -1540,6 +1697,10 @@ impl SseEncode for crate::api::http::HttpBody {
             crate::api::http::HttpBody::Form(field0) => {
                 <i32>::sse_encode(2, serializer);
                 <std::collections::HashMap<String, String>>::sse_encode(field0, serializer);
+            }
+            crate::api::http::HttpBody::Multipart(field0) => {
+                <i32>::sse_encode(3, serializer);
+                <crate::api::http::MultipartPayload>::sse_encode(field0, serializer);
             }
             _ => {
                 unimplemented!("");
@@ -1810,12 +1971,71 @@ impl SseEncode for Vec<(crate::api::http_types::HttpHeaderName, String)> {
     }
 }
 
+impl SseEncode for Vec<(String, crate::api::http::MultipartItem)> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <(String, crate::api::http::MultipartItem)>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<(String, String)> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <(String, String)>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for crate::api::http::MultipartItem {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::http::MultipartValue>::sse_encode(self.value, serializer);
+        <Option<String>>::sse_encode(self.file_name, serializer);
+        <Option<String>>::sse_encode(self.content_type, serializer);
+    }
+}
+
+impl SseEncode for crate::api::http::MultipartPayload {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<(String, crate::api::http::MultipartItem)>>::sse_encode(self.parts, serializer);
+    }
+}
+
+impl SseEncode for crate::api::http::MultipartValue {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::http::MultipartValue::Text(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::http::MultipartValue::Bytes(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <Vec<u8>>::sse_encode(field0, serializer);
+            }
+            crate::api::http::MultipartValue::File(field0) => {
+                <i32>::sse_encode(2, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for Option<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <String>::sse_encode(value, serializer);
         }
     }
 }
@@ -1905,6 +2125,14 @@ impl SseEncode for (crate::api::http_types::HttpHeaderName, String) {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <crate::api::http_types::HttpHeaderName>::sse_encode(self.0, serializer);
         <String>::sse_encode(self.1, serializer);
+    }
+}
+
+impl SseEncode for (String, crate::api::http::MultipartItem) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.0, serializer);
+        <crate::api::http::MultipartItem>::sse_encode(self.1, serializer);
     }
 }
 

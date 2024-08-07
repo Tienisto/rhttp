@@ -77,6 +77,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw);
 
   @protected
+  MultipartPayload dco_decode_box_autoadd_multipart_payload(dynamic raw);
+
+  @protected
   TlsSettings dco_decode_box_autoadd_tls_settings(dynamic raw);
 
   @protected
@@ -126,7 +129,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       dynamic raw);
 
   @protected
+  List<(String, MultipartItem)> dco_decode_list_record_string_multipart_item(
+      dynamic raw);
+
+  @protected
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
+
+  @protected
+  MultipartItem dco_decode_multipart_item(dynamic raw);
+
+  @protected
+  MultipartPayload dco_decode_multipart_payload(dynamic raw);
+
+  @protected
+  MultipartValue dco_decode_multipart_value(dynamic raw);
+
+  @protected
+  String? dco_decode_opt_String(dynamic raw);
 
   @protected
   Duration? dco_decode_opt_box_autoadd_Chrono_Duration(dynamic raw);
@@ -155,6 +174,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   (HttpHeaderName, String) dco_decode_record_http_header_name_string(
       dynamic raw);
+
+  @protected
+  (String, MultipartItem) dco_decode_record_string_multipart_item(dynamic raw);
 
   @protected
   (String, String) dco_decode_record_string_string(dynamic raw);
@@ -228,6 +250,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
+  MultipartPayload sse_decode_box_autoadd_multipart_payload(
+      SseDeserializer deserializer);
+
+  @protected
   TlsSettings sse_decode_box_autoadd_tls_settings(SseDeserializer deserializer);
 
   @protected
@@ -277,8 +303,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  List<(String, MultipartItem)> sse_decode_list_record_string_multipart_item(
+      SseDeserializer deserializer);
+
+  @protected
   List<(String, String)> sse_decode_list_record_string_string(
       SseDeserializer deserializer);
+
+  @protected
+  MultipartItem sse_decode_multipart_item(SseDeserializer deserializer);
+
+  @protected
+  MultipartPayload sse_decode_multipart_payload(SseDeserializer deserializer);
+
+  @protected
+  MultipartValue sse_decode_multipart_value(SseDeserializer deserializer);
+
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
   Duration? sse_decode_opt_box_autoadd_Chrono_Duration(
@@ -312,6 +354,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   (HttpHeaderName, String) sse_decode_record_http_header_name_string(
+      SseDeserializer deserializer);
+
+  @protected
+  (String, MultipartItem) sse_decode_record_string_multipart_item(
       SseDeserializer deserializer);
 
   @protected
@@ -400,6 +446,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       PlatformInt64 self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_multipart_payload(
+      MultipartPayload self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_tls_settings(
       TlsSettings self, SseSerializer serializer);
 
@@ -457,8 +507,26 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<(HttpHeaderName, String)> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_record_string_multipart_item(
+      List<(String, MultipartItem)> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_record_string_string(
       List<(String, String)> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_multipart_item(MultipartItem self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_multipart_payload(
+      MultipartPayload self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_multipart_value(
+      MultipartValue self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_Chrono_Duration(
@@ -495,6 +563,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_record_http_header_name_string(
       (HttpHeaderName, String) self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_string_multipart_item(
+      (String, MultipartItem) self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_string(

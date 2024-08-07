@@ -159,6 +159,23 @@ extension on HttpBody {
       HttpBodyJson json => rust.HttpBody.text(jsonEncode(json.json)),
       HttpBodyBytes bytes => rust.HttpBody.bytes(bytes.bytes),
       HttpBodyForm form => rust.HttpBody.form(form.form),
+      HttpBodyMultipart multipart =>
+        rust.HttpBody.multipart(rust.MultipartPayload(
+          parts: multipart.parts.map((e) {
+            final name = e.$1;
+            final item = e.$2;
+            final rustItem = rust.MultipartItem(
+              value: switch (item) {
+                MultiPartText() => rust.MultipartValue.text(item.text),
+                MultiPartBytes() => rust.MultipartValue.bytes(item.bytes),
+                MultiPartFile() => rust.MultipartValue.file(item.file),
+              },
+              fileName: item.fileName,
+              contentType: item.contentType,
+            );
+            return (name, rustItem);
+          }).toList(),
+        )),
     };
   }
 }

@@ -546,6 +546,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MultipartPayload dco_decode_box_autoadd_multipart_payload(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_multipart_payload(raw);
+  }
+
+  @protected
   TlsSettings dco_decode_box_autoadd_tls_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_tls_settings(raw);
@@ -587,6 +593,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 2:
         return HttpBody_Form(
           dco_decode_Map_String_String(raw[1]),
+        );
+      case 3:
+        return HttpBody_Multipart(
+          dco_decode_box_autoadd_multipart_payload(raw[1]),
         );
       default:
         throw Exception("unreachable");
@@ -705,9 +715,69 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<(String, MultipartItem)> dco_decode_list_record_string_multipart_item(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(dco_decode_record_string_multipart_item)
+        .toList();
+  }
+
+  @protected
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_record_string_string).toList();
+  }
+
+  @protected
+  MultipartItem dco_decode_multipart_item(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return MultipartItem(
+      value: dco_decode_multipart_value(arr[0]),
+      fileName: dco_decode_opt_String(arr[1]),
+      contentType: dco_decode_opt_String(arr[2]),
+    );
+  }
+
+  @protected
+  MultipartPayload dco_decode_multipart_payload(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1)
+      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return MultipartPayload(
+      parts: dco_decode_list_record_string_multipart_item(arr[0]),
+    );
+  }
+
+  @protected
+  MultipartValue dco_decode_multipart_value(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return MultipartValue_Text(
+          dco_decode_String(raw[1]),
+        );
+      case 1:
+        return MultipartValue_Bytes(
+          dco_decode_list_prim_u_8_strict(raw[1]),
+        );
+      case 2:
+        return MultipartValue_File(
+          dco_decode_String(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  String? dco_decode_opt_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_String(raw);
   }
 
   @protected
@@ -770,6 +840,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return (
       dco_decode_http_header_name(arr[0]),
       dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  (String, MultipartItem) dco_decode_record_string_multipart_item(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_String(arr[0]),
+      dco_decode_multipart_item(arr[1]),
     );
   }
 
@@ -962,6 +1045,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  MultipartPayload sse_decode_box_autoadd_multipart_payload(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_multipart_payload(deserializer));
+  }
+
+  @protected
   TlsSettings sse_decode_box_autoadd_tls_settings(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1006,6 +1096,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 2:
         var var_field0 = sse_decode_Map_String_String(deserializer);
         return HttpBody_Form(var_field0);
+      case 3:
+        var var_field0 = sse_decode_box_autoadd_multipart_payload(deserializer);
+        return HttpBody_Multipart(var_field0);
       default:
         throw UnimplementedError('');
     }
@@ -1132,6 +1225,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<(String, MultipartItem)> sse_decode_list_record_string_multipart_item(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <(String, MultipartItem)>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_record_string_multipart_item(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   List<(String, String)> sse_decode_list_record_string_string(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1142,6 +1248,54 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ans_.add(sse_decode_record_string_string(deserializer));
     }
     return ans_;
+  }
+
+  @protected
+  MultipartItem sse_decode_multipart_item(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_value = sse_decode_multipart_value(deserializer);
+    var var_fileName = sse_decode_opt_String(deserializer);
+    var var_contentType = sse_decode_opt_String(deserializer);
+    return MultipartItem(
+        value: var_value, fileName: var_fileName, contentType: var_contentType);
+  }
+
+  @protected
+  MultipartPayload sse_decode_multipart_payload(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_parts = sse_decode_list_record_string_multipart_item(deserializer);
+    return MultipartPayload(parts: var_parts);
+  }
+
+  @protected
+  MultipartValue sse_decode_multipart_value(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_String(deserializer);
+        return MultipartValue_Text(var_field0);
+      case 1:
+        var var_field0 = sse_decode_list_prim_u_8_strict(deserializer);
+        return MultipartValue_Bytes(var_field0);
+      case 2:
+        var var_field0 = sse_decode_String(deserializer);
+        return MultipartValue_File(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_String(deserializer));
+    } else {
+      return null;
+    }
   }
 
   @protected
@@ -1244,6 +1398,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_field0 = sse_decode_http_header_name(deserializer);
     var var_field1 = sse_decode_String(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
+  (String, MultipartItem) sse_decode_record_string_multipart_item(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_String(deserializer);
+    var var_field1 = sse_decode_multipart_item(deserializer);
     return (var_field0, var_field1);
   }
 
@@ -1459,6 +1622,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_multipart_payload(
+      MultipartPayload self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_multipart_payload(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_tls_settings(
       TlsSettings self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1496,6 +1666,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case HttpBody_Form(field0: final field0):
         sse_encode_i_32(2, serializer);
         sse_encode_Map_String_String(field0, serializer);
+      case HttpBody_Multipart(field0: final field0):
+        sse_encode_i_32(3, serializer);
+        sse_encode_box_autoadd_multipart_payload(field0, serializer);
       default:
         throw UnimplementedError('');
     }
@@ -1610,12 +1783,66 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_record_string_multipart_item(
+      List<(String, MultipartItem)> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_record_string_multipart_item(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_list_record_string_string(
       List<(String, String)> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_record_string_string(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_multipart_item(MultipartItem self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_multipart_value(self.value, serializer);
+    sse_encode_opt_String(self.fileName, serializer);
+    sse_encode_opt_String(self.contentType, serializer);
+  }
+
+  @protected
+  void sse_encode_multipart_payload(
+      MultipartPayload self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_record_string_multipart_item(self.parts, serializer);
+  }
+
+  @protected
+  void sse_encode_multipart_value(
+      MultipartValue self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case MultipartValue_Text(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_String(field0, serializer);
+      case MultipartValue_Bytes(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_list_prim_u_8_strict(field0, serializer);
+      case MultipartValue_File(field0: final field0):
+        sse_encode_i_32(2, serializer);
+        sse_encode_String(field0, serializer);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_String(self, serializer);
     }
   }
 
@@ -1713,6 +1940,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_http_header_name(self.$1, serializer);
     sse_encode_String(self.$2, serializer);
+  }
+
+  @protected
+  void sse_encode_record_string_multipart_item(
+      (String, MultipartItem) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.$1, serializer);
+    sse_encode_multipart_item(self.$2, serializer);
   }
 
   @protected

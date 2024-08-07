@@ -22,6 +22,7 @@ mixin _$HttpBody {
     required TResult Function(String field0) text,
     required TResult Function(Uint8List field0) bytes,
     required TResult Function(Map<String, String> field0) form,
+    required TResult Function(MultipartPayload field0) multipart,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -29,6 +30,7 @@ mixin _$HttpBody {
     TResult? Function(String field0)? text,
     TResult? Function(Uint8List field0)? bytes,
     TResult? Function(Map<String, String> field0)? form,
+    TResult? Function(MultipartPayload field0)? multipart,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -36,6 +38,7 @@ mixin _$HttpBody {
     TResult Function(String field0)? text,
     TResult Function(Uint8List field0)? bytes,
     TResult Function(Map<String, String> field0)? form,
+    TResult Function(MultipartPayload field0)? multipart,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -44,6 +47,7 @@ mixin _$HttpBody {
     required TResult Function(HttpBody_Text value) text,
     required TResult Function(HttpBody_Bytes value) bytes,
     required TResult Function(HttpBody_Form value) form,
+    required TResult Function(HttpBody_Multipart value) multipart,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -51,6 +55,7 @@ mixin _$HttpBody {
     TResult? Function(HttpBody_Text value)? text,
     TResult? Function(HttpBody_Bytes value)? bytes,
     TResult? Function(HttpBody_Form value)? form,
+    TResult? Function(HttpBody_Multipart value)? multipart,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -58,6 +63,7 @@ mixin _$HttpBody {
     TResult Function(HttpBody_Text value)? text,
     TResult Function(HttpBody_Bytes value)? bytes,
     TResult Function(HttpBody_Form value)? form,
+    TResult Function(HttpBody_Multipart value)? multipart,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -147,6 +153,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
     required TResult Function(String field0) text,
     required TResult Function(Uint8List field0) bytes,
     required TResult Function(Map<String, String> field0) form,
+    required TResult Function(MultipartPayload field0) multipart,
   }) {
     return text(field0);
   }
@@ -157,6 +164,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
     TResult? Function(String field0)? text,
     TResult? Function(Uint8List field0)? bytes,
     TResult? Function(Map<String, String> field0)? form,
+    TResult? Function(MultipartPayload field0)? multipart,
   }) {
     return text?.call(field0);
   }
@@ -167,6 +175,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
     TResult Function(String field0)? text,
     TResult Function(Uint8List field0)? bytes,
     TResult Function(Map<String, String> field0)? form,
+    TResult Function(MultipartPayload field0)? multipart,
     required TResult orElse(),
   }) {
     if (text != null) {
@@ -181,6 +190,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
     required TResult Function(HttpBody_Text value) text,
     required TResult Function(HttpBody_Bytes value) bytes,
     required TResult Function(HttpBody_Form value) form,
+    required TResult Function(HttpBody_Multipart value) multipart,
   }) {
     return text(this);
   }
@@ -191,6 +201,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
     TResult? Function(HttpBody_Text value)? text,
     TResult? Function(HttpBody_Bytes value)? bytes,
     TResult? Function(HttpBody_Form value)? form,
+    TResult? Function(HttpBody_Multipart value)? multipart,
   }) {
     return text?.call(this);
   }
@@ -201,6 +212,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
     TResult Function(HttpBody_Text value)? text,
     TResult Function(HttpBody_Bytes value)? bytes,
     TResult Function(HttpBody_Form value)? form,
+    TResult Function(HttpBody_Multipart value)? multipart,
     required TResult orElse(),
   }) {
     if (text != null) {
@@ -290,6 +302,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
     required TResult Function(String field0) text,
     required TResult Function(Uint8List field0) bytes,
     required TResult Function(Map<String, String> field0) form,
+    required TResult Function(MultipartPayload field0) multipart,
   }) {
     return bytes(field0);
   }
@@ -300,6 +313,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
     TResult? Function(String field0)? text,
     TResult? Function(Uint8List field0)? bytes,
     TResult? Function(Map<String, String> field0)? form,
+    TResult? Function(MultipartPayload field0)? multipart,
   }) {
     return bytes?.call(field0);
   }
@@ -310,6 +324,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
     TResult Function(String field0)? text,
     TResult Function(Uint8List field0)? bytes,
     TResult Function(Map<String, String> field0)? form,
+    TResult Function(MultipartPayload field0)? multipart,
     required TResult orElse(),
   }) {
     if (bytes != null) {
@@ -324,6 +339,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
     required TResult Function(HttpBody_Text value) text,
     required TResult Function(HttpBody_Bytes value) bytes,
     required TResult Function(HttpBody_Form value) form,
+    required TResult Function(HttpBody_Multipart value) multipart,
   }) {
     return bytes(this);
   }
@@ -334,6 +350,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
     TResult? Function(HttpBody_Text value)? text,
     TResult? Function(HttpBody_Bytes value)? bytes,
     TResult? Function(HttpBody_Form value)? form,
+    TResult? Function(HttpBody_Multipart value)? multipart,
   }) {
     return bytes?.call(this);
   }
@@ -344,6 +361,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
     TResult Function(HttpBody_Text value)? text,
     TResult Function(HttpBody_Bytes value)? bytes,
     TResult Function(HttpBody_Form value)? form,
+    TResult Function(HttpBody_Multipart value)? multipart,
     required TResult orElse(),
   }) {
     if (bytes != null) {
@@ -439,6 +457,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
     required TResult Function(String field0) text,
     required TResult Function(Uint8List field0) bytes,
     required TResult Function(Map<String, String> field0) form,
+    required TResult Function(MultipartPayload field0) multipart,
   }) {
     return form(field0);
   }
@@ -449,6 +468,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
     TResult? Function(String field0)? text,
     TResult? Function(Uint8List field0)? bytes,
     TResult? Function(Map<String, String> field0)? form,
+    TResult? Function(MultipartPayload field0)? multipart,
   }) {
     return form?.call(field0);
   }
@@ -459,6 +479,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
     TResult Function(String field0)? text,
     TResult Function(Uint8List field0)? bytes,
     TResult Function(Map<String, String> field0)? form,
+    TResult Function(MultipartPayload field0)? multipart,
     required TResult orElse(),
   }) {
     if (form != null) {
@@ -473,6 +494,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
     required TResult Function(HttpBody_Text value) text,
     required TResult Function(HttpBody_Bytes value) bytes,
     required TResult Function(HttpBody_Form value) form,
+    required TResult Function(HttpBody_Multipart value) multipart,
   }) {
     return form(this);
   }
@@ -483,6 +505,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
     TResult? Function(HttpBody_Text value)? text,
     TResult? Function(HttpBody_Bytes value)? bytes,
     TResult? Function(HttpBody_Form value)? form,
+    TResult? Function(HttpBody_Multipart value)? multipart,
   }) {
     return form?.call(this);
   }
@@ -493,6 +516,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
     TResult Function(HttpBody_Text value)? text,
     TResult Function(HttpBody_Bytes value)? bytes,
     TResult Function(HttpBody_Form value)? form,
+    TResult Function(HttpBody_Multipart value)? multipart,
     required TResult orElse(),
   }) {
     if (form != null) {
@@ -511,6 +535,155 @@ abstract class HttpBody_Form extends HttpBody {
   Map<String, String> get field0;
   @JsonKey(ignore: true)
   _$$HttpBody_FormImplCopyWith<_$HttpBody_FormImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$HttpBody_MultipartImplCopyWith<$Res> {
+  factory _$$HttpBody_MultipartImplCopyWith(_$HttpBody_MultipartImpl value,
+          $Res Function(_$HttpBody_MultipartImpl) then) =
+      __$$HttpBody_MultipartImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({MultipartPayload field0});
+}
+
+/// @nodoc
+class __$$HttpBody_MultipartImplCopyWithImpl<$Res>
+    extends _$HttpBodyCopyWithImpl<$Res, _$HttpBody_MultipartImpl>
+    implements _$$HttpBody_MultipartImplCopyWith<$Res> {
+  __$$HttpBody_MultipartImplCopyWithImpl(_$HttpBody_MultipartImpl _value,
+      $Res Function(_$HttpBody_MultipartImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+  }) {
+    return _then(_$HttpBody_MultipartImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as MultipartPayload,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$HttpBody_MultipartImpl extends HttpBody_Multipart {
+  const _$HttpBody_MultipartImpl(this.field0) : super._();
+
+  @override
+  final MultipartPayload field0;
+
+  @override
+  String toString() {
+    return 'HttpBody.multipart(field0: $field0)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HttpBody_MultipartImpl &&
+            (identical(other.field0, field0) || other.field0 == field0));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HttpBody_MultipartImplCopyWith<_$HttpBody_MultipartImpl> get copyWith =>
+      __$$HttpBody_MultipartImplCopyWithImpl<_$HttpBody_MultipartImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String field0) text,
+    required TResult Function(Uint8List field0) bytes,
+    required TResult Function(Map<String, String> field0) form,
+    required TResult Function(MultipartPayload field0) multipart,
+  }) {
+    return multipart(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String field0)? text,
+    TResult? Function(Uint8List field0)? bytes,
+    TResult? Function(Map<String, String> field0)? form,
+    TResult? Function(MultipartPayload field0)? multipart,
+  }) {
+    return multipart?.call(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String field0)? text,
+    TResult Function(Uint8List field0)? bytes,
+    TResult Function(Map<String, String> field0)? form,
+    TResult Function(MultipartPayload field0)? multipart,
+    required TResult orElse(),
+  }) {
+    if (multipart != null) {
+      return multipart(field0);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(HttpBody_Text value) text,
+    required TResult Function(HttpBody_Bytes value) bytes,
+    required TResult Function(HttpBody_Form value) form,
+    required TResult Function(HttpBody_Multipart value) multipart,
+  }) {
+    return multipart(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(HttpBody_Text value)? text,
+    TResult? Function(HttpBody_Bytes value)? bytes,
+    TResult? Function(HttpBody_Form value)? form,
+    TResult? Function(HttpBody_Multipart value)? multipart,
+  }) {
+    return multipart?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(HttpBody_Text value)? text,
+    TResult Function(HttpBody_Bytes value)? bytes,
+    TResult Function(HttpBody_Form value)? form,
+    TResult Function(HttpBody_Multipart value)? multipart,
+    required TResult orElse(),
+  }) {
+    if (multipart != null) {
+      return multipart(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class HttpBody_Multipart extends HttpBody {
+  const factory HttpBody_Multipart(final MultipartPayload field0) =
+      _$HttpBody_MultipartImpl;
+  const HttpBody_Multipart._() : super._();
+
+  @override
+  MultipartPayload get field0;
+  @JsonKey(ignore: true)
+  _$$HttpBody_MultipartImplCopyWith<_$HttpBody_MultipartImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1498,4 +1671,502 @@ class _$HttpResponseBody_StreamImpl extends HttpResponseBody_Stream {
 abstract class HttpResponseBody_Stream extends HttpResponseBody {
   const factory HttpResponseBody_Stream() = _$HttpResponseBody_StreamImpl;
   const HttpResponseBody_Stream._() : super._();
+}
+
+/// @nodoc
+mixin _$MultipartValue {
+  Object get field0 => throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String field0) text,
+    required TResult Function(Uint8List field0) bytes,
+    required TResult Function(String field0) file,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String field0)? text,
+    TResult? Function(Uint8List field0)? bytes,
+    TResult? Function(String field0)? file,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String field0)? text,
+    TResult Function(Uint8List field0)? bytes,
+    TResult Function(String field0)? file,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(MultipartValue_Text value) text,
+    required TResult Function(MultipartValue_Bytes value) bytes,
+    required TResult Function(MultipartValue_File value) file,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(MultipartValue_Text value)? text,
+    TResult? Function(MultipartValue_Bytes value)? bytes,
+    TResult? Function(MultipartValue_File value)? file,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(MultipartValue_Text value)? text,
+    TResult Function(MultipartValue_Bytes value)? bytes,
+    TResult Function(MultipartValue_File value)? file,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MultipartValueCopyWith<$Res> {
+  factory $MultipartValueCopyWith(
+          MultipartValue value, $Res Function(MultipartValue) then) =
+      _$MultipartValueCopyWithImpl<$Res, MultipartValue>;
+}
+
+/// @nodoc
+class _$MultipartValueCopyWithImpl<$Res, $Val extends MultipartValue>
+    implements $MultipartValueCopyWith<$Res> {
+  _$MultipartValueCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+}
+
+/// @nodoc
+abstract class _$$MultipartValue_TextImplCopyWith<$Res> {
+  factory _$$MultipartValue_TextImplCopyWith(_$MultipartValue_TextImpl value,
+          $Res Function(_$MultipartValue_TextImpl) then) =
+      __$$MultipartValue_TextImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String field0});
+}
+
+/// @nodoc
+class __$$MultipartValue_TextImplCopyWithImpl<$Res>
+    extends _$MultipartValueCopyWithImpl<$Res, _$MultipartValue_TextImpl>
+    implements _$$MultipartValue_TextImplCopyWith<$Res> {
+  __$$MultipartValue_TextImplCopyWithImpl(_$MultipartValue_TextImpl _value,
+      $Res Function(_$MultipartValue_TextImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+  }) {
+    return _then(_$MultipartValue_TextImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$MultipartValue_TextImpl extends MultipartValue_Text {
+  const _$MultipartValue_TextImpl(this.field0) : super._();
+
+  @override
+  final String field0;
+
+  @override
+  String toString() {
+    return 'MultipartValue.text(field0: $field0)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MultipartValue_TextImpl &&
+            (identical(other.field0, field0) || other.field0 == field0));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MultipartValue_TextImplCopyWith<_$MultipartValue_TextImpl> get copyWith =>
+      __$$MultipartValue_TextImplCopyWithImpl<_$MultipartValue_TextImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String field0) text,
+    required TResult Function(Uint8List field0) bytes,
+    required TResult Function(String field0) file,
+  }) {
+    return text(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String field0)? text,
+    TResult? Function(Uint8List field0)? bytes,
+    TResult? Function(String field0)? file,
+  }) {
+    return text?.call(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String field0)? text,
+    TResult Function(Uint8List field0)? bytes,
+    TResult Function(String field0)? file,
+    required TResult orElse(),
+  }) {
+    if (text != null) {
+      return text(field0);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(MultipartValue_Text value) text,
+    required TResult Function(MultipartValue_Bytes value) bytes,
+    required TResult Function(MultipartValue_File value) file,
+  }) {
+    return text(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(MultipartValue_Text value)? text,
+    TResult? Function(MultipartValue_Bytes value)? bytes,
+    TResult? Function(MultipartValue_File value)? file,
+  }) {
+    return text?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(MultipartValue_Text value)? text,
+    TResult Function(MultipartValue_Bytes value)? bytes,
+    TResult Function(MultipartValue_File value)? file,
+    required TResult orElse(),
+  }) {
+    if (text != null) {
+      return text(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class MultipartValue_Text extends MultipartValue {
+  const factory MultipartValue_Text(final String field0) =
+      _$MultipartValue_TextImpl;
+  const MultipartValue_Text._() : super._();
+
+  @override
+  String get field0;
+  @JsonKey(ignore: true)
+  _$$MultipartValue_TextImplCopyWith<_$MultipartValue_TextImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$MultipartValue_BytesImplCopyWith<$Res> {
+  factory _$$MultipartValue_BytesImplCopyWith(_$MultipartValue_BytesImpl value,
+          $Res Function(_$MultipartValue_BytesImpl) then) =
+      __$$MultipartValue_BytesImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({Uint8List field0});
+}
+
+/// @nodoc
+class __$$MultipartValue_BytesImplCopyWithImpl<$Res>
+    extends _$MultipartValueCopyWithImpl<$Res, _$MultipartValue_BytesImpl>
+    implements _$$MultipartValue_BytesImplCopyWith<$Res> {
+  __$$MultipartValue_BytesImplCopyWithImpl(_$MultipartValue_BytesImpl _value,
+      $Res Function(_$MultipartValue_BytesImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+  }) {
+    return _then(_$MultipartValue_BytesImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as Uint8List,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$MultipartValue_BytesImpl extends MultipartValue_Bytes {
+  const _$MultipartValue_BytesImpl(this.field0) : super._();
+
+  @override
+  final Uint8List field0;
+
+  @override
+  String toString() {
+    return 'MultipartValue.bytes(field0: $field0)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MultipartValue_BytesImpl &&
+            const DeepCollectionEquality().equals(other.field0, field0));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(field0));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MultipartValue_BytesImplCopyWith<_$MultipartValue_BytesImpl>
+      get copyWith =>
+          __$$MultipartValue_BytesImplCopyWithImpl<_$MultipartValue_BytesImpl>(
+              this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String field0) text,
+    required TResult Function(Uint8List field0) bytes,
+    required TResult Function(String field0) file,
+  }) {
+    return bytes(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String field0)? text,
+    TResult? Function(Uint8List field0)? bytes,
+    TResult? Function(String field0)? file,
+  }) {
+    return bytes?.call(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String field0)? text,
+    TResult Function(Uint8List field0)? bytes,
+    TResult Function(String field0)? file,
+    required TResult orElse(),
+  }) {
+    if (bytes != null) {
+      return bytes(field0);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(MultipartValue_Text value) text,
+    required TResult Function(MultipartValue_Bytes value) bytes,
+    required TResult Function(MultipartValue_File value) file,
+  }) {
+    return bytes(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(MultipartValue_Text value)? text,
+    TResult? Function(MultipartValue_Bytes value)? bytes,
+    TResult? Function(MultipartValue_File value)? file,
+  }) {
+    return bytes?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(MultipartValue_Text value)? text,
+    TResult Function(MultipartValue_Bytes value)? bytes,
+    TResult Function(MultipartValue_File value)? file,
+    required TResult orElse(),
+  }) {
+    if (bytes != null) {
+      return bytes(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class MultipartValue_Bytes extends MultipartValue {
+  const factory MultipartValue_Bytes(final Uint8List field0) =
+      _$MultipartValue_BytesImpl;
+  const MultipartValue_Bytes._() : super._();
+
+  @override
+  Uint8List get field0;
+  @JsonKey(ignore: true)
+  _$$MultipartValue_BytesImplCopyWith<_$MultipartValue_BytesImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$MultipartValue_FileImplCopyWith<$Res> {
+  factory _$$MultipartValue_FileImplCopyWith(_$MultipartValue_FileImpl value,
+          $Res Function(_$MultipartValue_FileImpl) then) =
+      __$$MultipartValue_FileImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String field0});
+}
+
+/// @nodoc
+class __$$MultipartValue_FileImplCopyWithImpl<$Res>
+    extends _$MultipartValueCopyWithImpl<$Res, _$MultipartValue_FileImpl>
+    implements _$$MultipartValue_FileImplCopyWith<$Res> {
+  __$$MultipartValue_FileImplCopyWithImpl(_$MultipartValue_FileImpl _value,
+      $Res Function(_$MultipartValue_FileImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? field0 = null,
+  }) {
+    return _then(_$MultipartValue_FileImpl(
+      null == field0
+          ? _value.field0
+          : field0 // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$MultipartValue_FileImpl extends MultipartValue_File {
+  const _$MultipartValue_FileImpl(this.field0) : super._();
+
+  @override
+  final String field0;
+
+  @override
+  String toString() {
+    return 'MultipartValue.file(field0: $field0)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MultipartValue_FileImpl &&
+            (identical(other.field0, field0) || other.field0 == field0));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, field0);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MultipartValue_FileImplCopyWith<_$MultipartValue_FileImpl> get copyWith =>
+      __$$MultipartValue_FileImplCopyWithImpl<_$MultipartValue_FileImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String field0) text,
+    required TResult Function(Uint8List field0) bytes,
+    required TResult Function(String field0) file,
+  }) {
+    return file(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String field0)? text,
+    TResult? Function(Uint8List field0)? bytes,
+    TResult? Function(String field0)? file,
+  }) {
+    return file?.call(field0);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String field0)? text,
+    TResult Function(Uint8List field0)? bytes,
+    TResult Function(String field0)? file,
+    required TResult orElse(),
+  }) {
+    if (file != null) {
+      return file(field0);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(MultipartValue_Text value) text,
+    required TResult Function(MultipartValue_Bytes value) bytes,
+    required TResult Function(MultipartValue_File value) file,
+  }) {
+    return file(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(MultipartValue_Text value)? text,
+    TResult? Function(MultipartValue_Bytes value)? bytes,
+    TResult? Function(MultipartValue_File value)? file,
+  }) {
+    return file?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(MultipartValue_Text value)? text,
+    TResult Function(MultipartValue_Bytes value)? bytes,
+    TResult Function(MultipartValue_File value)? file,
+    required TResult orElse(),
+  }) {
+    if (file != null) {
+      return file(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class MultipartValue_File extends MultipartValue {
+  const factory MultipartValue_File(final String field0) =
+      _$MultipartValue_FileImpl;
+  const MultipartValue_File._() : super._();
+
+  @override
+  String get field0;
+  @JsonKey(ignore: true)
+  _$$MultipartValue_FileImplCopyWith<_$MultipartValue_FileImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

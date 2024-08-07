@@ -82,6 +82,9 @@ sealed class HttpBody with _$HttpBody {
   const factory HttpBody.form(
     Map<String, String> field0,
   ) = HttpBody_Form;
+  const factory HttpBody.multipart(
+    MultipartPayload field0,
+  ) = HttpBody_Multipart;
 }
 
 enum HttpExpectBody {
@@ -176,4 +179,61 @@ enum HttpVersionPref {
   http3,
   all,
   ;
+}
+
+class MultipartItem {
+  final MultipartValue value;
+  final String? fileName;
+  final String? contentType;
+
+  const MultipartItem({
+    required this.value,
+    this.fileName,
+    this.contentType,
+  });
+
+  @override
+  int get hashCode => value.hashCode ^ fileName.hashCode ^ contentType.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MultipartItem &&
+          runtimeType == other.runtimeType &&
+          value == other.value &&
+          fileName == other.fileName &&
+          contentType == other.contentType;
+}
+
+class MultipartPayload {
+  final List<(String, MultipartItem)> parts;
+
+  const MultipartPayload({
+    required this.parts,
+  });
+
+  @override
+  int get hashCode => parts.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MultipartPayload &&
+          runtimeType == other.runtimeType &&
+          parts == other.parts;
+}
+
+@freezed
+sealed class MultipartValue with _$MultipartValue {
+  const MultipartValue._();
+
+  const factory MultipartValue.text(
+    String field0,
+  ) = MultipartValue_Text;
+  const factory MultipartValue.bytes(
+    Uint8List field0,
+  ) = MultipartValue_Bytes;
+  const factory MultipartValue.file(
+    String field0,
+  ) = MultipartValue_File;
 }

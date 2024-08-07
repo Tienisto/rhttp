@@ -104,6 +104,12 @@ sealed class HttpBody {
   /// The Content-Type header will be set to `application/x-www-form-urlencoded`
   /// if not provided.
   const factory HttpBody.form(Map<String, String> form) = HttpBodyForm._;
+
+  /// Multi-part form data.
+  /// The Content-Type header will be overridden to `multipart/form-data`
+  /// with a random boundary.
+  factory HttpBody.multipart(Map<String, MultipartItem> formData) =
+      HttpBodyMultipart.map;
 }
 
 /// A plain text body.
@@ -135,6 +141,89 @@ class HttpBodyForm extends HttpBody {
   final Map<String, String> form;
 
   const HttpBodyForm._(this.form);
+}
+
+/// Multi-part form data.
+/// The Content-Type header will be overridden to `multipart/form-data`
+/// with a random boundary.
+class HttpBodyMultipart extends HttpBody {
+  final List<(String, MultipartItem)> parts;
+
+  const HttpBodyMultipart._(this.parts);
+
+  factory HttpBodyMultipart.map(Map<String, MultipartItem> map) {
+    return HttpBodyMultipart._([
+      for (final entry in map.entries) (entry.key, entry.value),
+    ]);
+  }
+
+  /// Public in case you want to create a list of form data manually.
+  const factory HttpBodyMultipart.list(List<(String, MultipartItem)> list) =
+      HttpBodyMultipart._;
+}
+
+sealed class MultipartItem {
+  final String? fileName;
+  final String? contentType;
+
+  const MultipartItem({
+    this.fileName,
+    this.contentType,
+  });
+
+  /// A plain text value.
+  const factory MultipartItem.text({
+    required String text,
+    String? fileName,
+    String? contentType,
+  }) = MultiPartText._;
+
+  /// A value of raw bytes.
+  const factory MultipartItem.bytes({
+    required Uint8List bytes,
+    String? fileName,
+    String? contentType,
+  }) = MultiPartBytes._;
+
+  /// A file path.
+  const factory MultipartItem.file({
+    required String file,
+    String? fileName,
+    String? contentType,
+  }) = MultiPartFile._;
+}
+
+/// A plain text value.
+class MultiPartText extends MultipartItem {
+  final String text;
+
+  const MultiPartText._({
+    required this.text,
+    super.fileName,
+    super.contentType,
+  });
+}
+
+/// A value of raw bytes.
+class MultiPartBytes extends MultipartItem {
+  final Uint8List bytes;
+
+  const MultiPartBytes._({
+    required this.bytes,
+    super.fileName,
+    super.contentType,
+  });
+}
+
+/// A file path.
+class MultiPartFile extends MultipartItem {
+  final String file;
+
+  const MultiPartFile._({
+    required this.file,
+    super.fileName,
+    super.contentType,
+  });
 }
 
 @internal

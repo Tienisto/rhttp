@@ -148,6 +148,28 @@ await Rhttp.request(
 );
 ```
 
+**Multipart**
+
+Pass a map of `MultipartItem` to the `HttpBody.multipart` constructor.
+
+The Content-Type header will be overridden to `multipart/form-data` with a random boundary.
+
+```dart
+await Rhttp.request(
+  method: HttpMethod.post,
+  url: 'https://example.com',
+  body: HttpBody.multipart({
+    'name': const MultipartItem.text(
+      text: 'Tom',
+    ),
+    'profile_image': MultipartItem.bytes(
+      bytes: Uint8List.fromList(bytes),
+      fileName: 'image.jpeg',
+    ),
+  }),
+)
+```
+
 ### ➤ Response Body
 
 To let Rust do most of the work, you must specify the expected response body type before making the request.
@@ -276,7 +298,7 @@ await Rhttp.get(
 );
 ```
 
-### ➤ Disable TLS verification
+### ➤ Disable certificate verification
 
 This is very insecure and should only be used for testing purposes.
 
@@ -285,7 +307,7 @@ await Rhttp.get(
   'https://example.com',
   settings: const ClientSettings(
     tlsSettings: TlsSettings(
-      verifyCerts: false,
+      verifyCertificates: false,
     ),
   ),
 );
