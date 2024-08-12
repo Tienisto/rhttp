@@ -1,3 +1,7 @@
+## 0.3.2
+
+- docs: update README
+
 ## 0.3.1
 
 - docs: add benchmark
