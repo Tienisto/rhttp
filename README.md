@@ -8,16 +8,20 @@ Make HTTP requests using Rust for Flutter developers.
 ## About
 
 The default HTTP client in Dart is part of `dart:io`, which lacks configurability and performance compared to other HTTP clients.
+Furthermore, HTTP/2 and HTTP/3 are either missing or not supported by default.
 This package uses FFI with [flutter_rust_bridge](https://pub.dev/packages/flutter_rust_bridge) to call Rust code. This allows you to use a faster and more efficient HTTP client.
 On Rust's side, the [reqwest](https://crates.io/crates/reqwest) crate is used to make the requests.
+
+Why shouldn't I use [cronet_http](https://pub.dev/packages/cronet_http) or [cupertino_http](https://pub.dev/packages/cupertino_http)?
+These packages for instance only support Android or iOS, while rhttp supports all platforms (except web currently) with a single configuration.
 
 ## Benchmark
 
 rhttp is much faster at downloading large files and a bit faster at downloading small files compared to the default HTTP client in Dart.
 
-| Small payload (1 KB)                                                                                 | Large payload (10 MB)                                                                                |
-|------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
-| ![benchmark-small](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-small.png) | ![benchmark-large](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-large.png) |
+![benchmark-small](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-small.png)
+
+![benchmark-large](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-large.png)
 
 Referred packages: [dio](https://pub.dev/packages/dio) (5.5.0+1), [http](https://pub.dev/packages/http) (1.2.2), [rhttp](https://pub.dev/packages/rhttp) (0.3.0)
 
