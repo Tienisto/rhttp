@@ -11,6 +11,18 @@ The default HTTP client in Dart is part of `dart:io`, which lacks configurabilit
 This package uses FFI with [flutter_rust_bridge](https://pub.dev/packages/flutter_rust_bridge) to call Rust code. This allows you to use a faster and more efficient HTTP client.
 On Rust's side, the [reqwest](https://crates.io/crates/reqwest) crate is used to make the requests.
 
+## Benchmark
+
+rhttp is much faster at downloading large files and a bit faster at downloading small files compared to the default HTTP client in Dart.
+
+| Small payload (1 KB)                                                                                 | Large payload (10 MB)                                                                                |
+|------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| ![benchmark-small](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-small.png) | ![benchmark-large](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-large.png) |
+
+Referred packages: [dio](https://pub.dev/packages/dio) (5.5.0+1), [http](https://pub.dev/packages/http) (1.2.2), [rhttp](https://pub.dev/packages/rhttp) (0.3.0)
+
+Checkout the benchmark code [here](https://github.com/Tienisto/rhttp/tree/main/benchmark).
+
 ## Getting Started
 
 ### ➤ Installation
