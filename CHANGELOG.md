@@ -1,3 +1,7 @@
+## 0.3.1
+
+- docs: add benchmark
+
 ## 0.3.0
 
 - feat: add `HttpBody.multipart`
