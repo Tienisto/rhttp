@@ -15,6 +15,14 @@ On Rust's side, the [reqwest](https://crates.io/crates/reqwest) crate is used to
 Why shouldn't I use [cronet_http](https://pub.dev/packages/cronet_http) or [cupertino_http](https://pub.dev/packages/cupertino_http)?
 These packages for instance only support Android or iOS, while rhttp supports all platforms (except web currently) with a single configuration.
 
+## Features
+
+- ✅ HTTP/1, HTTP/1.1, HTTP/2, and HTTP/3 support
+- ✅ TLS 1.2 and 1.3 support
+- ✅ Connection pooling
+- ✅ Strong type safety
+- ✅ Optional compatibility layer for the [http](https://pub.dev/packages/http) package
+
 ## Benchmark
 
 rhttp is much faster at downloading large files and a bit faster at downloading small files compared to the default HTTP client in Dart.
@@ -65,6 +73,25 @@ void main() async {
   // Read the response
   int statusCode = response.statusCode;
   String body = response.body;
+}
+```
+
+Alternatively, you can use the `RhttpCompatibleClient` that implements the `Client` of the [http](https://pub.dev/packages/http) package.
+
+For more information, see [Compatibility Layer](#-compatibility-layer).
+
+```dart
+import 'package:rhttp/rhttp.dart';
+import 'package:http/http.dart' as http;
+
+void main() async {
+  await Rhttp.init();
+  
+  http.Client client = await RhttpCompatibleClient.create();
+  http.Response response = await client.get(Uri.parse('https://example.com'));
+
+  print(response.statusCode);
+  print(response.body);
 }
 ```
 
@@ -327,6 +354,33 @@ await Rhttp.get(
     ),
   ),
 );
+```
+
+### ➤ Compatibility Layer
+
+You can use the `RhttpCompatibleClient` that implements the `Client` of the [http](https://pub.dev/packages/http) package,
+thereby exposing the same API as the default HTTP client in the Dart ecosystem.
+
+This comes with some downsides, such as:
+
+- inferior type safety due to the flaw that `body` is of type `Object?` instead of a sane supertype.
+- body of type `Map` is implicitly interpreted as `x-www-form-urlencoded` that is only documented in StackOverflow (as of writing this).
+- no support for cancellation
+- no out-of-the-box support for multipart requests
+
+```dart
+import 'package:rhttp/rhttp.dart';
+import 'package:http/http.dart' as http;
+
+void main() async {
+  await Rhttp.init();
+  
+  http.Client client = await RhttpCompatibleClient.create();
+  http.Response response = await client.get(Uri.parse('https://example.com'));
+
+  print(response.statusCode);
+  print(response.body);
+}
 ```
 
 ## License

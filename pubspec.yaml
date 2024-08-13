@@ -20,6 +20,7 @@ dependencies:
     sdk: flutter
   flutter_rust_bridge: 2.1.0
   freezed_annotation: ^2.0.0
+  http: ^1.2.2
   meta: ^1.12.0
   plugin_platform_interface: ^2.0.2
 

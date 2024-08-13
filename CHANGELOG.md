@@ -1,3 +1,7 @@
+## 0.4.0
+
+- feat: add `RHttpCompatibleClient` that is compatible with the [http](https://pub.dev/packages/http) package
+
 ## 0.3.2
 
 - docs: update README

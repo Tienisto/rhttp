@@ -7,6 +7,9 @@ import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/request.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 
+/// An HTTP client that is used to make requests.
+/// Creating this is an expensive operation, so it is recommended to reuse it.
+/// Internally, it holds a connection pool and other resources on the Rust side.
 class RhttpClient {
   /// Settings for the client.
   final ClientSettings settings;
