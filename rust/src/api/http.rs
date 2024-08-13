@@ -8,8 +8,7 @@ use reqwest::header::{HeaderName, HeaderValue};
 use reqwest::{Method, Response, Url, Version};
 use tokio_util::sync::CancellationToken;
 
-use crate::api::client::ClientSettings;
-use crate::api::client_pool::RequestClient;
+use crate::api::client::{ClientSettings, RequestClient};
 use crate::api::error::RhttpError;
 use crate::api::http_types::HttpHeaderName;
 use crate::api::{client_pool, request_pool};
@@ -126,7 +125,8 @@ pub enum HttpResponseBody {
 }
 
 pub fn register_client(settings: ClientSettings) -> Result<i64, RhttpError> {
-    let (address, _) = client_pool::register_client(settings)?;
+    let client = RequestClient::new(settings)?;
+    let (address, _) = client_pool::register_client(client)?;
 
     Ok(address)
 }
@@ -337,7 +337,7 @@ async fn make_http_request_helper(
         }
 
         None => match settings {
-            Some(settings) => client_pool::create_client(settings)
+            Some(settings) => RequestClient::new(settings)
                 .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
             None => RequestClient::new_default(),
         },
