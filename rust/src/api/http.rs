@@ -155,7 +155,7 @@ pub async fn make_http_request(
         on_cancel_token(address).await;
 
         tokio::select! {
-            _ = cloned_token.cancelled() => Err(RhttpError::RhttpCancelError(url.to_owned())),
+            _ = cloned_token.cancelled() => Err(RhttpError::RhttpCancelError),
             response = make_http_request_inner(client_address, settings, method, url.to_owned(), query, headers, body, expect_body) => {
                 request_pool::remove_token(address);
                 response
@@ -242,7 +242,7 @@ pub async fn make_http_request_receive_stream(
         on_cancel_token(address).await;
 
         tokio::select! {
-            _ = cloned_token.cancelled() => Err(RhttpError::RhttpCancelError(url.to_owned())),
+            _ = cloned_token.cancelled() => Err(RhttpError::RhttpCancelError),
             _ = make_http_request_receive_stream_inner(
                 client_address,
                 settings,
@@ -436,7 +436,7 @@ async fn make_http_request_helper(
 
     let response = client.client.execute(request).await.map_err(|e| {
         if e.is_timeout() {
-            RhttpError::RhttpTimeoutError(url.to_owned())
+            RhttpError::RhttpTimeoutError
         } else {
             // We use the debug string because it contains more information
             let inner = e.source();
@@ -447,10 +447,7 @@ async fn make_http_request_helper(
             };
 
             if is_cert_error {
-                RhttpError::RhttpInvalidCertificateError(
-                    url.to_owned(),
-                    format!("{:?}", inner.unwrap()),
-                )
+                RhttpError::RhttpInvalidCertificateError(format!("{:?}", inner.unwrap()))
             } else {
                 RhttpError::RhttpUnknownError(match inner {
                     Some(inner) => format!("{inner:?}"),
@@ -464,7 +461,6 @@ async fn make_http_request_helper(
         let status = response.status();
         if status.is_client_error() || status.is_server_error() {
             return Err(RhttpError::RhttpStatusCodeError(
-                url,
                 response.status().as_u16(),
                 header_to_vec(response.headers()),
                 match expect_body {

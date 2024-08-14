@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:meta/meta.dart';
-import 'package:rhttp/src/model/cancel_token.dart';
 import 'package:rhttp/src/model/exception.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
@@ -14,40 +13,32 @@ import 'package:rhttp/src/rust/api/http.dart' as rust;
 /// Non-Generated helper function that is used by
 /// the client and also by the static class.
 @internal
-Future<HttpResponse> requestInternalGeneric({
-  required int? clientRef,
-  required ClientSettings? settings,
-  required HttpMethod method,
-  required String url,
-  required Map<String, String>? query,
-  required HttpHeaders? headers,
-  required HttpBody? body,
-  required HttpExpectBody expectBody,
-  required CancelToken? cancelToken,
-}) async {
+Future<HttpResponse> requestInternalGeneric(RhttpRequest request) async {
+  HttpHeaders? headers = request.headers;
   headers = _digestHeaders(
     headers: headers,
-    body: body,
+    body: request.body,
   );
 
   try {
-    if (expectBody == HttpExpectBody.stream) {
+    if (request.expectBody == HttpExpectBody.stream) {
       final cancelRefCompleter = Completer<int>();
       final responseCompleter = Completer<rust.HttpResponse>();
       final stream = rust.makeHttpRequestReceiveStream(
-        clientAddress: clientRef,
-        settings: settings?.toRustType(),
-        method: method._toRustType(),
-        url: url,
-        query: query?.entries.map((e) => (e.key, e.value)).toList(),
+        clientAddress: request.client?.ref,
+        settings: request.settings?.toRustType(),
+        method: request.method._toRustType(),
+        url: request.url,
+        query: request.query?.entries.map((e) => (e.key, e.value)).toList(),
         headers: headers?._toRustType(),
-        body: body?._toRustType(),
+        body: request.body?._toRustType(),
         onResponse: (r) => responseCompleter.complete(r),
         onCancelToken: (int cancelRef) =>
             cancelRefCompleter.complete(cancelRef),
-        cancelable: cancelToken != null,
+        cancelable: request.cancelToken != null,
       );
 
+      final cancelToken = request.cancelToken;
       if (cancelToken != null) {
         final cancelRef = await cancelRefCompleter.future;
         cancelToken.setRef(cancelRef);
@@ -62,19 +53,20 @@ Future<HttpResponse> requestInternalGeneric({
     } else {
       final cancelRefCompleter = Completer<int>();
       final responseFuture = rust.makeHttpRequest(
-        clientAddress: clientRef,
-        settings: settings?.toRustType(),
-        method: method._toRustType(),
-        url: url,
-        query: query?.entries.map((e) => (e.key, e.value)).toList(),
+        clientAddress: request.client?.ref,
+        settings: request.settings?.toRustType(),
+        method: request.method._toRustType(),
+        url: request.url,
+        query: request.query?.entries.map((e) => (e.key, e.value)).toList(),
         headers: headers?._toRustType(),
-        body: body?._toRustType(),
-        expectBody: expectBody.toRustType(),
+        body: request.body?._toRustType(),
+        expectBody: request.expectBody.toRustType(),
         onCancelToken: (int cancelRef) =>
             cancelRefCompleter.complete(cancelRef),
-        cancelable: cancelToken != null,
+        cancelable: request.cancelToken != null,
       );
 
+      final cancelToken = request.cancelToken;
       if (cancelToken != null) {
         final cancelRef = await cancelRefCompleter.future;
         cancelToken.setRef(cancelRef);
@@ -84,7 +76,7 @@ Future<HttpResponse> requestInternalGeneric({
     }
   } catch (e) {
     if (e is rust_error.RhttpError) {
-      throw parseError(e);
+      throw parseError(request, e);
     } else {
       rethrow;
     }

@@ -1,8 +1,93 @@
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:rhttp/src/client/rhttp_client.dart';
+import 'package:rhttp/src/model/cancel_token.dart';
+import 'package:rhttp/src/model/response.dart';
+import 'package:rhttp/src/model/settings.dart';
+import 'package:rhttp/src/request.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/rust/api/http_types.dart';
+
+/// An HTTP request that can be used
+/// on a client or statically.
+class BaseRhttpRequest {
+  /// The HTTP method to use.
+  final HttpMethod method;
+
+  /// The URL to request.
+  final String url;
+
+  /// Query parameters.
+  /// This can be null, if there are no query parameters
+  /// or if they are already part of the URL.
+  final Map<String, String>? query;
+
+  /// Headers to send with the request.
+  final HttpHeaders? headers;
+
+  /// The body of the request.
+  final HttpBody? body;
+
+  /// The expected body type of the response.
+  final HttpExpectBody expectBody;
+
+  /// The cancel token to use for the request.
+  final CancelToken? cancelToken;
+
+  const BaseRhttpRequest({
+    required this.method,
+    required this.url,
+    required this.query,
+    required this.headers,
+    required this.body,
+    required this.expectBody,
+    required this.cancelToken,
+  });
+}
+
+/// An HTTP request with the information which client to use.
+class RhttpRequest extends BaseRhttpRequest {
+  /// The client to use for the request.
+  final RhttpClient? client;
+
+  /// The settings to use for the request.
+  /// This is **only** used if [client] is `null`.
+  final ClientSettings? settings;
+
+  RhttpRequest({
+    required this.client,
+    required this.settings,
+    required super.method,
+    required super.url,
+    required super.query,
+    required super.headers,
+    required super.body,
+    required super.expectBody,
+    required super.cancelToken,
+  });
+
+  factory RhttpRequest.fromBase({
+    required BaseRhttpRequest request,
+    required RhttpClient? client,
+    required ClientSettings? settings,
+  }) =>
+      RhttpRequest(
+        client: client,
+        settings: settings,
+        method: request.method,
+        url: request.url,
+        query: request.query,
+        headers: request.headers,
+        body: request.body,
+        expectBody: request.expectBody,
+        cancelToken: request.cancelToken,
+      );
+
+  /// Sends the request using the specified client / settings
+  /// and returns the response.
+  Future<HttpResponse> send() => requestInternalGeneric(this);
+}
 
 enum HttpExpectBody {
   /// The response body is parsed as text.

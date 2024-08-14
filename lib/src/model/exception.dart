@@ -1,41 +1,37 @@
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/rust/api/error.dart' as rust;
 import 'package:rhttp/src/rust/api/http.dart' as rust_http;
 
 /// The base class for all exceptions thrown by the `rhttp` library.
 sealed class RhttpException {
-  const RhttpException();
+  /// The associated request when the exception was thrown.
+  final RhttpRequest request;
+
+  const RhttpException(this.request);
 }
 
 /// An exception thrown when a request is canceled.
 class RhttpCancelException extends RhttpException {
-  /// The URL of the request that was canceled.
-  final String url;
-
-  const RhttpCancelException(this.url);
+  const RhttpCancelException(super.request);
 
   @override
-  String toString() => '[$runtimeType] Request was canceled. URL: $url';
+  String toString() =>
+      '[$runtimeType] Request was canceled. URL: ${request.url}';
 }
 
 /// An exception thrown when a request times out.
 class RhttpTimeoutException extends RhttpException {
-  /// The URL of the request that timed out.
-  final String url;
-
-  const RhttpTimeoutException(this.url);
+  const RhttpTimeoutException(super.request);
 
   @override
-  String toString() => '[$runtimeType] Request timed out. URL: $url';
+  String toString() => '[$runtimeType] Request timed out. URL: ${request.url}';
 }
 
 /// An exception thrown on a 4xx or 5xx status code.
 class RhttpStatusCodeException extends RhttpException {
-  /// The URL of the request that returned the status code.
-  final String url;
-
   /// The status code of the response.
   final int statusCode;
 
@@ -52,36 +48,35 @@ class RhttpStatusCodeException extends RhttpException {
   final Object? body;
 
   const RhttpStatusCodeException({
-    required this.url,
+    required RhttpRequest request,
     required this.statusCode,
     required this.headers,
     required this.body,
-  });
+  }) : super(request);
 
   @override
-  String toString() => '[$runtimeType] Status code: $statusCode. URL: $url';
+  String toString() =>
+      '[$runtimeType] Status code: $statusCode. URL: ${request.url}';
 }
 
 /// An exception thrown when the server's certificate is invalid.
 class RhttpInvalidCertificateException extends RhttpException {
-  /// The URL of the request that failed.
-  final String url;
-
   /// The more detailed error message.
   final String message;
 
   const RhttpInvalidCertificateException({
-    required this.url,
+    required RhttpRequest request,
     required this.message,
-  });
+  }) : super(request);
 
   @override
-  String toString() => '[$runtimeType] Invalid certificate. $message URL: $url';
+  String toString() =>
+      '[$runtimeType] Invalid certificate. $message URL: ${request.url}';
 }
 
 /// An exception thrown a request is made with an invalid client.
 class RhttpInvalidClientException extends RhttpException {
-  const RhttpInvalidClientException();
+  const RhttpInvalidClientException(super.request);
 
   @override
   String toString() =>
@@ -93,20 +88,19 @@ class RhttpUnknownException extends RhttpException {
   /// The error message
   final String message;
 
-  const RhttpUnknownException(this.message);
+  const RhttpUnknownException(super.request, this.message);
 
   @override
   String toString() => '[$runtimeType] $message';
 }
 
 @internal
-RhttpException parseError(rust.RhttpError error) {
+RhttpException parseError(RhttpRequest request, rust.RhttpError error) {
   return error.when(
-    rhttpCancelError: (url) => RhttpCancelException(url),
-    rhttpTimeoutError: (url) => RhttpTimeoutException(url),
-    rhttpStatusCodeError: (url, code, headers, body) =>
-        RhttpStatusCodeException(
-      url: url,
+    rhttpCancelError: () => RhttpCancelException(request),
+    rhttpTimeoutError: () => RhttpTimeoutException(request),
+    rhttpStatusCodeError: (code, headers, body) => RhttpStatusCodeException(
+      request: request,
       statusCode: code,
       headers: headers,
       body: switch (body) {
@@ -115,9 +109,9 @@ RhttpException parseError(rust.RhttpError error) {
         rust_http.HttpResponseBody_Stream() => null,
       },
     ),
-    rhttpInvalidCertificateError: (url, message) =>
-        RhttpInvalidCertificateException(url: url, message: message),
-    rhttpInvalidClientError: () => const RhttpInvalidClientException(),
-    rhttpUnknownError: (message) => RhttpUnknownException(message),
+    rhttpInvalidCertificateError: (message) =>
+        RhttpInvalidCertificateException(request: request, message: message),
+    rhttpInvalidClientError: () => RhttpInvalidClientException(request),
+    rhttpUnknownError: (message) => RhttpUnknownException(request, message),
   );
 }

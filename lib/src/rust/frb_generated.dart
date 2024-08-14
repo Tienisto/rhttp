@@ -905,24 +905,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
       case 0:
-        return RhttpError_RhttpCancelError(
-          dco_decode_String(raw[1]),
-        );
+        return RhttpError_RhttpCancelError();
       case 1:
-        return RhttpError_RhttpTimeoutError(
-          dco_decode_String(raw[1]),
-        );
+        return RhttpError_RhttpTimeoutError();
       case 2:
         return RhttpError_RhttpStatusCodeError(
-          dco_decode_String(raw[1]),
-          dco_decode_u_16(raw[2]),
-          dco_decode_list_record_string_string(raw[3]),
-          dco_decode_box_autoadd_http_response_body(raw[4]),
+          dco_decode_u_16(raw[1]),
+          dco_decode_list_record_string_string(raw[2]),
+          dco_decode_box_autoadd_http_response_body(raw[3]),
         );
       case 3:
         return RhttpError_RhttpInvalidCertificateError(
           dco_decode_String(raw[1]),
-          dco_decode_String(raw[2]),
         );
       case 4:
         return RhttpError_RhttpInvalidClientError();
@@ -1502,23 +1496,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var tag_ = sse_decode_i_32(deserializer);
     switch (tag_) {
       case 0:
-        var var_field0 = sse_decode_String(deserializer);
-        return RhttpError_RhttpCancelError(var_field0);
+        return RhttpError_RhttpCancelError();
       case 1:
-        var var_field0 = sse_decode_String(deserializer);
-        return RhttpError_RhttpTimeoutError(var_field0);
+        return RhttpError_RhttpTimeoutError();
       case 2:
-        var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_u_16(deserializer);
-        var var_field2 = sse_decode_list_record_string_string(deserializer);
-        var var_field3 =
+        var var_field0 = sse_decode_u_16(deserializer);
+        var var_field1 = sse_decode_list_record_string_string(deserializer);
+        var var_field2 =
             sse_decode_box_autoadd_http_response_body(deserializer);
         return RhttpError_RhttpStatusCodeError(
-            var_field0, var_field1, var_field2, var_field3);
+            var_field0, var_field1, var_field2);
       case 3:
         var var_field0 = sse_decode_String(deserializer);
-        var var_field1 = sse_decode_String(deserializer);
-        return RhttpError_RhttpInvalidCertificateError(var_field0, var_field1);
+        return RhttpError_RhttpInvalidCertificateError(var_field0);
       case 4:
         return RhttpError_RhttpInvalidClientError();
       case 5:
@@ -2082,30 +2072,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_rhttp_error(RhttpError self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
-      case RhttpError_RhttpCancelError(field0: final field0):
+      case RhttpError_RhttpCancelError():
         sse_encode_i_32(0, serializer);
-        sse_encode_String(field0, serializer);
-      case RhttpError_RhttpTimeoutError(field0: final field0):
+      case RhttpError_RhttpTimeoutError():
         sse_encode_i_32(1, serializer);
-        sse_encode_String(field0, serializer);
       case RhttpError_RhttpStatusCodeError(
           field0: final field0,
           field1: final field1,
-          field2: final field2,
-          field3: final field3
+          field2: final field2
         ):
         sse_encode_i_32(2, serializer);
-        sse_encode_String(field0, serializer);
-        sse_encode_u_16(field1, serializer);
-        sse_encode_list_record_string_string(field2, serializer);
-        sse_encode_box_autoadd_http_response_body(field3, serializer);
-      case RhttpError_RhttpInvalidCertificateError(
-          field0: final field0,
-          field1: final field1
-        ):
+        sse_encode_u_16(field0, serializer);
+        sse_encode_list_record_string_string(field1, serializer);
+        sse_encode_box_autoadd_http_response_body(field2, serializer);
+      case RhttpError_RhttpInvalidCertificateError(field0: final field0):
         sse_encode_i_32(3, serializer);
         sse_encode_String(field0, serializer);
-        sse_encode_String(field1, serializer);
       case RhttpError_RhttpInvalidClientError():
         sse_encode_i_32(4, serializer);
       case RhttpError_RhttpUnknownError(field0: final field0):

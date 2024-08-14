@@ -13,6 +13,8 @@ class CancelToken {
   /// Whether the request has been cancelled.
   bool get isCancelled => _isCancelled;
 
+  CancelToken? _delegated;
+
   CancelToken();
 
   @internal
@@ -24,10 +26,24 @@ class CancelToken {
   /// If the [CancelToken] is not passed to the request method,
   /// this method never finishes.
   Future<void> cancel() async {
-    // We need to wait for the ref to be set.
-    final ref = await _ref.future;
+    if (_delegated != null) {
+      await _delegated!.cancel();
+    } else {
+      // We need to wait for the ref to be set.
+      final ref = await _ref.future;
 
-    rust.cancelRequest(address: ref);
-    _isCancelled = true;
+      rust.cancelRequest(address: ref);
+      _isCancelled = true;
+    }
+  }
+
+  /// When a request is retried, a new [CancelToken] is created.
+  /// To ensure that [cancel] is still working on the old token,
+  /// a new token is created that gets cancelled
+  /// when the old token is cancelled.
+  CancelToken createDelegatedToken() {
+    final delegated = CancelToken();
+    _delegated = delegated;
+    return delegated;
   }
 }

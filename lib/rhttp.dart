@@ -13,6 +13,8 @@ export 'src/model/exception.dart'
         RhttpUnknownException;
 export 'src/model/request.dart'
     show
+        BaseRhttpRequest,
+        RhttpRequest,
         HttpExpectBody,
         HttpMethod,
         HttpVersionPref,

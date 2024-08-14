@@ -15,21 +15,15 @@ part 'error.freezed.dart';
 sealed class RhttpError with _$RhttpError implements FrbException {
   const RhttpError._();
 
-  const factory RhttpError.rhttpCancelError(
-    String field0,
-  ) = RhttpError_RhttpCancelError;
-  const factory RhttpError.rhttpTimeoutError(
-    String field0,
-  ) = RhttpError_RhttpTimeoutError;
+  const factory RhttpError.rhttpCancelError() = RhttpError_RhttpCancelError;
+  const factory RhttpError.rhttpTimeoutError() = RhttpError_RhttpTimeoutError;
   const factory RhttpError.rhttpStatusCodeError(
-    String field0,
-    int field1,
-    List<(String, String)> field2,
-    HttpResponseBody field3,
+    int field0,
+    List<(String, String)> field1,
+    HttpResponseBody field2,
   ) = RhttpError_RhttpStatusCodeError;
   const factory RhttpError.rhttpInvalidCertificateError(
     String field0,
-    String field1,
   ) = RhttpError_RhttpInvalidCertificateError;
   const factory RhttpError.rhttpInvalidClientError() =
       RhttpError_RhttpInvalidClientError;

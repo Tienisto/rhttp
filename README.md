@@ -103,7 +103,7 @@ You can make requests using different HTTP methods:
 
 ```dart
 // Pass the method as an argument
-await Rhttp.request(method: HttpMethod.post, url: 'https://example.com');
+await Rhttp.requestText(method: HttpMethod.post, url: 'https://example.com');
 
 // Use the helper methods
 await Rhttp.post('https://example.com');
@@ -122,8 +122,7 @@ await Rhttp.get('https://example.com', query: {'key': 'value'});
 You can add headers to the request:
 
 ```dart
-await Rhttp.request(
-  method: HttpMethod.get,
+await Rhttp.post(
   url: 'https://example.com',
   headers: const HttpHeaders.map({
     HttpHeaderName.contentType: 'application/json',
@@ -141,8 +140,7 @@ Pass a string to the `HttpBody.text` constructor.
 
 ```dart
 // Raw body
-await Rhttp.request(
-  method: HttpMethod.post,
+await Rhttp.post(
   url: 'https://example.com',
   body: HttpBody.text('raw body'),
 );
@@ -156,8 +154,7 @@ The Content-Type header will be set to `application/json` if not provided.
 
 ```dart
 // JSON body
-await Rhttp.request(
-  method: HttpMethod.post,
+await Rhttp.post(
   url: 'https://example.com',
   body: HttpBody.json({'key': 'value'}),
 );
@@ -169,8 +166,7 @@ Pass a `Uint8List` to the `HttpBody.bytes` constructor.
 
 ```dart
 // Binary body
-await Rhttp.request(
-  method: HttpMethod.post,
+await Rhttp.post(
   url: 'https://example.com',
   body: HttpBody.bytes(Uint8List.fromList([0, 1, 2])),
 );
@@ -184,8 +180,7 @@ The Content-Type header will be set to `application/x-www-form-urlencoded` if no
 
 ```dart
 // Form body
-await Rhttp.request(
-  method: HttpMethod.post,
+await Rhttp.post(
   url: 'https://example.com',
   body: HttpBody.form({'key': 'value'}),
 );
@@ -198,8 +193,7 @@ Pass a map of `MultipartItem` to the `HttpBody.multipart` constructor.
 The Content-Type header will be overridden to `multipart/form-data` with a random boundary.
 
 ```dart
-await Rhttp.request(
-  method: HttpMethod.post,
+await Rhttp.post(
   url: 'https://example.com',
   body: HttpBody.multipart({
     'name': const MultipartItem.text(

@@ -3,10 +3,10 @@ use std::fmt::Display;
 
 #[derive(Debug)]
 pub enum RhttpError {
-    RhttpCancelError(String),
-    RhttpTimeoutError(String),
-    RhttpStatusCodeError(String, u16, Vec<(String, String)>, HttpResponseBody),
-    RhttpInvalidCertificateError(String, String),
+    RhttpCancelError,
+    RhttpTimeoutError,
+    RhttpStatusCodeError(u16, Vec<(String, String)>, HttpResponseBody),
+    RhttpInvalidCertificateError(String),
     RhttpInvalidClientError,
     RhttpUnknownError(String),
 }
@@ -14,13 +14,13 @@ pub enum RhttpError {
 impl Display for RhttpError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            RhttpError::RhttpCancelError(s) => write!(f, "RhttpCancelError: {s}"),
-            RhttpError::RhttpTimeoutError(s) => write!(f, "RhttpTimeoutError: {s}"),
-            RhttpError::RhttpStatusCodeError(s, i, _, _) => {
-                write!(f, "RhttpStatusCodeError: {i} - {s}")
+            RhttpError::RhttpCancelError => write!(f, "RhttpCancelError"),
+            RhttpError::RhttpTimeoutError => write!(f, "RhttpTimeoutError"),
+            RhttpError::RhttpStatusCodeError(i, _, _) => {
+                write!(f, "RhttpStatusCodeError: {i}")
             }
-            RhttpError::RhttpInvalidCertificateError(s, d) => {
-                write!(f, "RhttpInvalidCertificateError: {s}, {d}")
+            RhttpError::RhttpInvalidCertificateError(d) => {
+                write!(f, "RhttpInvalidCertificateError: {d}")
             }
             RhttpError::RhttpInvalidClientError => write!(f, "RhttpInvalidClientError"),
             RhttpError::RhttpUnknownError(e) => write!(f, "{}", e),

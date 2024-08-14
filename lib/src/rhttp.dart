@@ -15,7 +15,8 @@ class Rhttp {
   }
 
   /// Makes an HTTP request.
-  static Future<HttpResponse> requestGeneric({
+  /// Use [send] if you already have a [BaseRhttpRequest] object.
+  static Future<HttpResponse> request({
     ClientSettings? settings,
     required HttpMethod method,
     required String url,
@@ -25,8 +26,8 @@ class Rhttp {
     required HttpExpectBody expectBody,
     CancelToken? cancelToken,
   }) =>
-      requestInternalGeneric(
-        clientRef: null,
+      requestInternalGeneric(RhttpRequest(
+        client: null,
         settings: settings,
         method: method,
         url: url,
@@ -35,27 +36,19 @@ class Rhttp {
         body: body,
         expectBody: expectBody,
         cancelToken: cancelToken,
-      );
+      ));
 
-  /// Alias for [requestText].
-  static Future<HttpTextResponse> request({
+  /// Similar to [request], but uses a [BaseRhttpRequest] object
+  /// instead of individual parameters.
+  static Future<HttpResponse> send(
+    BaseRhttpRequest request, {
     ClientSettings? settings,
-    required HttpMethod method,
-    required String url,
-    Map<String, String>? query,
-    HttpHeaders? headers,
-    HttpBody? body,
-    CancelToken? cancelToken,
   }) =>
-      requestText(
+      requestInternalGeneric(RhttpRequest.fromBase(
+        request: request,
+        client: null,
         settings: settings,
-        method: method,
-        url: url,
-        query: query,
-        headers: headers,
-        body: body,
-        cancelToken: cancelToken,
-      );
+      ));
 
   /// Makes an HTTP request and returns the response as text.
   static Future<HttpTextResponse> requestText({
@@ -67,7 +60,7 @@ class Rhttp {
     HttpBody? body,
     CancelToken? cancelToken,
   }) async {
-    final response = await requestGeneric(
+    final response = await request(
       settings: settings,
       method: method,
       url: url,
@@ -90,7 +83,7 @@ class Rhttp {
     HttpBody? body,
     CancelToken? cancelToken,
   }) async {
-    final response = await requestGeneric(
+    final response = await request(
       settings: settings,
       method: method,
       url: url,
@@ -113,7 +106,7 @@ class Rhttp {
     HttpBody? body,
     CancelToken? cancelToken,
   }) async {
-    final response = await requestGeneric(
+    final response = await request(
       settings: settings,
       method: method,
       url: url,
@@ -134,7 +127,7 @@ class Rhttp {
     HttpHeaders? headers,
     CancelToken? cancelToken,
   }) =>
-      request(
+      requestText(
         settings: settings,
         method: HttpMethod.get,
         url: url,
@@ -204,7 +197,7 @@ class Rhttp {
     HttpBody? body,
     CancelToken? cancelToken,
   }) =>
-      request(
+      requestText(
         settings: settings,
         method: HttpMethod.post,
         url: url,
@@ -224,7 +217,7 @@ class Rhttp {
     HttpBody? body,
     CancelToken? cancelToken,
   }) =>
-      request(
+      requestText(
         settings: settings,
         method: HttpMethod.put,
         url: url,
@@ -244,7 +237,7 @@ class Rhttp {
     HttpBody? body,
     CancelToken? cancelToken,
   }) =>
-      request(
+      requestText(
         settings: settings,
         method: HttpMethod.delete,
         url: url,
@@ -263,7 +256,7 @@ class Rhttp {
     HttpHeaders? headers,
     CancelToken? cancelToken,
   }) =>
-      request(
+      requestText(
         settings: settings,
         method: HttpMethod.head,
         url: url,
@@ -282,7 +275,7 @@ class Rhttp {
     HttpBody? body,
     CancelToken? cancelToken,
   }) =>
-      request(
+      requestText(
         settings: settings,
         method: HttpMethod.patch,
         url: url,
@@ -302,7 +295,7 @@ class Rhttp {
     HttpBody? body,
     CancelToken? cancelToken,
   }) =>
-      request(
+      requestText(
         settings: settings,
         method: HttpMethod.options,
         url: url,
@@ -322,7 +315,7 @@ class Rhttp {
     HttpBody? body,
     CancelToken? cancelToken,
   }) =>
-      request(
+      requestText(
         settings: settings,
         method: HttpMethod.trace,
         url: url,
