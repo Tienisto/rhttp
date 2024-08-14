@@ -341,6 +341,62 @@ await Rhttp.get(
 );
 ```
 
+### ➤ Certificate Pinning
+
+To improve security, you can specify the expected server certificate.
+
+Due to limitations on Rust's side ([Github Issue](https://github.com/seanmonstar/reqwest/issues/298)),
+you need to either provide the full certificate chain, or the root certificate.
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    tlsSettings: TlsSettings(
+      trustedRootCertificates: [
+        '''-----BEGIN CERTIFICATE-----
+some certificate
+-----END CERTIFICATE-----''',
+],
+    ),
+  ),
+);
+```
+
+### ➤ Disable pre-installed root certificates
+
+By default, the pre-installed root certificates are used.
+You can disable this behavior by setting `trustRootCertificates` to `false`.
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    tlsSettings: TlsSettings(
+      trustRootCertificates: false,
+    ),
+  ),
+);
+```
+
+### ➤ Client Authentication / mutual TLS
+
+You can specify the client certificate and key to enable mutual TLS (mTLS).
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    tlsSettings: TlsSettings(
+      clientCertificate: ClientCertificate(
+         certificate: clientCert,
+         privateKey: clientKey,
+      ),
+    ),
+  ),
+);
+```
+
 ### ➤ Disable certificate verification
 
 This is very insecure and should only be used for testing purposes.
