@@ -700,6 +700,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_list_prim_u_8_strict).toList();
+  }
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
@@ -908,12 +914,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TlsSettings dco_decode_tls_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return TlsSettings(
-      verifyCertificates: dco_decode_bool(arr[0]),
-      minTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[1]),
-      maxTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[2]),
+      trustRootCertificates: dco_decode_bool(arr[0]),
+      trustedRootCertificates: dco_decode_list_list_prim_u_8_strict(arr[1]),
+      verifyCertificates: dco_decode_bool(arr[2]),
+      minTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[3]),
+      maxTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[4]),
     );
   }
 
@@ -1205,6 +1213,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<Uint8List> sse_decode_list_list_prim_u_8_strict(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <Uint8List>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_list_prim_u_8_strict(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
@@ -1456,12 +1477,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   TlsSettings sse_decode_tls_settings(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_trustRootCertificates = sse_decode_bool(deserializer);
+    var var_trustedRootCertificates =
+        sse_decode_list_list_prim_u_8_strict(deserializer);
     var var_verifyCertificates = sse_decode_bool(deserializer);
     var var_minTlsVersion =
         sse_decode_opt_box_autoadd_tls_version(deserializer);
     var var_maxTlsVersion =
         sse_decode_opt_box_autoadd_tls_version(deserializer);
     return TlsSettings(
+        trustRootCertificates: var_trustRootCertificates,
+        trustedRootCertificates: var_trustedRootCertificates,
         verifyCertificates: var_verifyCertificates,
         minTlsVersion: var_minTlsVersion,
         maxTlsVersion: var_maxTlsVersion);
@@ -1765,6 +1791,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_list_prim_u_8_strict(
+      List<Uint8List> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_list_prim_u_8_strict(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1999,6 +2035,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_tls_settings(TlsSettings self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_bool(self.trustRootCertificates, serializer);
+    sse_encode_list_list_prim_u_8_strict(
+        self.trustedRootCertificates, serializer);
     sse_encode_bool(self.verifyCertificates, serializer);
     sse_encode_opt_box_autoadd_tls_version(self.minTlsVersion, serializer);
     sse_encode_opt_box_autoadd_tls_version(self.maxTlsVersion, serializer);

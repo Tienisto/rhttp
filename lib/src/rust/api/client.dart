@@ -7,6 +7,10 @@ import '../frb_generated.dart';
 import 'http.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+// These functions are ignored because they are not marked as `pub`: `create_client`, `new_default`, `new`
+// These types are ignored because they are not used by any `pub` functions: `RequestClient`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`
+
 class ClientSettings {
   final HttpVersionPref httpVersionPref;
   final Duration? timeout;
@@ -46,11 +50,15 @@ class ClientSettings {
 }
 
 class TlsSettings {
+  final bool trustRootCertificates;
+  final List<Uint8List> trustedRootCertificates;
   final bool verifyCertificates;
   final TlsVersion? minTlsVersion;
   final TlsVersion? maxTlsVersion;
 
   const TlsSettings({
+    required this.trustRootCertificates,
+    required this.trustedRootCertificates,
     required this.verifyCertificates,
     this.minTlsVersion,
     this.maxTlsVersion,
@@ -58,6 +66,8 @@ class TlsSettings {
 
   @override
   int get hashCode =>
+      trustRootCertificates.hashCode ^
+      trustedRootCertificates.hashCode ^
       verifyCertificates.hashCode ^
       minTlsVersion.hashCode ^
       maxTlsVersion.hashCode;
@@ -67,6 +77,8 @@ class TlsSettings {
       identical(this, other) ||
       other is TlsSettings &&
           runtimeType == other.runtimeType &&
+          trustRootCertificates == other.trustRootCertificates &&
+          trustedRootCertificates == other.trustedRootCertificates &&
           verifyCertificates == other.verifyCertificates &&
           minTlsVersion == other.minTlsVersion &&
           maxTlsVersion == other.maxTlsVersion;

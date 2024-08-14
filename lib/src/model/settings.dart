@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:meta/meta.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/rust/api/client.dart' as rust_client;
@@ -34,6 +36,16 @@ class ClientSettings {
 /// TLS settings for the client.
 /// Used to configure HTTPS connections.
 class TlsSettings {
+  /// Trust the root certificates that are pre-installed on the system.
+  final bool trustRootCertificates;
+
+  /// The trusted root certificates in PEM format.
+  /// Either specify the root certificate or the full
+  /// certificate chain.
+  /// The Rust API currently doesn't support trusting a single leaf certificate.
+  /// Hint: PEM format starts with `-----BEGIN CERTIFICATE-----`.
+  final List<String> trustedRootCertificates;
+
   /// Verify the server's certificate.
   /// If set to `false`, the client will accept any certificate.
   /// This is insecure and should only be used for testing.
@@ -46,6 +58,8 @@ class TlsSettings {
   final rust_client.TlsVersion? maxTlsVersion;
 
   const TlsSettings({
+    this.trustRootCertificates = true,
+    this.trustedRootCertificates = const [],
     this.verifyCertificates = true,
     this.minTlsVersion,
     this.maxTlsVersion,
@@ -68,6 +82,10 @@ extension ClientSettingsExt on ClientSettings {
 extension on TlsSettings {
   rust_client.TlsSettings _toRustType() {
     return rust_client.TlsSettings(
+      trustRootCertificates: trustRootCertificates,
+      trustedRootCertificates: trustedRootCertificates
+          .map((e) => Uint8List.fromList(e.codeUnits))
+          .toList(),
       verifyCertificates: verifyCertificates,
       minTlsVersion: minTlsVersion,
       maxTlsVersion: maxTlsVersion,
