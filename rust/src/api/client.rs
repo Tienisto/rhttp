@@ -1,7 +1,7 @@
 use crate::api::error::RhttpError;
 use crate::api::http::HttpVersionPref;
 use chrono::Duration;
-use reqwest::tls;
+use reqwest::{tls, Certificate};
 
 pub struct ClientSettings {
     pub http_version_pref: HttpVersionPref,
@@ -12,6 +12,8 @@ pub struct ClientSettings {
 }
 
 pub struct TlsSettings {
+    pub trust_root_certificates: bool,
+    pub trusted_root_certificates: Vec<Vec<u8>>,
     pub verify_certificates: bool,
     pub min_tls_version: Option<TlsVersion>,
     pub max_tls_version: Option<TlsVersion>,
@@ -70,6 +72,21 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
         }
 
         if let Some(tls_settings) = settings.tls_settings {
+            if !tls_settings.trust_root_certificates {
+                client = client.tls_built_in_root_certs(false);
+            }
+
+            for cert in tls_settings.trusted_root_certificates {
+                client =
+                    client.add_root_certificate(Certificate::from_pem(&cert).map_err(|e| {
+                        RhttpError::RhttpUnknownError(
+                            "Failed to parse trusted certificate".to_string(),
+                        )
+                    })?);
+
+                println!("Added trusted certificate!");
+            }
+
             if !tls_settings.verify_certificates {
                 client = client.danger_accept_invalid_certs(true);
             }
