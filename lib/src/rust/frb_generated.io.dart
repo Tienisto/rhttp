@@ -60,6 +60,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Duration dco_decode_box_autoadd_Chrono_Duration(dynamic raw);
 
   @protected
+  ClientCertificate dco_decode_box_autoadd_client_certificate(dynamic raw);
+
+  @protected
   ClientSettings dco_decode_box_autoadd_client_settings(dynamic raw);
 
   @protected
@@ -82,6 +85,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   TlsVersion dco_decode_box_autoadd_tls_version(dynamic raw);
+
+  @protected
+  ClientCertificate dco_decode_client_certificate(dynamic raw);
 
   @protected
   ClientSettings dco_decode_client_settings(dynamic raw);
@@ -150,6 +156,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Duration? dco_decode_opt_box_autoadd_Chrono_Duration(dynamic raw);
+
+  @protected
+  ClientCertificate? dco_decode_opt_box_autoadd_client_certificate(dynamic raw);
 
   @protected
   ClientSettings? dco_decode_opt_box_autoadd_client_settings(dynamic raw);
@@ -234,6 +243,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Duration sse_decode_box_autoadd_Chrono_Duration(SseDeserializer deserializer);
 
   @protected
+  ClientCertificate sse_decode_box_autoadd_client_certificate(
+      SseDeserializer deserializer);
+
+  @protected
   ClientSettings sse_decode_box_autoadd_client_settings(
       SseDeserializer deserializer);
 
@@ -259,6 +272,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   TlsVersion sse_decode_box_autoadd_tls_version(SseDeserializer deserializer);
+
+  @protected
+  ClientCertificate sse_decode_client_certificate(SseDeserializer deserializer);
 
   @protected
   ClientSettings sse_decode_client_settings(SseDeserializer deserializer);
@@ -329,6 +345,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Duration? sse_decode_opt_box_autoadd_Chrono_Duration(
+      SseDeserializer deserializer);
+
+  @protected
+  ClientCertificate? sse_decode_opt_box_autoadd_client_certificate(
       SseDeserializer deserializer);
 
   @protected
@@ -431,6 +451,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       Duration self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_client_certificate(
+      ClientCertificate self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_client_settings(
       ClientSettings self, SseSerializer serializer);
 
@@ -461,6 +485,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_tls_version(
       TlsVersion self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_client_certificate(
+      ClientCertificate self, SseSerializer serializer);
 
   @protected
   void sse_encode_client_settings(
@@ -540,6 +568,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_box_autoadd_Chrono_Duration(
       Duration? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_client_certificate(
+      ClientCertificate? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_client_settings(

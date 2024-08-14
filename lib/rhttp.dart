@@ -30,7 +30,8 @@ export 'src/model/request.dart'
         MultiPartText,
         MultiPartBytes,
         MultiPartFile;
-export 'src/model/settings.dart' show ClientSettings, TlsSettings;
+export 'src/model/settings.dart'
+    show ClientSettings, TlsSettings, ClientCertificate;
 export 'src/model/response.dart'
     show
         HttpResponse,

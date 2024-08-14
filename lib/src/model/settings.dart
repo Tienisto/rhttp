@@ -51,6 +51,10 @@ class TlsSettings {
   /// This is insecure and should only be used for testing.
   final bool verifyCertificates;
 
+  /// The client certificate to use.
+  /// This is used for client authentication / mutual TLS.
+  final ClientCertificate? clientCertificate;
+
   /// The minimum TLS version to use.
   final rust_client.TlsVersion? minTlsVersion;
 
@@ -61,8 +65,23 @@ class TlsSettings {
     this.trustRootCertificates = true,
     this.trustedRootCertificates = const [],
     this.verifyCertificates = true,
+    this.clientCertificate,
     this.minTlsVersion,
     this.maxTlsVersion,
+  });
+}
+
+/// A client certificate for client authentication / mutual TLS.
+class ClientCertificate {
+  /// The certificate in PEM format.
+  final String certificate;
+
+  /// The private key in PEM format.
+  final String privateKey;
+
+  const ClientCertificate({
+    required this.certificate,
+    required this.privateKey,
   });
 }
 
@@ -87,6 +106,7 @@ extension on TlsSettings {
           .map((e) => Uint8List.fromList(e.codeUnits))
           .toList(),
       verifyCertificates: verifyCertificates,
+      clientCertificate: clientCertificate?._toRustType(),
       minTlsVersion: minTlsVersion,
       maxTlsVersion: maxTlsVersion,
     );
@@ -102,5 +122,14 @@ extension on HttpVersionPref {
       HttpVersionPref.http3 => rust.HttpVersionPref.http3,
       HttpVersionPref.all => rust.HttpVersionPref.all,
     };
+  }
+}
+
+extension on ClientCertificate {
+  rust_client.ClientCertificate _toRustType() {
+    return rust_client.ClientCertificate(
+      certificate: Uint8List.fromList(certificate.codeUnits),
+      privateKey: Uint8List.fromList(privateKey.codeUnits),
+    );
   }
 }

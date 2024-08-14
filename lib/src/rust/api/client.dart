@@ -11,6 +11,27 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // These types are ignored because they are not used by any `pub` functions: `RequestClient`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`
 
+class ClientCertificate {
+  final Uint8List certificate;
+  final Uint8List privateKey;
+
+  const ClientCertificate({
+    required this.certificate,
+    required this.privateKey,
+  });
+
+  @override
+  int get hashCode => certificate.hashCode ^ privateKey.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ClientCertificate &&
+          runtimeType == other.runtimeType &&
+          certificate == other.certificate &&
+          privateKey == other.privateKey;
+}
+
 class ClientSettings {
   final HttpVersionPref httpVersionPref;
   final Duration? timeout;
@@ -53,6 +74,7 @@ class TlsSettings {
   final bool trustRootCertificates;
   final List<Uint8List> trustedRootCertificates;
   final bool verifyCertificates;
+  final ClientCertificate? clientCertificate;
   final TlsVersion? minTlsVersion;
   final TlsVersion? maxTlsVersion;
 
@@ -60,6 +82,7 @@ class TlsSettings {
     required this.trustRootCertificates,
     required this.trustedRootCertificates,
     required this.verifyCertificates,
+    this.clientCertificate,
     this.minTlsVersion,
     this.maxTlsVersion,
   });
@@ -69,6 +92,7 @@ class TlsSettings {
       trustRootCertificates.hashCode ^
       trustedRootCertificates.hashCode ^
       verifyCertificates.hashCode ^
+      clientCertificate.hashCode ^
       minTlsVersion.hashCode ^
       maxTlsVersion.hashCode;
 
@@ -80,6 +104,7 @@ class TlsSettings {
           trustRootCertificates == other.trustRootCertificates &&
           trustedRootCertificates == other.trustedRootCertificates &&
           verifyCertificates == other.verifyCertificates &&
+          clientCertificate == other.clientCertificate &&
           minTlsVersion == other.minTlsVersion &&
           maxTlsVersion == other.maxTlsVersion;
 }

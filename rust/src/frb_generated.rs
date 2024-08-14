@@ -481,6 +481,18 @@ impl SseDecode for bool {
     }
 }
 
+impl SseDecode for crate::api::client::ClientCertificate {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_certificate = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_privateKey = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::client::ClientCertificate {
+            certificate: var_certificate,
+            private_key: var_privateKey,
+        };
+    }
+}
+
 impl SseDecode for crate::api::client::ClientSettings {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -894,6 +906,19 @@ impl SseDecode for Option<chrono::Duration> {
     }
 }
 
+impl SseDecode for Option<crate::api::client::ClientCertificate> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::client::ClientCertificate>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<crate::api::client::ClientSettings> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1049,6 +1074,8 @@ impl SseDecode for crate::api::client::TlsSettings {
         let mut var_trustRootCertificates = <bool>::sse_decode(deserializer);
         let mut var_trustedRootCertificates = <Vec<Vec<u8>>>::sse_decode(deserializer);
         let mut var_verifyCertificates = <bool>::sse_decode(deserializer);
+        let mut var_clientCertificate =
+            <Option<crate::api::client::ClientCertificate>>::sse_decode(deserializer);
         let mut var_minTlsVersion =
             <Option<crate::api::client::TlsVersion>>::sse_decode(deserializer);
         let mut var_maxTlsVersion =
@@ -1057,6 +1084,7 @@ impl SseDecode for crate::api::client::TlsSettings {
             trust_root_certificates: var_trustRootCertificates,
             trusted_root_certificates: var_trustedRootCertificates,
             verify_certificates: var_verifyCertificates,
+            client_certificate: var_clientCertificate,
             min_tls_version: var_minTlsVersion,
             max_tls_version: var_maxTlsVersion,
         };
@@ -1145,6 +1173,27 @@ fn pde_ffi_dispatcher_sync_impl(
 
 // Section: rust2dart
 
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::client::ClientCertificate {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.certificate.into_into_dart().into_dart(),
+            self.private_key.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::client::ClientCertificate
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::client::ClientCertificate>
+    for crate::api::client::ClientCertificate
+{
+    fn into_into_dart(self) -> crate::api::client::ClientCertificate {
+        self
+    }
+}
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::client::ClientSettings {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
@@ -1587,6 +1636,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::client::TlsSettings {
             self.trust_root_certificates.into_into_dart().into_dart(),
             self.trusted_root_certificates.into_into_dart().into_dart(),
             self.verify_certificates.into_into_dart().into_dart(),
+            self.client_certificate.into_into_dart().into_dart(),
             self.min_tls_version.into_into_dart().into_dart(),
             self.max_tls_version.into_into_dart().into_dart(),
         ]
@@ -1686,6 +1736,14 @@ impl SseEncode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_u8(self as _).unwrap();
+    }
+}
+
+impl SseEncode for crate::api::client::ClientCertificate {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.certificate, serializer);
+        <Vec<u8>>::sse_encode(self.private_key, serializer);
     }
 }
 
@@ -2078,6 +2136,16 @@ impl SseEncode for Option<chrono::Duration> {
     }
 }
 
+impl SseEncode for Option<crate::api::client::ClientCertificate> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::client::ClientCertificate>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<crate::api::client::ClientSettings> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2216,6 +2284,10 @@ impl SseEncode for crate::api::client::TlsSettings {
         <bool>::sse_encode(self.trust_root_certificates, serializer);
         <Vec<Vec<u8>>>::sse_encode(self.trusted_root_certificates, serializer);
         <bool>::sse_encode(self.verify_certificates, serializer);
+        <Option<crate::api::client::ClientCertificate>>::sse_encode(
+            self.client_certificate,
+            serializer,
+        );
         <Option<crate::api::client::TlsVersion>>::sse_encode(self.min_tls_version, serializer);
         <Option<crate::api::client::TlsVersion>>::sse_encode(self.max_tls_version, serializer);
     }

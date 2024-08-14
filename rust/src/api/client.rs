@@ -15,8 +15,14 @@ pub struct TlsSettings {
     pub trust_root_certificates: bool,
     pub trusted_root_certificates: Vec<Vec<u8>>,
     pub verify_certificates: bool,
+    pub client_certificate: Option<ClientCertificate>,
     pub min_tls_version: Option<TlsVersion>,
     pub max_tls_version: Option<TlsVersion>,
+}
+
+pub struct ClientCertificate {
+    pub certificate: Vec<u8>,
+    pub private_key: Vec<u8>,
 }
 
 pub enum TlsVersion {
@@ -79,16 +85,28 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
             for cert in tls_settings.trusted_root_certificates {
                 client =
                     client.add_root_certificate(Certificate::from_pem(&cert).map_err(|e| {
-                        RhttpError::RhttpUnknownError(
-                            "Failed to parse trusted certificate".to_string(),
-                        )
+                        RhttpError::RhttpUnknownError(format!(
+                            "Error adding trusted certificate: {e:?}"
+                        ))
                     })?);
-
-                println!("Added trusted certificate!");
             }
 
             if !tls_settings.verify_certificates {
                 client = client.danger_accept_invalid_certs(true);
+            }
+
+            if let Some(client_certificate) = tls_settings.client_certificate {
+                let identity = &[
+                    client_certificate.certificate.as_slice(),
+                    "\n".as_bytes(),
+                    client_certificate.private_key.as_slice(),
+                ]
+                .concat();
+
+                client = client.identity(
+                    reqwest::Identity::from_pem(identity)
+                        .map_err(|e| RhttpError::RhttpUnknownError(format!("{e:?}")))?,
+                );
             }
 
             if let Some(min_tls_version) = tls_settings.min_tls_version {
@@ -115,7 +133,7 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
 
         client
             .build()
-            .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?
+            .map_err(|e| RhttpError::RhttpUnknownError(format!("{e:?}")))?
     };
 
     Ok(RequestClient {

@@ -516,6 +516,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ClientCertificate dco_decode_box_autoadd_client_certificate(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_client_certificate(raw);
+  }
+
+  @protected
   ClientSettings dco_decode_box_autoadd_client_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_client_settings(raw);
@@ -561,6 +567,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TlsVersion dco_decode_box_autoadd_tls_version(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_tls_version(raw);
+  }
+
+  @protected
+  ClientCertificate dco_decode_client_certificate(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return ClientCertificate(
+      certificate: dco_decode_list_prim_u_8_strict(arr[0]),
+      privateKey: dco_decode_list_prim_u_8_strict(arr[1]),
+    );
   }
 
   @protected
@@ -793,6 +811,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ClientCertificate? dco_decode_opt_box_autoadd_client_certificate(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_client_certificate(raw);
+  }
+
+  @protected
   ClientSettings? dco_decode_opt_box_autoadd_client_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_client_settings(raw);
@@ -914,14 +939,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TlsSettings dco_decode_tls_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return TlsSettings(
       trustRootCertificates: dco_decode_bool(arr[0]),
       trustedRootCertificates: dco_decode_list_list_prim_u_8_strict(arr[1]),
       verifyCertificates: dco_decode_bool(arr[2]),
-      minTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[3]),
-      maxTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[4]),
+      clientCertificate: dco_decode_opt_box_autoadd_client_certificate(arr[3]),
+      minTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[4]),
+      maxTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[5]),
     );
   }
 
@@ -1020,6 +1046,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ClientCertificate sse_decode_box_autoadd_client_certificate(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_client_certificate(deserializer));
+  }
+
+  @protected
   ClientSettings sse_decode_box_autoadd_client_settings(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1070,6 +1103,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TlsVersion sse_decode_box_autoadd_tls_version(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_tls_version(deserializer));
+  }
+
+  @protected
+  ClientCertificate sse_decode_client_certificate(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_certificate = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_privateKey = sse_decode_list_prim_u_8_strict(deserializer);
+    return ClientCertificate(
+        certificate: var_certificate, privateKey: var_privateKey);
   }
 
   @protected
@@ -1332,6 +1375,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ClientCertificate? sse_decode_opt_box_autoadd_client_certificate(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_client_certificate(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   ClientSettings? sse_decode_opt_box_autoadd_client_settings(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1481,6 +1536,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_trustedRootCertificates =
         sse_decode_list_list_prim_u_8_strict(deserializer);
     var var_verifyCertificates = sse_decode_bool(deserializer);
+    var var_clientCertificate =
+        sse_decode_opt_box_autoadd_client_certificate(deserializer);
     var var_minTlsVersion =
         sse_decode_opt_box_autoadd_tls_version(deserializer);
     var var_maxTlsVersion =
@@ -1489,6 +1546,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         trustRootCertificates: var_trustRootCertificates,
         trustedRootCertificates: var_trustedRootCertificates,
         verifyCertificates: var_verifyCertificates,
+        clientCertificate: var_clientCertificate,
         minTlsVersion: var_minTlsVersion,
         maxTlsVersion: var_maxTlsVersion);
   }
@@ -1613,6 +1671,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_client_certificate(
+      ClientCertificate self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_client_certificate(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_client_settings(
       ClientSettings self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1666,6 +1731,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       TlsVersion self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_tls_version(self, serializer);
+  }
+
+  @protected
+  void sse_encode_client_certificate(
+      ClientCertificate self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.certificate, serializer);
+    sse_encode_list_prim_u_8_strict(self.privateKey, serializer);
   }
 
   @protected
@@ -1894,6 +1967,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_client_certificate(
+      ClientCertificate? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_client_certificate(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_client_settings(
       ClientSettings? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2039,6 +2123,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_list_list_prim_u_8_strict(
         self.trustedRootCertificates, serializer);
     sse_encode_bool(self.verifyCertificates, serializer);
+    sse_encode_opt_box_autoadd_client_certificate(
+        self.clientCertificate, serializer);
     sse_encode_opt_box_autoadd_tls_version(self.minTlsVersion, serializer);
     sse_encode_opt_box_autoadd_tls_version(self.maxTlsVersion, serializer);
   }
