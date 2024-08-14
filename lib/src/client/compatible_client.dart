@@ -1,5 +1,6 @@
 import 'package:http/http.dart';
 import 'package:rhttp/src/client/rhttp_client.dart';
+import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/settings.dart';
 
@@ -22,8 +23,12 @@ class RhttpCompatibleClient with BaseClient {
 
   static Future<RhttpCompatibleClient> create({
     ClientSettings? settings,
+    List<Interceptor>? interceptors,
   }) async {
-    final client = await RhttpClient.create(settings: settings);
+    final client = await RhttpClient.create(
+      settings: settings,
+      interceptors: interceptors,
+    );
     return RhttpCompatibleClient._(client);
   }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:meta/meta.dart';
+import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/cancel_token.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
@@ -15,18 +16,32 @@ class RhttpClient {
   /// Settings for the client.
   final ClientSettings settings;
 
+  /// One or more interceptors that are used to modify requests and responses.
+  final Interceptor? interceptor;
+
   /// Internal reference to the Rust client.
   @internal
   final int ref;
 
-  RhttpClient._(this.settings, this.ref);
+  RhttpClient._({
+    required this.settings,
+    required this.interceptor,
+    required this.ref,
+  });
 
-  static Future<RhttpClient> create({ClientSettings? settings}) async {
+  static Future<RhttpClient> create({
+    ClientSettings? settings,
+    List<Interceptor>? interceptors,
+  }) async {
     settings ??= const ClientSettings();
     final ref = await rust.registerClient(
       settings: settings.toRustType(),
     );
-    return RhttpClient._(settings, ref);
+    return RhttpClient._(
+      settings: settings,
+      interceptor: parseInterceptorList(interceptors),
+      ref: ref,
+    );
   }
 
   /// Disposes the client.
@@ -49,7 +64,8 @@ class RhttpClient {
   }) =>
       requestInternalGeneric(RhttpRequest(
         client: this,
-        settings: null,
+        settings: settings,
+        interceptor: interceptor,
         method: method,
         url: url,
         query: query,
@@ -66,6 +82,7 @@ class RhttpClient {
         request: request,
         client: this,
         settings: settings,
+        interceptor: interceptor,
       ));
 
   /// Makes an HTTP request and returns the response as text.

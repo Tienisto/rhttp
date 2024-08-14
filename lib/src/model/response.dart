@@ -1,9 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 
 sealed class HttpResponse {
+  final RhttpRequest request;
   final HttpVersion version;
   final int statusCode;
   final List<(String, String)> headers;
@@ -13,6 +15,7 @@ sealed class HttpResponse {
       };
 
   const HttpResponse({
+    required this.request,
     required this.version,
     required this.statusCode,
     required this.headers,
@@ -23,6 +26,7 @@ class HttpTextResponse extends HttpResponse {
   final String body;
 
   const HttpTextResponse({
+    required super.request,
     required super.version,
     required super.statusCode,
     required super.headers,
@@ -39,6 +43,7 @@ class HttpBytesResponse extends HttpResponse {
   final Uint8List body;
 
   const HttpBytesResponse({
+    required super.request,
     required super.version,
     required super.statusCode,
     required super.headers,
@@ -55,6 +60,7 @@ class HttpStreamResponse extends HttpResponse {
   final Stream<Uint8List> body;
 
   const HttpStreamResponse({
+    required super.request,
     required super.version,
     required super.statusCode,
     required super.headers,
@@ -79,6 +85,7 @@ enum HttpVersion {
 
 @internal
 HttpResponse parseHttpResponse(
+  RhttpRequest request,
   rust.HttpResponse response, {
   Stream<Uint8List>? bodyStream,
 }) {
@@ -88,18 +95,21 @@ HttpResponse parseHttpResponse(
 
   return switch (response.body) {
     rust.HttpResponseBody_Text text => HttpTextResponse(
+        request: request,
         version: parseHttpVersion(response.version),
         statusCode: response.statusCode,
         headers: response.headers,
         body: text.field0,
       ),
     rust.HttpResponseBody_Bytes bytes => HttpBytesResponse(
+        request: request,
         version: parseHttpVersion(response.version),
         statusCode: response.statusCode,
         headers: response.headers,
         body: bytes.field0,
       ),
     rust.HttpResponseBody_Stream _ => HttpStreamResponse(
+        request: request,
         version: parseHttpVersion(response.version),
         statusCode: response.statusCode,
         headers: response.headers,

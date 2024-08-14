@@ -2,6 +2,15 @@ library rhttp;
 
 export 'src/client/compatible_client.dart' show RhttpCompatibleClient;
 export 'src/client/rhttp_client.dart' show RhttpClient;
+export 'src/interceptor/interceptor.dart'
+    show
+        Interceptor,
+        InterceptorResult,
+        InterceptorNextResult,
+        InterceptorStopResult,
+        InterceptorResolveResult;
+export 'src/interceptor/queued_interceptor.dart' show QueuedInterceptor;
+export 'src/interceptor/retry_interceptor.dart';
 export 'src/model/cancel_token.dart' show CancelToken;
 export 'src/model/exception.dart'
     show

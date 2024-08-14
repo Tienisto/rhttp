@@ -2,12 +2,17 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:rhttp/src/client/rhttp_client.dart';
+import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/cancel_token.dart';
 import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/request.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/rust/api/http_types.dart';
+
+const Map<String, String> _keepQuery = {};
+const HttpHeaders _keepHeaders = HttpHeaders.map({});
+const HttpBody _keepBody = HttpBody.text('');
 
 /// An HTTP request that can be used
 /// on a client or statically.
@@ -35,7 +40,12 @@ class BaseRhttpRequest {
   /// The cancel token to use for the request.
   final CancelToken? cancelToken;
 
-  const BaseRhttpRequest({
+  /// Map that can be used to store additional information.
+  /// Primarily used by interceptors.
+  /// This is not const to allow for modifications.
+  final Map<String, dynamic> additionalData = {};
+
+  BaseRhttpRequest({
     required this.method,
     required this.url,
     required this.query,
@@ -55,9 +65,14 @@ class RhttpRequest extends BaseRhttpRequest {
   /// This is **only** used if [client] is `null`.
   final ClientSettings? settings;
 
+  /// The interceptor to use for the request.
+  /// This can be a [QueuedInterceptor] if there are multiple interceptors.
+  final Interceptor? interceptor;
+
   RhttpRequest({
     required this.client,
     required this.settings,
+    required this.interceptor,
     required super.method,
     required super.url,
     required super.query,
@@ -71,10 +86,12 @@ class RhttpRequest extends BaseRhttpRequest {
     required BaseRhttpRequest request,
     required RhttpClient? client,
     required ClientSettings? settings,
+    required Interceptor? interceptor,
   }) =>
       RhttpRequest(
         client: client,
         settings: settings,
+        interceptor: interceptor,
         method: request.method,
         url: request.url,
         query: request.query,
@@ -87,6 +104,30 @@ class RhttpRequest extends BaseRhttpRequest {
   /// Sends the request using the specified client / settings
   /// and returns the response.
   Future<HttpResponse> send() => requestInternalGeneric(this);
+
+  RhttpRequest copyWith({
+    RhttpClient? client,
+    ClientSettings? settings,
+    HttpMethod? method,
+    String? url,
+    Map<String, String>? query = _keepQuery,
+    HttpHeaders? headers = _keepHeaders,
+    HttpBody? body = _keepBody,
+    HttpExpectBody? expectBody,
+    CancelToken? cancelToken,
+  }) =>
+      RhttpRequest(
+        client: client ?? this.client,
+        settings: settings ?? this.settings,
+        interceptor: interceptor,
+        method: method ?? this.method,
+        url: url ?? this.url,
+        query: identical(query, _keepQuery) ? this.query : query,
+        headers: identical(headers, _keepHeaders) ? this.headers : headers,
+        body: identical(body, _keepBody) ? this.body : body,
+        expectBody: expectBody ?? this.expectBody,
+        cancelToken: cancelToken ?? this.cancelToken,
+      );
 }
 
 enum HttpExpectBody {

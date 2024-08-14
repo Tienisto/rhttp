@@ -1,3 +1,10 @@
+## 0.5.0
+
+- feat: interceptors (e.g. `RetryInterceptor`)
+- feat: certificate pinning
+- feat: client certificate / mutual TLS
+- **BREAKING**: `requestGeneric` renamed to `request`, `request` removed
+
 ## 0.4.0
 
 - feat: add `RHttpCompatibleClient` that is compatible with the [http](https://pub.dev/packages/http) package

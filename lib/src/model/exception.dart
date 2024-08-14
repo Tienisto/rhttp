@@ -5,8 +5,11 @@ import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/rust/api/error.dart' as rust;
 import 'package:rhttp/src/rust/api/http.dart' as rust_http;
 
-/// The base class for all exceptions thrown by the `rhttp` library.
-sealed class RhttpException {
+/// The base class for all exceptions thrown by the `rhttp` library
+/// or by interceptors.
+///
+/// This class is not sealed to allow for custom exceptions.
+class RhttpException {
   /// The associated request when the exception was thrown.
   final RhttpRequest request;
 
@@ -81,6 +84,19 @@ class RhttpInvalidClientException extends RhttpException {
   @override
   String toString() =>
       '[$runtimeType] Invalid client. Is the client already disposed?';
+}
+
+/// An exception thrown by an interceptor.
+/// Interceptors should only throw exceptions of type [RhttpException].
+class RhttpInterceptorException extends RhttpException {
+  final Object error;
+
+  final StackTrace stackTrace;
+
+  RhttpInterceptorException(super.request, this.error, this.stackTrace);
+
+  @override
+  String toString() => '[$runtimeType] $error. URL: ${request.url}';
 }
 
 /// An exception thrown when an unknown error occurs.

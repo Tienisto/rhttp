@@ -32,9 +32,8 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    final res = await Rhttp.request(
-                      method: HttpMethod.get,
-                      url: 'https://example.com',
+                    final res = await Rhttp.get(
+                      'https://example.com',
                       settings: const ClientSettings(
                         tlsSettings: TlsSettings(
                           verifyCertificates: false,

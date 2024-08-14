@@ -32,9 +32,8 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    final res = await Rhttp.request(
-                      method: HttpMethod.get,
-                      url: 'https://reqres.in/apis/userse',
+                    final res = await Rhttp.get(
+                      'https://reqres.in/apis/userse',
                       query: {'page': '5'},
                       settings: const ClientSettings(
                         httpVersionPref: HttpVersionPref.http3,

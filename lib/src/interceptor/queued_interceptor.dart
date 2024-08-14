@@ -1,0 +1,70 @@
+import 'package:rhttp/src/interceptor/interceptor.dart';
+import 'package:rhttp/src/model/exception.dart';
+import 'package:rhttp/src/model/request.dart';
+import 'package:rhttp/src/model/response.dart';
+
+/// An interceptor that queues other interceptors sequentially.
+class QueuedInterceptor extends Interceptor {
+  final List<Interceptor> interceptors;
+
+  QueuedInterceptor({
+    required this.interceptors,
+  });
+
+  @override
+  Future<InterceptorResult<RhttpRequest>> beforeSend(
+    RhttpRequest request,
+  ) async {
+    RhttpRequest tempRequest = request;
+    for (final interceptor in interceptors) {
+      final result = await interceptor.beforeSend(tempRequest);
+      switch (result) {
+        case InterceptorNextResult<RhttpRequest>():
+          tempRequest = result.value ?? tempRequest;
+        case InterceptorStopResult<RhttpRequest>():
+          return Interceptor.stop(result.value ?? tempRequest);
+        case InterceptorResolveResult<RhttpRequest>():
+          return result;
+      }
+    }
+    return Interceptor.next(tempRequest);
+  }
+
+  @override
+  Future<InterceptorResult<HttpResponse>> beforeReturn(
+    HttpResponse response,
+  ) async {
+    HttpResponse tempResponse = response;
+    for (final interceptor in interceptors) {
+      final result = await interceptor.beforeReturn(tempResponse);
+      switch (result) {
+        case InterceptorNextResult<HttpResponse>():
+          tempResponse = result.value ?? tempResponse;
+        case InterceptorStopResult<HttpResponse>():
+          return Interceptor.stop(result.value ?? tempResponse);
+        case InterceptorResolveResult<HttpResponse>():
+          return result;
+      }
+    }
+    return Interceptor.next(tempResponse);
+  }
+
+  @override
+  Future<InterceptorResult<RhttpException>> onError(
+    RhttpException exception,
+  ) async {
+    RhttpException tempException = exception;
+    for (final interceptor in interceptors) {
+      final result = await interceptor.onError(tempException);
+      switch (result) {
+        case InterceptorNextResult<RhttpException>():
+          tempException = result.value ?? tempException;
+        case InterceptorStopResult<RhttpException>():
+          return Interceptor.stop(result.value ?? tempException);
+        case InterceptorResolveResult<RhttpException>():
+          return result;
+      }
+    }
+    return Interceptor.next(tempException);
+  }
+}

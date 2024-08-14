@@ -34,9 +34,8 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    final res = await Rhttp.request(
-                      method: HttpMethod.post,
-                      url: 'http://localhost:3000/',
+                    final res = await Rhttp.post(
+                      'http://localhost:3000/',
                       body: HttpBody.multipart({
                         'name': const MultipartItem.text(
                           text: 'Tom',

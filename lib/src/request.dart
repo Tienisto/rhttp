@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:meta/meta.dart';
+import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/exception.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
@@ -14,12 +15,32 @@ import 'package:rhttp/src/rust/api/http.dart' as rust;
 /// the client and also by the static class.
 @internal
 Future<HttpResponse> requestInternalGeneric(RhttpRequest request) async {
+  final interceptors = request.interceptor;
+
+  if (interceptors != null) {
+    try {
+      final result = await interceptors.beforeSend(request);
+      switch (result) {
+        case InterceptorNextResult<RhttpRequest>() ||
+              InterceptorStopResult<RhttpRequest>():
+          request = result.value ?? request;
+        case InterceptorResolveResult<RhttpRequest>():
+          return result.response;
+      }
+    } on RhttpException {
+      rethrow;
+    } catch (e, st) {
+      throw RhttpInterceptorException(request, e, st);
+    }
+  }
+
   HttpHeaders? headers = request.headers;
   headers = _digestHeaders(
     headers: headers,
     body: request.body,
   );
 
+  bool exceptionByInterceptor = false;
   try {
     if (request.expectBody == HttpExpectBody.stream) {
       final cancelRefCompleter = Completer<int>();
@@ -44,12 +65,34 @@ Future<HttpResponse> requestInternalGeneric(RhttpRequest request) async {
         cancelToken.setRef(cancelRef);
       }
 
-      final response = await responseCompleter.future;
+      final rustResponse = await responseCompleter.future;
 
-      return parseHttpResponse(
-        response,
+      HttpResponse response = parseHttpResponse(
+        request,
+        rustResponse,
         bodyStream: stream,
       );
+
+      if (interceptors != null) {
+        try {
+          final result = await interceptors.beforeReturn(response);
+          switch (result) {
+            case InterceptorNextResult<HttpResponse>() ||
+                  InterceptorStopResult<HttpResponse>():
+              response = result.value ?? response;
+            case InterceptorResolveResult<HttpResponse>():
+              return result.response;
+          }
+        } on RhttpException {
+          exceptionByInterceptor = true;
+          rethrow;
+        } catch (e, st) {
+          exceptionByInterceptor = true;
+          throw RhttpInterceptorException(request, e, st);
+        }
+      }
+
+      return response;
     } else {
       final cancelRefCompleter = Completer<int>();
       final responseFuture = rust.makeHttpRequest(
@@ -72,11 +115,59 @@ Future<HttpResponse> requestInternalGeneric(RhttpRequest request) async {
         cancelToken.setRef(cancelRef);
       }
 
-      return parseHttpResponse(await responseFuture);
+      final rustResponse = await responseFuture;
+
+      HttpResponse response = parseHttpResponse(
+        request,
+        rustResponse,
+      );
+
+      if (interceptors != null) {
+        try {
+          final result = await interceptors.beforeReturn(response);
+          switch (result) {
+            case InterceptorNextResult<HttpResponse>() ||
+                  InterceptorStopResult<HttpResponse>():
+              response = result.value ?? response;
+            case InterceptorResolveResult<HttpResponse>():
+              return result.response;
+          }
+        } on RhttpException {
+          exceptionByInterceptor = true;
+          rethrow;
+        } catch (e, st) {
+          exceptionByInterceptor = true;
+          throw RhttpInterceptorException(request, e, st);
+        }
+      }
+
+      return response;
     }
   } catch (e) {
+    if (exceptionByInterceptor) {
+      rethrow;
+    }
     if (e is rust_error.RhttpError) {
-      throw parseError(request, e);
+      RhttpException exception = parseError(request, e);
+
+      if (interceptors != null) {
+        try {
+          final result = await interceptors.onError(exception);
+          switch (result) {
+            case InterceptorNextResult<RhttpException>() ||
+                  InterceptorStopResult<RhttpException>():
+              exception = result.value ?? exception;
+            case InterceptorResolveResult<RhttpException>():
+              return result.response;
+          }
+        } on RhttpException {
+          rethrow;
+        } catch (e, st) {
+          throw RhttpInterceptorException(request, e, st);
+        }
+      }
+
+      throw exception;
     } else {
       rethrow;
     }
