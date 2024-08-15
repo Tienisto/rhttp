@@ -37,8 +37,8 @@ class _MyAppState extends State<MyApp> {
                       method: HttpMethod.get,
                       url: 'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
                       cancelToken: cancelToken,
-                      settings: ClientSettings(
-                        timeout: const Duration(milliseconds: 1),
+                      settings: const ClientSettings(
+                        timeout: Duration(milliseconds: 1),
                       ),
                     );
 
