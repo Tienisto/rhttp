@@ -34,6 +34,14 @@ dev_dependencies:
   freezed: ^2.0.0
   integration_test:
     sdk: flutter
+  mocktail: ^1.0.4
+
+dependency_overrides:
+  flutter_rust_bridge:
+    git:
+      url: https://github.com/fzyzcjy/flutter_rust_bridge.git
+      path: frb_dart
+      ref: 66f47e5c62a895ea3a06c541cf79b8213b5d5cbb
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

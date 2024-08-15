@@ -41,6 +41,48 @@ class Interceptor {
       InterceptorResolveResult(response);
 }
 
+/// An interceptor where you can specify the behavior
+/// in the constructor without creating a new class.
+class SimpleInterceptor extends Interceptor {
+  final Future<InterceptorResult<RhttpRequest>> Function(RhttpRequest request)?
+      _beforeSend;
+  final Future<InterceptorResult<HttpResponse>> Function(HttpResponse response)?
+      _beforeReturn;
+  final Future<InterceptorResult<RhttpException>> Function(
+    RhttpException exception,
+  )? _onError;
+
+  SimpleInterceptor({
+    Future<InterceptorResult<RhttpRequest>> Function(RhttpRequest request)?
+        beforeSend,
+    Future<InterceptorResult<HttpResponse>> Function(HttpResponse response)?
+        beforeReturn,
+    Future<InterceptorResult<RhttpException>> Function(
+            RhttpException exception)?
+        onError,
+  })  : _beforeSend = beforeSend,
+        _beforeReturn = beforeReturn,
+        _onError = onError;
+
+  @override
+  Future<InterceptorResult<RhttpRequest>> beforeSend(
+      RhttpRequest request) async {
+    return await _beforeSend?.call(request) ?? Interceptor.next(request);
+  }
+
+  @override
+  Future<InterceptorResult<HttpResponse>> beforeReturn(
+      HttpResponse response) async {
+    return await _beforeReturn?.call(response) ?? Interceptor.next(response);
+  }
+
+  @override
+  Future<InterceptorResult<RhttpException>> onError(
+      RhttpException exception) async {
+    return await _onError?.call(exception) ?? Interceptor.next(exception);
+  }
+}
+
 /// Creates a new [Interceptor] from a list of interceptors.
 /// Returns null if the list is empty.
 /// Returns the interceptor if the list has only one element.

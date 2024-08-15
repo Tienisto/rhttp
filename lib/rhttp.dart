@@ -5,6 +5,7 @@ export 'src/client/rhttp_client.dart' show RhttpClient;
 export 'src/interceptor/interceptor.dart'
     show
         Interceptor,
+        SimpleInterceptor,
         InterceptorResult,
         InterceptorNextResult,
         InterceptorStopResult,
@@ -19,6 +20,7 @@ export 'src/model/exception.dart'
         RhttpTimeoutException,
         RhttpStatusCodeException,
         RhttpInvalidClientException,
+        RhttpInterceptorException,
         RhttpUnknownException;
 export 'src/model/request.dart'
     show
