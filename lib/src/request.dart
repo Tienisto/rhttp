@@ -19,7 +19,7 @@ Future<HttpResponse> requestInternalGeneric(RhttpRequest request) async {
 
   if (interceptors != null) {
     try {
-      final result = await interceptors.beforeSend(request);
+      final result = await interceptors.beforeRequest(request);
       switch (result) {
         case InterceptorNextResult<RhttpRequest>() ||
               InterceptorStopResult<RhttpRequest>():
@@ -75,7 +75,7 @@ Future<HttpResponse> requestInternalGeneric(RhttpRequest request) async {
 
       if (interceptors != null) {
         try {
-          final result = await interceptors.beforeReturn(response);
+          final result = await interceptors.afterResponse(response);
           switch (result) {
             case InterceptorNextResult<HttpResponse>() ||
                   InterceptorStopResult<HttpResponse>():
@@ -124,7 +124,7 @@ Future<HttpResponse> requestInternalGeneric(RhttpRequest request) async {
 
       if (interceptors != null) {
         try {
-          final result = await interceptors.beforeReturn(response);
+          final result = await interceptors.afterResponse(response);
           switch (result) {
             case InterceptorNextResult<HttpResponse>() ||
                   InterceptorStopResult<HttpResponse>():

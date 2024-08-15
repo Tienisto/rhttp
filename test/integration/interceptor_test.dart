@@ -14,8 +14,8 @@ void main() {
     RustLib.instance.initMockImpl(api: mockApi);
   });
 
-  group('beforeSend', () {
-    test('Should call beforeSend before sending', () async {
+  group('beforeRequest', () {
+    test('Should call beforeRequest before sending', () async {
       bool called = false;
       bool receivedAfterCalled = false;
       mockApi.mockDefaultResponse(onAnswer: () {
@@ -28,7 +28,7 @@ void main() {
         'https://example.com',
         interceptors: [
           SimpleInterceptor(
-            beforeSend: (request) async {
+            beforeRequest: (request) async {
               called = true;
               return Interceptor.next();
             },
@@ -36,7 +36,6 @@ void main() {
         ],
       );
 
-      // exception is thrown but beforeSend should be called
       expect(called, true);
       expect(receivedAfterCalled, true);
     });
@@ -48,7 +47,7 @@ void main() {
         'https://example.com',
         interceptors: [
           SimpleInterceptor(
-            beforeSend: (request) async {
+            beforeRequest: (request) async {
               return Interceptor.resolve(FakeHttpResponse('before123'));
             },
           )
@@ -70,7 +69,7 @@ void main() {
           'https://some-url-123',
           interceptors: [
             SimpleInterceptor(
-              beforeSend: (request) async {
+              beforeRequest: (request) async {
                 throw 'Test 123';
               },
             )
@@ -115,7 +114,7 @@ void main() {
           'https://url-456',
           interceptors: [
             SimpleInterceptor(
-              beforeSend: (request) async {
+              beforeRequest: (request) async {
                 throw RhttpStatusCodeException(
                   request: request,
                   statusCode: 222,
@@ -149,7 +148,7 @@ void main() {
     });
   });
 
-  test('Should call beforeReturn after receiving', () async {
+  test('Should call afterResponse after receiving', () async {
     bool received = false;
     mockApi.mockDefaultResponse(onAnswer: () => received = true);
 
@@ -158,7 +157,7 @@ void main() {
       'https://example.com',
       interceptors: [
         SimpleInterceptor(
-          beforeReturn: (request) async {
+          afterResponse: (request) async {
             if (received) {
               calledAfterReceived = true;
             }

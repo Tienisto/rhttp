@@ -82,7 +82,7 @@ class RhttpRequest extends BaseRhttpRequest {
     required super.cancelToken,
   });
 
-  factory RhttpRequest.fromBase({
+  factory RhttpRequest.from({
     required BaseRhttpRequest request,
     required RhttpClient? client,
     required ClientSettings? settings,

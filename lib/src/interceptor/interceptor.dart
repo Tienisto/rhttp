@@ -6,14 +6,14 @@ import 'package:rhttp/src/model/response.dart';
 
 class Interceptor {
   /// Called before the request is sent.
-  Future<InterceptorResult<RhttpRequest>> beforeSend(
+  Future<InterceptorResult<RhttpRequest>> beforeRequest(
     RhttpRequest request,
   ) async {
     return next(request);
   }
 
   /// Called before the response is returned.
-  Future<InterceptorResult<HttpResponse>> beforeReturn(
+  Future<InterceptorResult<HttpResponse>> afterResponse(
     HttpResponse response,
   ) async {
     return next(response);
@@ -45,35 +45,35 @@ class Interceptor {
 /// in the constructor without creating a new class.
 class SimpleInterceptor extends Interceptor {
   final Future<InterceptorResult<RhttpRequest>> Function(RhttpRequest request)?
-      _beforeSend;
+      _beforeRequest;
   final Future<InterceptorResult<HttpResponse>> Function(HttpResponse response)?
-      _beforeReturn;
+      _afterResponse;
   final Future<InterceptorResult<RhttpException>> Function(
     RhttpException exception,
   )? _onError;
 
   SimpleInterceptor({
     Future<InterceptorResult<RhttpRequest>> Function(RhttpRequest request)?
-        beforeSend,
+        beforeRequest,
     Future<InterceptorResult<HttpResponse>> Function(HttpResponse response)?
-        beforeReturn,
+        afterResponse,
     Future<InterceptorResult<RhttpException>> Function(
             RhttpException exception)?
         onError,
-  })  : _beforeSend = beforeSend,
-        _beforeReturn = beforeReturn,
+  })  : _beforeRequest = beforeRequest,
+        _afterResponse = afterResponse,
         _onError = onError;
 
   @override
-  Future<InterceptorResult<RhttpRequest>> beforeSend(
+  Future<InterceptorResult<RhttpRequest>> beforeRequest(
       RhttpRequest request) async {
-    return await _beforeSend?.call(request) ?? Interceptor.next(request);
+    return await _beforeRequest?.call(request) ?? Interceptor.next(request);
   }
 
   @override
-  Future<InterceptorResult<HttpResponse>> beforeReturn(
+  Future<InterceptorResult<HttpResponse>> afterResponse(
       HttpResponse response) async {
-    return await _beforeReturn?.call(response) ?? Interceptor.next(response);
+    return await _afterResponse?.call(response) ?? Interceptor.next(response);
   }
 
   @override

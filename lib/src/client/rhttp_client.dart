@@ -78,7 +78,7 @@ class RhttpClient {
   /// Similar to [request], but uses a [BaseRhttpRequest] object
   /// instead of individual parameters.
   Future<HttpResponse> send(BaseRhttpRequest request) =>
-      requestInternalGeneric(RhttpRequest.fromBase(
+      requestInternalGeneric(RhttpRequest.from(
         request: request,
         client: this,
         settings: settings,

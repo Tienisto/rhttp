@@ -123,7 +123,7 @@ class _MyAppState extends State<MyApp> {
 
 class _ReturnFakeInterceptor extends Interceptor {
   @override
-  Future<InterceptorResult<RhttpRequest>> beforeSend(
+  Future<InterceptorResult<RhttpRequest>> beforeRequest(
       RhttpRequest request) async {
     return Interceptor.resolve(HttpTextResponse(
       request: request,
@@ -137,7 +137,7 @@ class _ReturnFakeInterceptor extends Interceptor {
 
 class _ReturnFakeAfterSendInterceptor extends Interceptor {
   @override
-  Future<InterceptorResult<HttpResponse>> beforeReturn(
+  Future<InterceptorResult<HttpResponse>> afterResponse(
       HttpResponse response) async {
     return Interceptor.resolve(HttpTextResponse(
       request: response.request,

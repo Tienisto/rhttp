@@ -48,7 +48,7 @@ class Rhttp {
     ClientSettings? settings,
     List<Interceptor>? interceptors,
   }) =>
-      requestInternalGeneric(RhttpRequest.fromBase(
+      requestInternalGeneric(RhttpRequest.from(
         request: request,
         client: null,
         settings: settings,

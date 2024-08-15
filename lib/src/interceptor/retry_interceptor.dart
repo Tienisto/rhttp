@@ -35,7 +35,7 @@ class RetryInterceptor extends Interceptor {
         beforeRetryFunc = beforeRetry;
 
   @override
-  Future<InterceptorResult<HttpResponse>> beforeReturn(
+  Future<InterceptorResult<HttpResponse>> afterResponse(
     HttpResponse response,
   ) async {
     final isRetry = response.request.additionalData[key] ?? false;
