@@ -42,7 +42,7 @@ class MockRustLibApi extends Mock implements RustLibApi {
 
   void mockErrorResponse({void Function() onAnswer = _noop}) {
     when<Future<rust_http.HttpResponse>>(
-          () => crateApiHttpMakeHttpRequest(
+      () => crateApiHttpMakeHttpRequest(
         method: any(named: 'method'),
         url: any(named: 'url'),
         expectBody: any(named: 'expectBody'),

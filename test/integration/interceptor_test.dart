@@ -49,13 +49,16 @@ void main() {
         interceptors: [
           SimpleInterceptor(
             beforeSend: (request) async {
-              return Interceptor.resolve(FakeHttpResponse());
+              return Interceptor.resolve(FakeHttpResponse('before123'));
             },
           )
         ],
       );
 
-      expect(response, isA<FakeHttpResponse>());
+      expect(
+        response,
+        isA<FakeHttpResponse>().having((r) => r.body, 'body', 'before123'),
+      );
     });
 
     test('Should wrap exception', () async {
@@ -78,26 +81,71 @@ void main() {
       }
 
       expect(
-          exception,
-          isA<RhttpInterceptorException>().having(
-            (e) => e.error,
-            'error',
-            'Test 123',
-          ));
+        exception,
+        isA<RhttpInterceptorException>().having(
+          (e) => e.error,
+          'error',
+          'Test 123',
+        ),
+      );
       expect(
-          exception,
-          isA<RhttpInterceptorException>().having(
-            (e) => e.stackTrace.toString(),
-            'stackTrace',
-            contains('interceptor_test.dart'),
-          ));
+        exception,
+        isA<RhttpInterceptorException>().having(
+          (e) => e.stackTrace.toString(),
+          'stackTrace',
+          contains('interceptor_test.dart'),
+        ),
+      );
       expect(
-          exception,
-          isA<RhttpInterceptorException>().having(
-            (e) => e.request.url,
-            'request.url',
-            'https://some-url-123',
-          ));
+        exception,
+        isA<RhttpInterceptorException>().having(
+          (e) => e.request.url,
+          'request.url',
+          'https://some-url-123',
+        ),
+      );
+    });
+
+    test('Should rethrow RhttpException', () async {
+      mockApi.mockErrorResponse();
+
+      Object? exception;
+      try {
+        await Rhttp.get(
+          'https://url-456',
+          interceptors: [
+            SimpleInterceptor(
+              beforeSend: (request) async {
+                throw RhttpStatusCodeException(
+                  request: request,
+                  statusCode: 222,
+                  headers: [],
+                  body: null,
+                );
+              },
+            )
+          ],
+        );
+      } catch (e) {
+        exception = e;
+      }
+
+      expect(
+        exception,
+        isA<RhttpStatusCodeException>().having(
+          (e) => e.statusCode,
+          'statusCode',
+          222,
+        ),
+      );
+      expect(
+        exception,
+        isA<RhttpStatusCodeException>().having(
+          (e) => e.request.url,
+          'request.url',
+          'https://url-456',
+        ),
+      );
     });
   });
 
@@ -125,4 +173,9 @@ void main() {
   });
 }
 
-class FakeHttpResponse extends Fake implements HttpTextResponse {}
+class FakeHttpResponse extends Fake implements HttpTextResponse {
+  @override
+  final String body;
+
+  FakeHttpResponse(this.body);
+}
