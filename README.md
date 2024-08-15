@@ -1,6 +1,7 @@
 # rhttp
 
 [![pub package](https://img.shields.io/pub/v/rhttp.svg)](https://pub.dev/packages/rhttp)
+![ci](https://github.com/Tienisto/rhttp/actions/workflows/ci.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Make HTTP requests using Rust for Flutter developers.
