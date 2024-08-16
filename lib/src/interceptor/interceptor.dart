@@ -4,6 +4,13 @@ import 'package:rhttp/src/model/exception.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
 
+/// An interceptor that can be used
+/// to modify requests / responses, handle errors, observe requests, etc.
+///
+/// Any exceptions thrown in an interceptor that is not a [RhttpException]
+/// will be caught and wrapped in a [RhttpInterceptorException].
+/// To increase type safety, it is recommended to
+/// throw a (custom) subclass of [RhttpException].
 class Interceptor {
   /// Called before the request is sent.
   Future<InterceptorResult<HttpRequest>> beforeRequest(

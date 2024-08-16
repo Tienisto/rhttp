@@ -305,6 +305,83 @@ await Rhttp.get(
 );
 ```
 
+### ➤ Interceptors
+
+You can add interceptors to the client to modify requests / responses, handle errors, observe requests, etc.
+
+```dart
+class TestInterceptor extends Interceptor {
+  @override
+  Future<InterceptorResult<HttpRequest>> beforeRequest(
+    HttpRequest request,
+  ) async {
+    return Interceptor.next();
+  }
+
+  @override
+  Future<InterceptorResult<HttpResponse>> afterResponse(
+    HttpResponse response,
+  ) async {
+    return Interceptor.next();
+  }
+
+  @override
+  Future<InterceptorResult<RhttpException>> onError(
+    RhttpException exception,
+  ) async {
+    return Interceptor.next();
+  }
+}
+```
+
+There are 4 termination methods:
+
+- `Interceptor.next()`: Continue with the next interceptor.
+- `Interceptor.stop()`: Stop the interceptor chain.
+- `Interceptor.resolve()`: Resolve the request with the given response.
+- `throw RhttpException`: Throw an exception. The stack trace will be preserved.
+
+Instead of implementing the `Interceptor` class, you can use the `SimpleInterceptor` class:
+
+```dart
+final client = await RhttpClient.create(
+  interceptors: [
+    SimpleInterceptor(
+      onError: (exception) async {
+        if (exception is RhttpStatusCodeException && exception.statusCode == 401) {
+          // Log out
+        }
+        return Interceptor.next();
+      },
+    ),
+  ],
+);
+```
+
+### ➤ RetryInterceptor
+
+There is a built-in `RetryInterceptor` that retries the request if it fails.
+
+```dart
+final client = await RhttpClient.create(
+  interceptors: [
+    RetryInterceptor(
+      maxRetries: 1,
+      shouldRetry: (response, exception) {
+        if (exception is RhttpStatusCodeException && exception.statusCode == 401) {
+          return true;
+        }
+        return false;
+      },
+      beforeRetry: (retryCount, request, response, exception) async {
+        // Refresh token
+        return;
+      },
+    ),
+  ],
+);
+```
+
 ### ➤ HTTP version
 
 You can specify the HTTP version to use for the request.
@@ -403,6 +480,21 @@ await Rhttp.get(
     tlsSettings: TlsSettings(
       verifyCertificates: false,
     ),
+  ),
+);
+```
+
+### ➤ Proxy
+
+By default, the system proxy is enabled.
+
+Disable system proxy:
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    proxySettings: ProxySettings.noProxy(),
   ),
 );
 ```
