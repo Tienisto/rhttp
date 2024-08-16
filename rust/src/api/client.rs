@@ -8,7 +8,12 @@ pub struct ClientSettings {
     pub timeout: Option<Duration>,
     pub connect_timeout: Option<Duration>,
     pub throw_on_status_code: bool,
+    pub proxy_settings: Option<ProxySettings>,
     pub tls_settings: Option<TlsSettings>,
+}
+
+pub enum ProxySettings {
+    NoProxy,
 }
 
 pub struct TlsSettings {
@@ -37,6 +42,7 @@ impl Default for ClientSettings {
             timeout: None,
             connect_timeout: None,
             throw_on_status_code: true,
+            proxy_settings: None,
             tls_settings: None,
         }
     }
@@ -62,6 +68,12 @@ impl RequestClient {
 fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> {
     let client: reqwest::Client = {
         let mut client = reqwest::Client::builder();
+        if let Some(proxy_settings) = settings.proxy_settings {
+            match proxy_settings {
+                ProxySettings::NoProxy => client = client.no_proxy(),
+            }
+        }
+
         if let Some(timeout) = settings.timeout {
             client = client.timeout(
                 timeout

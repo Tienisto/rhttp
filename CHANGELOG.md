@@ -3,6 +3,7 @@
 - feat: interceptors (e.g. `RetryInterceptor`)
 - feat: certificate pinning
 - feat: client certificate / mutual TLS
+- feat: add `ProxySettings`
 - **BREAKING**: `requestGeneric` renamed to `request`, `request` removed
 
 ## 0.4.0

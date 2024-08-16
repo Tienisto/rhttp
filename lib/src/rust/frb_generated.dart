@@ -558,6 +558,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ProxySettings dco_decode_box_autoadd_proxy_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_proxy_settings(raw);
+  }
+
+  @protected
   TlsSettings dco_decode_box_autoadd_tls_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_tls_settings(raw);
@@ -585,14 +591,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ClientSettings dco_decode_client_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return ClientSettings(
       httpVersionPref: dco_decode_http_version_pref(arr[0]),
       timeout: dco_decode_opt_box_autoadd_Chrono_Duration(arr[1]),
       connectTimeout: dco_decode_opt_box_autoadd_Chrono_Duration(arr[2]),
       throwOnStatusCode: dco_decode_bool(arr[3]),
-      tlsSettings: dco_decode_opt_box_autoadd_tls_settings(arr[4]),
+      proxySettings: dco_decode_opt_box_autoadd_proxy_settings(arr[4]),
+      tlsSettings: dco_decode_opt_box_autoadd_tls_settings(arr[5]),
     );
   }
 
@@ -842,6 +849,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ProxySettings? dco_decode_opt_box_autoadd_proxy_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_proxy_settings(raw);
+  }
+
+  @protected
   TlsSettings? dco_decode_opt_box_autoadd_tls_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_tls_settings(raw);
@@ -858,6 +871,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_list_record_string_string(raw);
+  }
+
+  @protected
+  ProxySettings dco_decode_proxy_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ProxySettings.values[raw as int];
   }
 
   @protected
@@ -1087,6 +1106,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ProxySettings sse_decode_box_autoadd_proxy_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_proxy_settings(deserializer));
+  }
+
+  @protected
   TlsSettings sse_decode_box_autoadd_tls_settings(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1117,12 +1143,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_connectTimeout =
         sse_decode_opt_box_autoadd_Chrono_Duration(deserializer);
     var var_throwOnStatusCode = sse_decode_bool(deserializer);
+    var var_proxySettings =
+        sse_decode_opt_box_autoadd_proxy_settings(deserializer);
     var var_tlsSettings = sse_decode_opt_box_autoadd_tls_settings(deserializer);
     return ClientSettings(
         httpVersionPref: var_httpVersionPref,
         timeout: var_timeout,
         connectTimeout: var_connectTimeout,
         throwOnStatusCode: var_throwOnStatusCode,
+        proxySettings: var_proxySettings,
         tlsSettings: var_tlsSettings);
   }
 
@@ -1427,6 +1456,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ProxySettings? sse_decode_opt_box_autoadd_proxy_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_proxy_settings(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   TlsSettings? sse_decode_opt_box_autoadd_tls_settings(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1460,6 +1501,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     } else {
       return null;
     }
+  }
+
+  @protected
+  ProxySettings sse_decode_proxy_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return ProxySettings.values[inner];
   }
 
   @protected
@@ -1710,6 +1758,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_proxy_settings(
+      ProxySettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_proxy_settings(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_tls_settings(
       TlsSettings self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1739,6 +1794,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_box_autoadd_Chrono_Duration(self.timeout, serializer);
     sse_encode_opt_box_autoadd_Chrono_Duration(self.connectTimeout, serializer);
     sse_encode_bool(self.throwOnStatusCode, serializer);
+    sse_encode_opt_box_autoadd_proxy_settings(self.proxySettings, serializer);
     sse_encode_opt_box_autoadd_tls_settings(self.tlsSettings, serializer);
   }
 
@@ -2012,6 +2068,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_proxy_settings(
+      ProxySettings? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_proxy_settings(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_tls_settings(
       TlsSettings? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2042,6 +2109,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (self != null) {
       sse_encode_list_record_string_string(self, serializer);
     }
+  }
+
+  @protected
+  void sse_encode_proxy_settings(ProxySettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
   }
 
   @protected

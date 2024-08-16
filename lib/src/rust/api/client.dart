@@ -37,6 +37,7 @@ class ClientSettings {
   final Duration? timeout;
   final Duration? connectTimeout;
   final bool throwOnStatusCode;
+  final ProxySettings? proxySettings;
   final TlsSettings? tlsSettings;
 
   const ClientSettings({
@@ -44,6 +45,7 @@ class ClientSettings {
     this.timeout,
     this.connectTimeout,
     required this.throwOnStatusCode,
+    this.proxySettings,
     this.tlsSettings,
   });
 
@@ -56,6 +58,7 @@ class ClientSettings {
       timeout.hashCode ^
       connectTimeout.hashCode ^
       throwOnStatusCode.hashCode ^
+      proxySettings.hashCode ^
       tlsSettings.hashCode;
 
   @override
@@ -67,7 +70,13 @@ class ClientSettings {
           timeout == other.timeout &&
           connectTimeout == other.connectTimeout &&
           throwOnStatusCode == other.throwOnStatusCode &&
+          proxySettings == other.proxySettings &&
           tlsSettings == other.tlsSettings;
+}
+
+enum ProxySettings {
+  noProxy,
+  ;
 }
 
 class TlsSettings {

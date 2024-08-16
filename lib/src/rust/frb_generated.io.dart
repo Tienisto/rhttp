@@ -81,6 +81,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MultipartPayload dco_decode_box_autoadd_multipart_payload(dynamic raw);
 
   @protected
+  ProxySettings dco_decode_box_autoadd_proxy_settings(dynamic raw);
+
+  @protected
   TlsSettings dco_decode_box_autoadd_tls_settings(dynamic raw);
 
   @protected
@@ -173,6 +176,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
 
   @protected
+  ProxySettings? dco_decode_opt_box_autoadd_proxy_settings(dynamic raw);
+
+  @protected
   TlsSettings? dco_decode_opt_box_autoadd_tls_settings(dynamic raw);
 
   @protected
@@ -180,6 +186,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<(String, String)>? dco_decode_opt_list_record_string_string(dynamic raw);
+
+  @protected
+  ProxySettings dco_decode_proxy_settings(dynamic raw);
 
   @protected
   (HttpHeaderName, String) dco_decode_record_http_header_name_string(
@@ -265,6 +274,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   MultipartPayload sse_decode_box_autoadd_multipart_payload(
+      SseDeserializer deserializer);
+
+  @protected
+  ProxySettings sse_decode_box_autoadd_proxy_settings(
       SseDeserializer deserializer);
 
   @protected
@@ -366,6 +379,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
+  ProxySettings? sse_decode_opt_box_autoadd_proxy_settings(
+      SseDeserializer deserializer);
+
+  @protected
   TlsSettings? sse_decode_opt_box_autoadd_tls_settings(
       SseDeserializer deserializer);
 
@@ -376,6 +393,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<(String, String)>? sse_decode_opt_list_record_string_string(
       SseDeserializer deserializer);
+
+  @protected
+  ProxySettings sse_decode_proxy_settings(SseDeserializer deserializer);
 
   @protected
   (HttpHeaderName, String) sse_decode_record_http_header_name_string(
@@ -477,6 +497,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_multipart_payload(
       MultipartPayload self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_proxy_settings(
+      ProxySettings self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_tls_settings(
@@ -590,6 +614,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       PlatformInt64? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_proxy_settings(
+      ProxySettings? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_opt_box_autoadd_tls_settings(
       TlsSettings? self, SseSerializer serializer);
 
@@ -600,6 +628,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_list_record_string_string(
       List<(String, String)>? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_proxy_settings(ProxySettings self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_http_header_name_string(

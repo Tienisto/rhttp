@@ -44,7 +44,7 @@ export 'src/model/request.dart'
         MultiPartBytes,
         MultiPartFile;
 export 'src/model/settings.dart'
-    show ClientSettings, TlsSettings, ClientCertificate;
+    show ClientSettings, ProxySettings, TlsSettings, ClientCertificate;
 export 'src/model/response.dart'
     show
         HttpResponse,

@@ -21,6 +21,9 @@ class ClientSettings {
   /// Throws an exception if the status code is 4xx or 5xx.
   final bool throwOnStatusCode;
 
+  /// Proxy settings.
+  final ProxySettings? proxySettings;
+
   /// TLS settings.
   final TlsSettings? tlsSettings;
 
@@ -29,8 +32,20 @@ class ClientSettings {
     this.timeout,
     this.connectTimeout,
     this.throwOnStatusCode = true,
+    this.proxySettings,
     this.tlsSettings,
   });
+}
+
+sealed class ProxySettings {
+  const ProxySettings();
+
+  /// Disables any proxy settings including system settings.
+  const factory ProxySettings.noProxy() = NoProxy;
+}
+
+class NoProxy extends ProxySettings {
+  const NoProxy();
 }
 
 /// TLS settings for the client.
@@ -93,8 +108,17 @@ extension ClientSettingsExt on ClientSettings {
       timeout: timeout,
       connectTimeout: connectTimeout,
       throwOnStatusCode: throwOnStatusCode,
+      proxySettings: proxySettings?._toRustType(),
       tlsSettings: tlsSettings?._toRustType(),
     );
+  }
+}
+
+extension on ProxySettings {
+  rust_client.ProxySettings _toRustType() {
+    return switch (this) {
+      NoProxy() => rust_client.ProxySettings.noProxy,
+    };
   }
 }
 
