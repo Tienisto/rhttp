@@ -548,7 +548,7 @@ void main() {
     });
 
     test('Should not catch exception from interceptor', () async {
-      mockApi.mockErrorResponse();
+      mockApi.mockDefaultResponse();
 
       bool called = false;
       Object? exception;
@@ -557,7 +557,7 @@ void main() {
           'https://example.com',
           interceptors: [
             SimpleInterceptor(
-              beforeRequest: (request) async {
+              afterResponse: (request) async {
                 throw 'Test 123';
               },
               onError: (exception) async {
