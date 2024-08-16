@@ -52,7 +52,7 @@ class RhttpClient {
   }
 
   /// Makes an HTTP request.
-  /// Use [send] if you already have a [BaseRhttpRequest] object.
+  /// Use [send] if you already have a [BaseHttpRequest] object.
   Future<HttpResponse> request({
     required HttpMethod method,
     required String url,
@@ -62,7 +62,7 @@ class RhttpClient {
     required HttpExpectBody expectBody,
     CancelToken? cancelToken,
   }) =>
-      requestInternalGeneric(RhttpRequest(
+      requestInternalGeneric(HttpRequest(
         client: this,
         settings: settings,
         interceptor: interceptor,
@@ -75,10 +75,10 @@ class RhttpClient {
         cancelToken: cancelToken,
       ));
 
-  /// Similar to [request], but uses a [BaseRhttpRequest] object
+  /// Similar to [request], but uses a [BaseHttpRequest] object
   /// instead of individual parameters.
-  Future<HttpResponse> send(BaseRhttpRequest request) =>
-      requestInternalGeneric(RhttpRequest.from(
+  Future<HttpResponse> send(BaseHttpRequest request) =>
+      requestInternalGeneric(HttpRequest.from(
         request: request,
         client: this,
         settings: settings,

@@ -24,8 +24,8 @@ export 'src/model/exception.dart'
         RhttpUnknownException;
 export 'src/model/request.dart'
     show
-        BaseRhttpRequest,
-        RhttpRequest,
+        BaseHttpRequest,
+        HttpRequest,
         HttpExpectBody,
         HttpMethod,
         HttpVersionPref,

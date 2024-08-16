@@ -493,9 +493,11 @@ fn header_to_vec(headers: &reqwest::header::HeaderMap) -> Vec<(String, String)> 
         .collect()
 }
 
-pub fn cancel_request(address: i64) {
+pub fn cancel_request(address: i64) -> bool {
     if let Some(token) = request_pool::get_token(address) {
         token.cancel();
-        request_pool::remove_token(address);
+        request_pool::remove_token(address).is_some()
+    } else {
+        false
     }
 }

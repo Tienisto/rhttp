@@ -5,7 +5,7 @@ import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 
 sealed class HttpResponse {
-  final RhttpRequest request;
+  final HttpRequest request;
   final HttpVersion version;
   final int statusCode;
   final List<(String, String)> headers;
@@ -85,7 +85,7 @@ enum HttpVersion {
 
 @internal
 HttpResponse parseHttpResponse(
-  RhttpRequest request,
+  HttpRequest request,
   rust.HttpResponse response, {
   Stream<Uint8List>? bodyStream,
 }) {

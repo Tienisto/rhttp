@@ -14,17 +14,17 @@ import 'package:rhttp/src/rust/api/http.dart' as rust;
 /// Non-Generated helper function that is used by
 /// the client and also by the static class.
 @internal
-Future<HttpResponse> requestInternalGeneric(RhttpRequest request) async {
+Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
   final interceptors = request.interceptor;
 
   if (interceptors != null) {
     try {
       final result = await interceptors.beforeRequest(request);
       switch (result) {
-        case InterceptorNextResult<RhttpRequest>() ||
-              InterceptorStopResult<RhttpRequest>():
+        case InterceptorNextResult<HttpRequest>() ||
+              InterceptorStopResult<HttpRequest>():
           request = result.value ?? request;
-        case InterceptorResolveResult<RhttpRequest>():
+        case InterceptorResolveResult<HttpRequest>():
           return result.response;
       }
     } on RhttpException {

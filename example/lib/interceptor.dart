@@ -85,7 +85,7 @@ class _MyAppState extends State<MyApp> {
                           maxRetries: 1,
                           beforeRetry: (
                             int retryCount,
-                            RhttpRequest request,
+                            HttpRequest request,
                             HttpResponse? response,
                             RhttpException? exception,
                           ) async {
@@ -123,8 +123,8 @@ class _MyAppState extends State<MyApp> {
 
 class _ReturnFakeInterceptor extends Interceptor {
   @override
-  Future<InterceptorResult<RhttpRequest>> beforeRequest(
-      RhttpRequest request) async {
+  Future<InterceptorResult<HttpRequest>> beforeRequest(
+      HttpRequest request) async {
     return Interceptor.resolve(HttpTextResponse(
       request: request,
       version: HttpVersion.http1_1,

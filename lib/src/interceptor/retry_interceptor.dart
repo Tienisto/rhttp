@@ -5,9 +5,9 @@ import 'package:rhttp/src/model/response.dart';
 
 typedef RetryCondition = bool Function(HttpResponse?, RhttpException?);
 typedef RetryDelay = Duration Function(int);
-typedef BeforeRetry = Future<RhttpRequest?> Function(
+typedef BeforeRetry = Future<HttpRequest?> Function(
   int,
-  RhttpRequest request,
+  HttpRequest request,
   HttpResponse?,
   RhttpException?,
 );
@@ -79,9 +79,9 @@ class RetryInterceptor extends Interceptor {
   /// Called before each retry.
   /// May return a new request to be used for the current retry and
   /// all subsequent retries.
-  Future<RhttpRequest?> beforeRetry(
+  Future<HttpRequest?> beforeRetry(
     int attempt,
-    RhttpRequest request,
+    HttpRequest request,
     HttpResponse? response,
     RhttpException? exception,
   ) async {
@@ -97,7 +97,7 @@ class RetryInterceptor extends Interceptor {
     RhttpException? exception,
   ) async {
     assert(response != null || exception != null);
-    RhttpRequest request = response?.request ?? exception!.request;
+    HttpRequest request = response?.request ?? exception!.request;
     final originalCancelToken = request.cancelToken;
 
     for (var i = 0; i < maxRetries; i++) {

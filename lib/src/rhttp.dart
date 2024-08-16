@@ -16,7 +16,7 @@ class Rhttp {
   }
 
   /// Makes an HTTP request.
-  /// Use [send] if you already have a [BaseRhttpRequest] object.
+  /// Use [send] if you already have a [BaseHttpRequest] object.
   static Future<HttpResponse> request({
     ClientSettings? settings,
     List<Interceptor>? interceptors,
@@ -28,7 +28,7 @@ class Rhttp {
     required HttpExpectBody expectBody,
     CancelToken? cancelToken,
   }) =>
-      requestInternalGeneric(RhttpRequest(
+      requestInternalGeneric(HttpRequest(
         client: null,
         settings: settings,
         interceptor: parseInterceptorList(interceptors),
@@ -41,14 +41,14 @@ class Rhttp {
         cancelToken: cancelToken,
       ));
 
-  /// Similar to [request], but uses a [BaseRhttpRequest] object
+  /// Similar to [request], but uses a [BaseHttpRequest] object
   /// instead of individual parameters.
   static Future<HttpResponse> send(
-    BaseRhttpRequest request, {
+    BaseHttpRequest request, {
     ClientSettings? settings,
     List<Interceptor>? interceptors,
   }) =>
-      requestInternalGeneric(RhttpRequest.from(
+      requestInternalGeneric(HttpRequest.from(
         request: request,
         client: null,
         settings: settings,

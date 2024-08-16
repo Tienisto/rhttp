@@ -6,8 +6,8 @@ import 'package:rhttp/src/model/response.dart';
 
 class Interceptor {
   /// Called before the request is sent.
-  Future<InterceptorResult<RhttpRequest>> beforeRequest(
-    RhttpRequest request,
+  Future<InterceptorResult<HttpRequest>> beforeRequest(
+    HttpRequest request,
   ) async {
     return next(request);
   }
@@ -44,7 +44,7 @@ class Interceptor {
 /// An interceptor where you can specify the behavior
 /// in the constructor without creating a new class.
 class SimpleInterceptor extends Interceptor {
-  final Future<InterceptorResult<RhttpRequest>> Function(RhttpRequest request)?
+  final Future<InterceptorResult<HttpRequest>> Function(HttpRequest request)?
       _beforeRequest;
   final Future<InterceptorResult<HttpResponse>> Function(HttpResponse response)?
       _afterResponse;
@@ -53,7 +53,7 @@ class SimpleInterceptor extends Interceptor {
   )? _onError;
 
   SimpleInterceptor({
-    Future<InterceptorResult<RhttpRequest>> Function(RhttpRequest request)?
+    Future<InterceptorResult<HttpRequest>> Function(HttpRequest request)?
         beforeRequest,
     Future<InterceptorResult<HttpResponse>> Function(HttpResponse response)?
         afterResponse,
@@ -65,8 +65,8 @@ class SimpleInterceptor extends Interceptor {
         _onError = onError;
 
   @override
-  Future<InterceptorResult<RhttpRequest>> beforeRequest(
-      RhttpRequest request) async {
+  Future<InterceptorResult<HttpRequest>> beforeRequest(
+      HttpRequest request) async {
     return await _beforeRequest?.call(request) ?? Interceptor.next(request);
   }
 

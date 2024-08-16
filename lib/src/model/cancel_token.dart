@@ -23,17 +23,19 @@ class CancelToken {
   }
 
   /// Cancels the HTTP request.
+  /// Returns `true` if the request was successfully cancelled.
   /// If the [CancelToken] is not passed to the request method,
   /// this method never finishes.
-  Future<void> cancel() async {
+  Future<bool> cancel() async {
     if (_delegated != null) {
-      await _delegated!.cancel();
+      return await _delegated!.cancel();
     } else {
       // We need to wait for the ref to be set.
       final ref = await _ref.future;
 
-      rust.cancelRequest(address: ref);
+      final cancelResult = rust.cancelRequest(address: ref);
       _isCancelled = true;
+      return cancelResult;
     }
   }
 

@@ -18,7 +18,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_rust_bridge: 2.1.0
+  flutter_rust_bridge: 2.2.0
   freezed_annotation: ^2.0.0
   http: ^1.2.0
   meta: ^1.12.0
@@ -41,7 +41,7 @@ dependency_overrides:
     git:
       url: https://github.com/fzyzcjy/flutter_rust_bridge.git
       path: frb_dart
-      ref: 66f47e5c62a895ea3a06c541cf79b8213b5d5cbb
+      ref: c5bdedbbb1b222162bdc88d28e96313b687007a8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

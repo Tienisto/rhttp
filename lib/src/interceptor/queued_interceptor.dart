@@ -12,18 +12,18 @@ class QueuedInterceptor extends Interceptor {
   });
 
   @override
-  Future<InterceptorResult<RhttpRequest>> beforeRequest(
-    RhttpRequest request,
+  Future<InterceptorResult<HttpRequest>> beforeRequest(
+    HttpRequest request,
   ) async {
-    RhttpRequest tempRequest = request;
+    HttpRequest tempRequest = request;
     for (final interceptor in interceptors) {
       final result = await interceptor.beforeRequest(tempRequest);
       switch (result) {
-        case InterceptorNextResult<RhttpRequest>():
+        case InterceptorNextResult<HttpRequest>():
           tempRequest = result.value ?? tempRequest;
-        case InterceptorStopResult<RhttpRequest>():
+        case InterceptorStopResult<HttpRequest>():
           return Interceptor.stop(result.value ?? tempRequest);
-        case InterceptorResolveResult<RhttpRequest>():
+        case InterceptorResolveResult<HttpRequest>():
           return result;
       }
     }

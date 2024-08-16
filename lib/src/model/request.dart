@@ -16,7 +16,7 @@ const HttpBody _keepBody = HttpBody.text('');
 
 /// An HTTP request that can be used
 /// on a client or statically.
-class BaseRhttpRequest {
+class BaseHttpRequest {
   /// The HTTP method to use.
   final HttpMethod method;
 
@@ -45,7 +45,7 @@ class BaseRhttpRequest {
   /// This is not const to allow for modifications.
   final Map<String, dynamic> additionalData = {};
 
-  BaseRhttpRequest({
+  BaseHttpRequest({
     required this.method,
     required this.url,
     required this.query,
@@ -57,7 +57,7 @@ class BaseRhttpRequest {
 }
 
 /// An HTTP request with the information which client to use.
-class RhttpRequest extends BaseRhttpRequest {
+class HttpRequest extends BaseHttpRequest {
   /// The client to use for the request.
   final RhttpClient? client;
 
@@ -69,7 +69,7 @@ class RhttpRequest extends BaseRhttpRequest {
   /// This can be a [QueuedInterceptor] if there are multiple interceptors.
   final Interceptor? interceptor;
 
-  RhttpRequest({
+  HttpRequest({
     required this.client,
     required this.settings,
     required this.interceptor,
@@ -82,13 +82,13 @@ class RhttpRequest extends BaseRhttpRequest {
     required super.cancelToken,
   });
 
-  factory RhttpRequest.from({
-    required BaseRhttpRequest request,
+  factory HttpRequest.from({
+    required BaseHttpRequest request,
     required RhttpClient? client,
     required ClientSettings? settings,
     required Interceptor? interceptor,
   }) =>
-      RhttpRequest(
+      HttpRequest(
         client: client,
         settings: settings,
         interceptor: interceptor,
@@ -105,7 +105,7 @@ class RhttpRequest extends BaseRhttpRequest {
   /// and returns the response.
   Future<HttpResponse> send() => requestInternalGeneric(this);
 
-  RhttpRequest copyWith({
+  HttpRequest copyWith({
     RhttpClient? client,
     ClientSettings? settings,
     HttpMethod? method,
@@ -116,7 +116,7 @@ class RhttpRequest extends BaseRhttpRequest {
     HttpExpectBody? expectBody,
     CancelToken? cancelToken,
   }) =>
-      RhttpRequest(
+      HttpRequest(
         client: client ?? this.client,
         settings: settings ?? this.settings,
         interceptor: interceptor,

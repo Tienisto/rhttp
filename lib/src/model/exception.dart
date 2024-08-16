@@ -11,7 +11,7 @@ import 'package:rhttp/src/rust/api/http.dart' as rust_http;
 /// This class is not sealed to allow for custom exceptions.
 class RhttpException {
   /// The associated request when the exception was thrown.
-  final RhttpRequest request;
+  final HttpRequest request;
 
   const RhttpException(this.request);
 }
@@ -51,7 +51,7 @@ class RhttpStatusCodeException extends RhttpException {
   final Object? body;
 
   const RhttpStatusCodeException({
-    required RhttpRequest request,
+    required HttpRequest request,
     required this.statusCode,
     required this.headers,
     required this.body,
@@ -68,7 +68,7 @@ class RhttpInvalidCertificateException extends RhttpException {
   final String message;
 
   const RhttpInvalidCertificateException({
-    required RhttpRequest request,
+    required HttpRequest request,
     required this.message,
   }) : super(request);
 
@@ -111,7 +111,7 @@ class RhttpUnknownException extends RhttpException {
 }
 
 @internal
-RhttpException parseError(RhttpRequest request, rust.RhttpError error) {
+RhttpException parseError(HttpRequest request, rust.RhttpError error) {
   return error.when(
     rhttpCancelError: () => RhttpCancelException(request),
     rhttpTimeoutError: () => RhttpTimeoutException(request),
