@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -32,6 +33,9 @@ class HttpTextResponse extends HttpResponse {
     required super.headers,
     required this.body,
   });
+
+  /// Convenience method to parse the body as JSON.
+  dynamic get bodyToJson => jsonDecode(body);
 
   @override
   String toString() {

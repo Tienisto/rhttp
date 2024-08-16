@@ -1,3 +1,7 @@
+## 0.5.1
+
+- feat: add convenience method: `HttpTextResponse.bodyToJson`
+
 ## 0.5.0
 
 - feat: interceptors (e.g. `RetryInterceptor`)
