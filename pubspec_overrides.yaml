@@ -1,0 +1,6 @@
+dependency_overrides:
+  flutter_rust_bridge:
+    git:
+      url: https://github.com/fzyzcjy/flutter_rust_bridge.git
+      path: frb_dart
+      ref: c5bdedbbb1b222162bdc88d28e96313b687007a8

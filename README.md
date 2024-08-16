@@ -21,6 +21,9 @@ These packages for instance only support Android or iOS, while rhttp supports al
 - ✅ HTTP/1, HTTP/1.1, HTTP/2, and HTTP/3 support
 - ✅ TLS 1.2 and 1.3 support
 - ✅ Connection pooling
+- ✅ Interceptors
+- ✅ Retry (optional)
+- ✅ Certificate pinning
 - ✅ Strong type safety
 - ✅ Optional compatibility layer for the [http](https://pub.dev/packages/http) package
 
