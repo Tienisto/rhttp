@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/exception.dart';
 import 'package:rhttp/src/model/request.dart';
@@ -35,6 +36,13 @@ class RetryInterceptor extends Interceptor {
         beforeRetryFunc = beforeRetry;
 
   @override
+  @nonVirtual
+  Future<InterceptorResult<HttpRequest>> beforeRequest(HttpRequest request) {
+    return super.beforeRequest(request);
+  }
+
+  @override
+  @nonVirtual
   Future<InterceptorResult<HttpResponse>> afterResponse(
     HttpResponse response,
   ) async {
@@ -52,6 +60,7 @@ class RetryInterceptor extends Interceptor {
   }
 
   @override
+  @nonVirtual
   Future<InterceptorResult<RhttpException>> onError(
     RhttpException exception,
   ) async {
@@ -68,10 +77,14 @@ class RetryInterceptor extends Interceptor {
     return await _retry(null, exception);
   }
 
+  /// Whether to retry the request.
+  /// Override this method to customize the retry logic.
   bool shouldRetry(HttpResponse? response, RhttpException? exception) {
     return shouldRetryFunc(response, exception);
   }
 
+  /// The delay between retries (including the delay before the initial retry).
+  /// Override this method to customize the delay.
   Duration getDelay(int attempt) {
     return delayFunc(attempt);
   }
