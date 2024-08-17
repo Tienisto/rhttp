@@ -22,6 +22,7 @@ export 'src/model/exception.dart'
         RhttpInvalidClientException,
         RhttpInterceptorException,
         RhttpUnknownException;
+export 'src/model/header.dart';
 export 'src/model/request.dart'
     show
         BaseHttpRequest,
@@ -52,4 +53,4 @@ export 'src/model/response.dart'
         HttpBytesResponse,
         HttpStreamResponse,
         HttpVersion;
-export 'src/rhttp.dart' show Rhttp, HttpHeaderName;
+export 'src/rhttp.dart' show Rhttp;

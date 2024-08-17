@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_riverpod: ^2.5.1
   http: ^1.0.0
   rhttp:
     # When depending on this package from a real application you should use:

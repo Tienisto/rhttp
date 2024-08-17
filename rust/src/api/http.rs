@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::str::FromStr;
 
-use flutter_rust_bridge::DartFnFuture;
+use flutter_rust_bridge::{frb, DartFnFuture};
 use futures_util::StreamExt;
 use reqwest::header::{HeaderName, HeaderValue};
 use reqwest::{Method, Response, Url, Version};
@@ -10,7 +10,6 @@ use tokio_util::sync::CancellationToken;
 
 use crate::api::client::{ClientSettings, RequestClient};
 use crate::api::error::RhttpError;
-use crate::api::http_types::HttpHeaderName;
 use crate::api::{client_pool, request_pool};
 use crate::frb_generated::StreamSink;
 
@@ -43,8 +42,7 @@ impl HttpMethod {
 }
 
 pub enum HttpHeaders {
-    Map(HashMap<HttpHeaderName, String>),
-    RawMap(HashMap<String, String>),
+    Map(HashMap<String, String>),
     List(Vec<(String, String)>),
 }
 
@@ -125,6 +123,15 @@ pub enum HttpResponseBody {
 }
 
 pub fn register_client(settings: ClientSettings) -> Result<i64, RhttpError> {
+    register_client_internal(settings)
+}
+
+#[frb(sync)]
+pub fn register_client_sync(settings: ClientSettings) -> Result<i64, RhttpError> {
+    register_client_internal(settings)
+}
+
+fn register_client_internal(settings: ClientSettings) -> Result<i64, RhttpError> {
     let client = RequestClient::new(settings)?;
     let (address, _) = client_pool::register_client(client)?;
 
@@ -363,14 +370,6 @@ async fn make_http_request_helper(
 
         match headers {
             Some(HttpHeaders::Map(map)) => {
-                for (k, v) in map {
-                    let header_name = k.to_actual_header_name();
-                    let header_value = HeaderValue::from_str(&v)
-                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
-                    request = request.header(header_name, header_value);
-                }
-            }
-            Some(HttpHeaders::RawMap(map)) => {
                 for (k, v) in map {
                     let header_name = HeaderName::from_str(&k)
                         .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;

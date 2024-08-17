@@ -1086,7 +1086,6 @@ dependencies = [
  "chrono",
  "flutter_rust_bridge",
  "futures-util",
- "http",
  "reqwest",
  "tokio",
  "tokio-util",

@@ -247,6 +247,13 @@ You can dispose the client when you are done with it:
 client.dispose();
 ```
 
+To create a client synchronously, use `RhttpClient.createSync`.
+This should only be called during app start to avoid blocking the UI thread.
+
+```dart
+final client = RhttpClient.createSync();
+```
+
 ### ➤ Cancel Requests
 
 You can cancel a request by providing a `CancelToken`:
@@ -366,24 +373,35 @@ final client = await RhttpClient.create(
 There is a built-in `RetryInterceptor` that retries the request if it fails.
 
 ```dart
-final client = await RhttpClient.create(
-  interceptors: [
-    RetryInterceptor(
-      maxRetries: 1,
-      shouldRetry: (response, exception) {
-        if (exception is RhttpStatusCodeException && exception.statusCode == 401) {
-          return true;
-        }
-        return false;
-      },
-      beforeRetry: (retryCount, request, response, exception) async {
-        // Refresh token
-        return;
-      },
-    ),
-  ],
-);
+class RefreshTokenInterceptor extends RetryInterceptor {
+  final Ref ref;
+
+  RefreshTokenInterceptor(this.ref);
+
+  @override
+  int get maxRetries => 1;
+
+  @override
+  bool shouldRetry(HttpResponse? response, RhttpException? exception) {
+    return exception is RhttpStatusCodeException &&
+        (exception.statusCode == 401 || exception.statusCode == 403);
+  }
+
+  @override
+  Future<HttpRequest?> beforeRetry(
+    int attempt,
+    HttpRequest request,
+    HttpResponse? response,
+    RhttpException? exception,
+  ) async {
+    ref.read(authProvider.notifier).state = await refresh();
+    return null;
+  }
+}
 ```
+
+Checkout this [example](https://github.com/Tienisto/rhttp/blob/main/example/lib/interceptor_riverpod.dart)
+to see how access tokens can be refreshed using Riverpod.
 
 ### ➤ HTTP version
 
@@ -512,7 +530,6 @@ This comes with some downsides, such as:
 - inferior type safety due to the flaw that `body` is of type `Object?` instead of a sane supertype.
 - body of type `Map` is implicitly interpreted as `x-www-form-urlencoded` that is only documented in StackOverflow (as of writing this).
 - no support for cancellation
-- no out-of-the-box support for multipart requests
 
 ```dart
 import 'package:rhttp/rhttp.dart';

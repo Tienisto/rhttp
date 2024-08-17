@@ -7,7 +7,6 @@ import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/request.dart';
 import 'package:rhttp/src/rust/frb_generated.dart';
-export 'package:rhttp/src/rust/api/http_types.dart' show HttpHeaderName;
 
 class Rhttp {
   /// Initializes the Rust library.

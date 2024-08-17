@@ -9,7 +9,6 @@
 import 'api/client.dart';
 import 'api/error.dart';
 import 'api/http.dart';
-import 'api/http_types.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -43,10 +42,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Map<String, String> dco_decode_Map_String_String(dynamic raw);
-
-  @protected
-  Map<HttpHeaderName, String> dco_decode_Map_http_header_name_String(
-      dynamic raw);
 
   @protected
   RustStreamSink<Uint8List> dco_decode_StreamSink_list_prim_u_8_strict_Sse(
@@ -104,9 +99,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   HttpExpectBody dco_decode_http_expect_body(dynamic raw);
 
   @protected
-  HttpHeaderName dco_decode_http_header_name(dynamic raw);
-
-  @protected
   HttpHeaders dco_decode_http_headers(dynamic raw);
 
   @protected
@@ -135,10 +127,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
-
-  @protected
-  List<(HttpHeaderName, String)> dco_decode_list_record_http_header_name_string(
-      dynamic raw);
 
   @protected
   List<(String, MultipartItem)> dco_decode_list_record_string_multipart_item(
@@ -193,10 +181,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ProxySettings dco_decode_proxy_settings(dynamic raw);
 
   @protected
-  (HttpHeaderName, String) dco_decode_record_http_header_name_string(
-      dynamic raw);
-
-  @protected
   (String, MultipartItem) dco_decode_record_string_multipart_item(dynamic raw);
 
   @protected
@@ -234,10 +218,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Map<String, String> sse_decode_Map_String_String(
-      SseDeserializer deserializer);
-
-  @protected
-  Map<HttpHeaderName, String> sse_decode_Map_http_header_name_String(
       SseDeserializer deserializer);
 
   @protected
@@ -301,9 +281,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   HttpExpectBody sse_decode_http_expect_body(SseDeserializer deserializer);
 
   @protected
-  HttpHeaderName sse_decode_http_header_name(SseDeserializer deserializer);
-
-  @protected
   HttpHeaders sse_decode_http_headers(SseDeserializer deserializer);
 
   @protected
@@ -333,10 +310,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
-
-  @protected
-  List<(HttpHeaderName, String)> sse_decode_list_record_http_header_name_string(
-      SseDeserializer deserializer);
 
   @protected
   List<(String, MultipartItem)> sse_decode_list_record_string_multipart_item(
@@ -400,10 +373,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ProxySettings sse_decode_proxy_settings(SseDeserializer deserializer);
 
   @protected
-  (HttpHeaderName, String) sse_decode_record_http_header_name_string(
-      SseDeserializer deserializer);
-
-  @protected
   (String, MultipartItem) sse_decode_record_string_multipart_item(
       SseDeserializer deserializer);
 
@@ -453,10 +422,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_Map_String_String(
       Map<String, String> self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_Map_http_header_name_String(
-      Map<HttpHeaderName, String> self, SseSerializer serializer);
 
   @protected
   void sse_encode_StreamSink_list_prim_u_8_strict_Sse(
@@ -528,10 +493,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       HttpExpectBody self, SseSerializer serializer);
 
   @protected
-  void sse_encode_http_header_name(
-      HttpHeaderName self, SseSerializer serializer);
-
-  @protected
   void sse_encode_http_headers(HttpHeaders self, SseSerializer serializer);
 
   @protected
@@ -564,10 +525,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_list_record_http_header_name_string(
-      List<(HttpHeaderName, String)> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_record_string_multipart_item(
@@ -633,10 +590,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_proxy_settings(ProxySettings self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_record_http_header_name_string(
-      (HttpHeaderName, String) self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_multipart_item(

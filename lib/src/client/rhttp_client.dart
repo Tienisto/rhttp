@@ -23,18 +23,38 @@ class RhttpClient {
   @internal
   final int ref;
 
-  RhttpClient._({
+  const RhttpClient._({
     required this.settings,
     required this.interceptor,
     required this.ref,
   });
 
+  /// Creates a new HTTP client asynchronously.
+  /// Use this method if your app is already running to avoid blocking the UI.
   static Future<RhttpClient> create({
     ClientSettings? settings,
     List<Interceptor>? interceptors,
   }) async {
     settings ??= const ClientSettings();
     final ref = await rust.registerClient(
+      settings: settings.toRustType(),
+    );
+    return RhttpClient._(
+      settings: settings,
+      interceptor: parseInterceptorList(interceptors),
+      ref: ref,
+    );
+  }
+
+  /// Creates a new HTTP client synchronously.
+  /// Use this method if your app is starting up to simplify the code
+  /// that might arise by using async/await.
+  factory RhttpClient.createSync({
+    ClientSettings? settings,
+    List<Interceptor>? interceptors,
+  }) {
+    settings ??= const ClientSettings();
+    final ref = rust.registerClientSync(
       settings: settings.toRustType(),
     );
     return RhttpClient._(

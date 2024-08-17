@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/exception.dart';
+import 'package:rhttp/src/model/header.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
-import 'package:rhttp/src/rust/api/http_types.dart';
 import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 
@@ -228,8 +228,10 @@ extension on HttpMethod {
 extension on HttpHeaders {
   rust.HttpHeaders _toRustType() {
     return switch (this) {
-      HttpHeaderMap map => rust.HttpHeaders.map(map.map),
-      HttpHeaderRawMap rawMap => rust.HttpHeaders.rawMap(rawMap.map),
+      HttpHeaderMap map => rust.HttpHeaders.map({
+          for (final entry in map.map.entries) entry.key.httpName: entry.value,
+        }),
+      HttpHeaderRawMap rawMap => rust.HttpHeaders.map(rawMap.map),
       HttpHeaderList list => rust.HttpHeaders.list(list.list),
     };
   }

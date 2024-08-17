@@ -4,11 +4,11 @@ import 'package:meta/meta.dart';
 import 'package:rhttp/src/client/rhttp_client.dart';
 import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/cancel_token.dart';
+import 'package:rhttp/src/model/header.dart';
 import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/request.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
-import 'package:rhttp/src/rust/api/http_types.dart';
 
 const Map<String, String> _keepQuery = {};
 const HttpHeaders _keepHeaders = HttpHeaders.map({});
@@ -115,19 +115,24 @@ class HttpRequest extends BaseHttpRequest {
     HttpBody? body = _keepBody,
     HttpExpectBody? expectBody,
     CancelToken? cancelToken,
-  }) =>
-      HttpRequest(
-        client: client ?? this.client,
-        settings: settings ?? this.settings,
-        interceptor: interceptor,
-        method: method ?? this.method,
-        url: url ?? this.url,
-        query: identical(query, _keepQuery) ? this.query : query,
-        headers: identical(headers, _keepHeaders) ? this.headers : headers,
-        body: identical(body, _keepBody) ? this.body : body,
-        expectBody: expectBody ?? this.expectBody,
-        cancelToken: cancelToken ?? this.cancelToken,
-      );
+  }) {
+    final request = HttpRequest(
+      client: client ?? this.client,
+      settings: settings ?? this.settings,
+      interceptor: interceptor,
+      method: method ?? this.method,
+      url: url ?? this.url,
+      query: identical(query, _keepQuery) ? this.query : query,
+      headers: identical(headers, _keepHeaders) ? this.headers : headers,
+      body: identical(body, _keepBody) ? this.body : body,
+      expectBody: expectBody ?? this.expectBody,
+      cancelToken: cancelToken ?? this.cancelToken,
+    );
+
+    request.additionalData.addAll(additionalData);
+
+    return request;
+  }
 }
 
 enum HttpExpectBody {
@@ -189,6 +194,88 @@ sealed class HttpHeaders {
   /// This allows for multiple headers with the same name.
   const factory HttpHeaders.list(List<(String, String)> list) =
       HttpHeaderList._;
+
+  /// An empty header map.
+  static const HttpHeaders empty = HttpHeaderMap._({});
+
+  /// Adds a header to the headers.
+  /// Returns a new instance of [HttpHeaders] with the added header.
+  /// Converts [HttpHeaderMap] to [HttpHeaderRawMap].
+  HttpHeaders copyWithRaw(String key, String value) {
+    return switch (this) {
+      HttpHeaderMap map => HttpHeaders.rawMap({
+          for (final entry in map.map.entries) entry.key.httpName: entry.value,
+          key: value,
+        }),
+      HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
+          ...rawMap.map,
+          key: value,
+        }),
+      HttpHeaderList list => HttpHeaders.list([
+          ...list.list,
+          (key, value),
+        ]),
+    };
+  }
+
+  /// Adds a header to the headers.
+  /// Returns a new instance of [HttpHeaders] with the added header.
+  HttpHeaders copyWith(HttpHeaderName key, String value) {
+    return switch (this) {
+      HttpHeaderMap map => HttpHeaders.map({
+          ...map.map,
+          key: value,
+        }),
+      HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
+          ...rawMap.map,
+          key.httpName: value,
+        }),
+      HttpHeaderList list => HttpHeaders.list([
+          ...list.list,
+          (key.httpName, value),
+        ]),
+    };
+  }
+
+  /// Removes a header from the headers.
+  /// Returns a new instance of [HttpHeaders] without the [key].
+  HttpHeaders copyWithout(HttpHeaderName key) {
+    return switch (this) {
+      HttpHeaderMap map => HttpHeaders.map({
+          for (final entry in map.map.entries)
+            if (entry.key != key) entry.key: entry.value,
+        }),
+      HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
+          for (final entry in rawMap.map.entries)
+            if (entry.key.toLowerCase() != key.httpName) entry.key: entry.value,
+        }),
+      HttpHeaderList list => HttpHeaders.list([
+          for (final entry in list.list)
+            if (entry.$1.toLowerCase() != key.httpName) entry,
+        ]),
+    };
+  }
+
+  /// Removes a header from the headers.
+  /// Returns a new instance of [HttpHeaders] without the [key].
+  /// Converts [HttpHeaderMap] to [HttpHeaderRawMap].
+  HttpHeaders copyWithoutRaw(String key) {
+    key = key.toLowerCase();
+    return switch (this) {
+      HttpHeaderMap map => HttpHeaders.rawMap({
+          for (final entry in map.map.entries)
+            if (entry.key.httpName != key) entry.key.httpName: entry.value,
+        }),
+      HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
+          for (final entry in rawMap.map.entries)
+            if (entry.key.toLowerCase() != key) entry.key: entry.value,
+        }),
+      HttpHeaderList list => HttpHeaders.list([
+          for (final entry in list.list)
+            if (entry.$1.toLowerCase() != key) entry,
+        ]),
+    };
+  }
 }
 
 /// A typed header map with a set of predefined keys.
@@ -196,6 +283,11 @@ class HttpHeaderMap extends HttpHeaders {
   final Map<HttpHeaderName, String> map;
 
   const HttpHeaderMap._(this.map);
+
+  @override
+  String toString() {
+    return 'HttpHeaderMap(${map.toString()})';
+  }
 }
 
 /// A raw header map where the keys are strings.
@@ -203,6 +295,11 @@ class HttpHeaderRawMap extends HttpHeaders {
   final Map<String, String> map;
 
   const HttpHeaderRawMap._(this.map);
+
+  @override
+  String toString() {
+    return 'HttpHeaderRawMap(${map.toString()})';
+  }
 }
 
 /// A raw header list.
@@ -211,6 +308,11 @@ class HttpHeaderList extends HttpHeaders {
   final List<(String, String)> list;
 
   const HttpHeaderList._(this.list);
+
+  @override
+  String toString() {
+    return 'HttpHeaderList(${list.toString()})';
+  }
 }
 
 sealed class HttpBody {

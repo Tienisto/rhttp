@@ -6,16 +6,18 @@
 import '../frb_generated.dart';
 import 'client.dart';
 import 'error.dart';
-import 'http_types.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'http.freezed.dart';
 
-// These functions are ignored because they are not marked as `pub`: `from_version`, `header_to_vec`, `make_http_request_helper`, `make_http_request_inner`, `make_http_request_receive_stream_inner`, `to_method`
+// These functions are ignored because they are not marked as `pub`: `from_version`, `header_to_vec`, `make_http_request_helper`, `make_http_request_inner`, `make_http_request_receive_stream_inner`, `register_client_internal`, `to_method`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`
 
 Future<PlatformInt64> registerClient({required ClientSettings settings}) =>
     RustLib.instance.api.crateApiHttpRegisterClient(settings: settings);
+
+PlatformInt64 registerClientSync({required ClientSettings settings}) =>
+    RustLib.instance.api.crateApiHttpRegisterClientSync(settings: settings);
 
 Future<void> removeClient({required PlatformInt64 address}) =>
     RustLib.instance.api.crateApiHttpRemoveClient(address: address);
@@ -98,11 +100,8 @@ sealed class HttpHeaders with _$HttpHeaders {
   const HttpHeaders._();
 
   const factory HttpHeaders.map(
-    Map<HttpHeaderName, String> field0,
-  ) = HttpHeaders_Map;
-  const factory HttpHeaders.rawMap(
     Map<String, String> field0,
-  ) = HttpHeaders_RawMap;
+  ) = HttpHeaders_Map;
   const factory HttpHeaders.list(
     List<(String, String)> field0,
   ) = HttpHeaders_List;

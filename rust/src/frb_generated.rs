@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.2.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1154344864;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 2133635912;
 
 // Section: executor
 
@@ -274,6 +274,36 @@ fn wire__crate__api__http__register_client_impl(
         },
     )
 }
+fn wire__crate__api__http__register_client_sync_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "register_client_sync",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_settings = <crate::api::client::ClientSettings>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, crate::api::error::RhttpError>((move || {
+                let output_ok = crate::api::http::register_client_sync(api_settings)?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__http__remove_client_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -448,15 +478,6 @@ impl SseDecode for std::collections::HashMap<String, String> {
     }
 }
 
-impl SseDecode for std::collections::HashMap<crate::api::http_types::HttpHeaderName, String> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut inner =
-            <Vec<(crate::api::http_types::HttpHeaderName, String)>>::sse_decode(deserializer);
-        return inner.into_iter().collect();
-    }
-}
-
 impl SseDecode for StreamSink<Vec<u8>, flutter_rust_bridge::for_generated::SseCodec> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -555,115 +576,17 @@ impl SseDecode for crate::api::http::HttpExpectBody {
     }
 }
 
-impl SseDecode for crate::api::http_types::HttpHeaderName {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut inner = <i32>::sse_decode(deserializer);
-        return match inner {
-            0 => crate::api::http_types::HttpHeaderName::Accept,
-            1 => crate::api::http_types::HttpHeaderName::AcceptCharset,
-            2 => crate::api::http_types::HttpHeaderName::AcceptEncoding,
-            3 => crate::api::http_types::HttpHeaderName::AcceptLanguage,
-            4 => crate::api::http_types::HttpHeaderName::AcceptRanges,
-            5 => crate::api::http_types::HttpHeaderName::AccessControlAllowCredentials,
-            6 => crate::api::http_types::HttpHeaderName::AccessControlAllowHeaders,
-            7 => crate::api::http_types::HttpHeaderName::AccessControlAllowMethods,
-            8 => crate::api::http_types::HttpHeaderName::AccessControlAllowOrigin,
-            9 => crate::api::http_types::HttpHeaderName::AccessControlExposeHeaders,
-            10 => crate::api::http_types::HttpHeaderName::AccessControlMaxAge,
-            11 => crate::api::http_types::HttpHeaderName::AccessControlRequestHeaders,
-            12 => crate::api::http_types::HttpHeaderName::AccessControlRequestMethod,
-            13 => crate::api::http_types::HttpHeaderName::Age,
-            14 => crate::api::http_types::HttpHeaderName::Allow,
-            15 => crate::api::http_types::HttpHeaderName::AltSvc,
-            16 => crate::api::http_types::HttpHeaderName::Authorization,
-            17 => crate::api::http_types::HttpHeaderName::CacheControl,
-            18 => crate::api::http_types::HttpHeaderName::CacheStatus,
-            19 => crate::api::http_types::HttpHeaderName::CdnCacheControl,
-            20 => crate::api::http_types::HttpHeaderName::Connection,
-            21 => crate::api::http_types::HttpHeaderName::ContentDisposition,
-            22 => crate::api::http_types::HttpHeaderName::ContentEncoding,
-            23 => crate::api::http_types::HttpHeaderName::ContentLanguage,
-            24 => crate::api::http_types::HttpHeaderName::ContentLength,
-            25 => crate::api::http_types::HttpHeaderName::ContentLocation,
-            26 => crate::api::http_types::HttpHeaderName::ContentRange,
-            27 => crate::api::http_types::HttpHeaderName::ContentSecurityPolicy,
-            28 => crate::api::http_types::HttpHeaderName::ContentSecurityPolicyReportOnly,
-            29 => crate::api::http_types::HttpHeaderName::ContentType,
-            30 => crate::api::http_types::HttpHeaderName::Cookie,
-            31 => crate::api::http_types::HttpHeaderName::Dnt,
-            32 => crate::api::http_types::HttpHeaderName::Date,
-            33 => crate::api::http_types::HttpHeaderName::Etag,
-            34 => crate::api::http_types::HttpHeaderName::Expect,
-            35 => crate::api::http_types::HttpHeaderName::Expires,
-            36 => crate::api::http_types::HttpHeaderName::Forwarded,
-            37 => crate::api::http_types::HttpHeaderName::From,
-            38 => crate::api::http_types::HttpHeaderName::Host,
-            39 => crate::api::http_types::HttpHeaderName::IfMatch,
-            40 => crate::api::http_types::HttpHeaderName::IfModifiedSince,
-            41 => crate::api::http_types::HttpHeaderName::IfNoneMatch,
-            42 => crate::api::http_types::HttpHeaderName::IfRange,
-            43 => crate::api::http_types::HttpHeaderName::IfUnmodifiedSince,
-            44 => crate::api::http_types::HttpHeaderName::LastModified,
-            45 => crate::api::http_types::HttpHeaderName::Link,
-            46 => crate::api::http_types::HttpHeaderName::Location,
-            47 => crate::api::http_types::HttpHeaderName::MaxForwards,
-            48 => crate::api::http_types::HttpHeaderName::Origin,
-            49 => crate::api::http_types::HttpHeaderName::Pragma,
-            50 => crate::api::http_types::HttpHeaderName::ProxyAuthenticate,
-            51 => crate::api::http_types::HttpHeaderName::ProxyAuthorization,
-            52 => crate::api::http_types::HttpHeaderName::PublicKeyPins,
-            53 => crate::api::http_types::HttpHeaderName::PublicKeyPinsReportOnly,
-            54 => crate::api::http_types::HttpHeaderName::Range,
-            55 => crate::api::http_types::HttpHeaderName::Referer,
-            56 => crate::api::http_types::HttpHeaderName::ReferrerPolicy,
-            57 => crate::api::http_types::HttpHeaderName::Refresh,
-            58 => crate::api::http_types::HttpHeaderName::RetryAfter,
-            59 => crate::api::http_types::HttpHeaderName::SecWebSocketAccept,
-            60 => crate::api::http_types::HttpHeaderName::SecWebSocketExtensions,
-            61 => crate::api::http_types::HttpHeaderName::SecWebSocketKey,
-            62 => crate::api::http_types::HttpHeaderName::SecWebSocketProtocol,
-            63 => crate::api::http_types::HttpHeaderName::SecWebSocketVersion,
-            64 => crate::api::http_types::HttpHeaderName::Server,
-            65 => crate::api::http_types::HttpHeaderName::SetCookie,
-            66 => crate::api::http_types::HttpHeaderName::StrictTransportSecurity,
-            67 => crate::api::http_types::HttpHeaderName::Te,
-            68 => crate::api::http_types::HttpHeaderName::Trailer,
-            69 => crate::api::http_types::HttpHeaderName::TransferEncoding,
-            70 => crate::api::http_types::HttpHeaderName::UserAgent,
-            71 => crate::api::http_types::HttpHeaderName::Upgrade,
-            72 => crate::api::http_types::HttpHeaderName::UpgradeInsecureRequests,
-            73 => crate::api::http_types::HttpHeaderName::Vary,
-            74 => crate::api::http_types::HttpHeaderName::Via,
-            75 => crate::api::http_types::HttpHeaderName::Warning,
-            76 => crate::api::http_types::HttpHeaderName::WwwAuthenticate,
-            77 => crate::api::http_types::HttpHeaderName::XContentTypeOptions,
-            78 => crate::api::http_types::HttpHeaderName::XDnsPrefetchControl,
-            79 => crate::api::http_types::HttpHeaderName::XFrameOptions,
-            80 => crate::api::http_types::HttpHeaderName::XXssProtection,
-            _ => unreachable!("Invalid variant for HttpHeaderName: {}", inner),
-        };
-    }
-}
-
 impl SseDecode for crate::api::http::HttpHeaders {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut tag_ = <i32>::sse_decode(deserializer);
         match tag_ {
             0 => {
-                let mut var_field0 = <std::collections::HashMap<
-                    crate::api::http_types::HttpHeaderName,
-                    String,
-                >>::sse_decode(deserializer);
+                let mut var_field0 =
+                    <std::collections::HashMap<String, String>>::sse_decode(deserializer);
                 return crate::api::http::HttpHeaders::Map(var_field0);
             }
             1 => {
-                let mut var_field0 =
-                    <std::collections::HashMap<String, String>>::sse_decode(deserializer);
-                return crate::api::http::HttpHeaders::RawMap(var_field0);
-            }
-            2 => {
                 let mut var_field0 = <Vec<(String, String)>>::sse_decode(deserializer);
                 return crate::api::http::HttpHeaders::List(var_field0);
             }
@@ -796,18 +719,6 @@ impl SseDecode for Vec<u8> {
         let mut ans_ = vec![];
         for idx_ in 0..len_ {
             ans_.push(<u8>::sse_decode(deserializer));
-        }
-        return ans_;
-    }
-}
-
-impl SseDecode for Vec<(crate::api::http_types::HttpHeaderName, String)> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut len_ = <i32>::sse_decode(deserializer);
-        let mut ans_ = vec![];
-        for idx_ in 0..len_ {
-            ans_.push(<(crate::api::http_types::HttpHeaderName, String)>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -1024,15 +935,6 @@ impl SseDecode for crate::api::client::ProxySettings {
     }
 }
 
-impl SseDecode for (crate::api::http_types::HttpHeaderName, String) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_field0 = <crate::api::http_types::HttpHeaderName>::sse_decode(deserializer);
-        let mut var_field1 = <String>::sse_decode(deserializer);
-        return (var_field0, var_field1);
-    }
-}
-
 impl SseDecode for (String, crate::api::http::MultipartItem) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1173,8 +1075,8 @@ fn pde_ffi_dispatcher_primary_impl(
             data_len,
         ),
         5 => wire__crate__api__http__register_client_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__http__remove_client_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__crate__api__init__init_app_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__http__remove_client_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__init__init_app_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -1187,6 +1089,7 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
+        6 => wire__crate__api__http__register_client_sync_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -1289,117 +1192,14 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::http::HttpExpectBody>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::http_types::HttpHeaderName {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        match self {
-            Self::Accept => 0.into_dart(),
-            Self::AcceptCharset => 1.into_dart(),
-            Self::AcceptEncoding => 2.into_dart(),
-            Self::AcceptLanguage => 3.into_dart(),
-            Self::AcceptRanges => 4.into_dart(),
-            Self::AccessControlAllowCredentials => 5.into_dart(),
-            Self::AccessControlAllowHeaders => 6.into_dart(),
-            Self::AccessControlAllowMethods => 7.into_dart(),
-            Self::AccessControlAllowOrigin => 8.into_dart(),
-            Self::AccessControlExposeHeaders => 9.into_dart(),
-            Self::AccessControlMaxAge => 10.into_dart(),
-            Self::AccessControlRequestHeaders => 11.into_dart(),
-            Self::AccessControlRequestMethod => 12.into_dart(),
-            Self::Age => 13.into_dart(),
-            Self::Allow => 14.into_dart(),
-            Self::AltSvc => 15.into_dart(),
-            Self::Authorization => 16.into_dart(),
-            Self::CacheControl => 17.into_dart(),
-            Self::CacheStatus => 18.into_dart(),
-            Self::CdnCacheControl => 19.into_dart(),
-            Self::Connection => 20.into_dart(),
-            Self::ContentDisposition => 21.into_dart(),
-            Self::ContentEncoding => 22.into_dart(),
-            Self::ContentLanguage => 23.into_dart(),
-            Self::ContentLength => 24.into_dart(),
-            Self::ContentLocation => 25.into_dart(),
-            Self::ContentRange => 26.into_dart(),
-            Self::ContentSecurityPolicy => 27.into_dart(),
-            Self::ContentSecurityPolicyReportOnly => 28.into_dart(),
-            Self::ContentType => 29.into_dart(),
-            Self::Cookie => 30.into_dart(),
-            Self::Dnt => 31.into_dart(),
-            Self::Date => 32.into_dart(),
-            Self::Etag => 33.into_dart(),
-            Self::Expect => 34.into_dart(),
-            Self::Expires => 35.into_dart(),
-            Self::Forwarded => 36.into_dart(),
-            Self::From => 37.into_dart(),
-            Self::Host => 38.into_dart(),
-            Self::IfMatch => 39.into_dart(),
-            Self::IfModifiedSince => 40.into_dart(),
-            Self::IfNoneMatch => 41.into_dart(),
-            Self::IfRange => 42.into_dart(),
-            Self::IfUnmodifiedSince => 43.into_dart(),
-            Self::LastModified => 44.into_dart(),
-            Self::Link => 45.into_dart(),
-            Self::Location => 46.into_dart(),
-            Self::MaxForwards => 47.into_dart(),
-            Self::Origin => 48.into_dart(),
-            Self::Pragma => 49.into_dart(),
-            Self::ProxyAuthenticate => 50.into_dart(),
-            Self::ProxyAuthorization => 51.into_dart(),
-            Self::PublicKeyPins => 52.into_dart(),
-            Self::PublicKeyPinsReportOnly => 53.into_dart(),
-            Self::Range => 54.into_dart(),
-            Self::Referer => 55.into_dart(),
-            Self::ReferrerPolicy => 56.into_dart(),
-            Self::Refresh => 57.into_dart(),
-            Self::RetryAfter => 58.into_dart(),
-            Self::SecWebSocketAccept => 59.into_dart(),
-            Self::SecWebSocketExtensions => 60.into_dart(),
-            Self::SecWebSocketKey => 61.into_dart(),
-            Self::SecWebSocketProtocol => 62.into_dart(),
-            Self::SecWebSocketVersion => 63.into_dart(),
-            Self::Server => 64.into_dart(),
-            Self::SetCookie => 65.into_dart(),
-            Self::StrictTransportSecurity => 66.into_dart(),
-            Self::Te => 67.into_dart(),
-            Self::Trailer => 68.into_dart(),
-            Self::TransferEncoding => 69.into_dart(),
-            Self::UserAgent => 70.into_dart(),
-            Self::Upgrade => 71.into_dart(),
-            Self::UpgradeInsecureRequests => 72.into_dart(),
-            Self::Vary => 73.into_dart(),
-            Self::Via => 74.into_dart(),
-            Self::Warning => 75.into_dart(),
-            Self::WwwAuthenticate => 76.into_dart(),
-            Self::XContentTypeOptions => 77.into_dart(),
-            Self::XDnsPrefetchControl => 78.into_dart(),
-            Self::XFrameOptions => 79.into_dart(),
-            Self::XXssProtection => 80.into_dart(),
-            _ => unreachable!(),
-        }
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::http_types::HttpHeaderName
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::http_types::HttpHeaderName>
-    for crate::api::http_types::HttpHeaderName
-{
-    fn into_into_dart(self) -> crate::api::http_types::HttpHeaderName {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::http::HttpHeaders {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
             crate::api::http::HttpHeaders::Map(field0) => {
                 [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
-            crate::api::http::HttpHeaders::RawMap(field0) => {
-                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
-            }
             crate::api::http::HttpHeaders::List(field0) => {
-                [2.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -1739,16 +1539,6 @@ impl SseEncode for std::collections::HashMap<String, String> {
     }
 }
 
-impl SseEncode for std::collections::HashMap<crate::api::http_types::HttpHeaderName, String> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<(crate::api::http_types::HttpHeaderName, String)>>::sse_encode(
-            self.into_iter().collect(),
-            serializer,
-        );
-    }
-}
-
 impl SseEncode for StreamSink<Vec<u8>, flutter_rust_bridge::for_generated::SseCodec> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -1833,115 +1623,16 @@ impl SseEncode for crate::api::http::HttpExpectBody {
     }
 }
 
-impl SseEncode for crate::api::http_types::HttpHeaderName {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <i32>::sse_encode(
-            match self {
-                crate::api::http_types::HttpHeaderName::Accept => 0,
-                crate::api::http_types::HttpHeaderName::AcceptCharset => 1,
-                crate::api::http_types::HttpHeaderName::AcceptEncoding => 2,
-                crate::api::http_types::HttpHeaderName::AcceptLanguage => 3,
-                crate::api::http_types::HttpHeaderName::AcceptRanges => 4,
-                crate::api::http_types::HttpHeaderName::AccessControlAllowCredentials => 5,
-                crate::api::http_types::HttpHeaderName::AccessControlAllowHeaders => 6,
-                crate::api::http_types::HttpHeaderName::AccessControlAllowMethods => 7,
-                crate::api::http_types::HttpHeaderName::AccessControlAllowOrigin => 8,
-                crate::api::http_types::HttpHeaderName::AccessControlExposeHeaders => 9,
-                crate::api::http_types::HttpHeaderName::AccessControlMaxAge => 10,
-                crate::api::http_types::HttpHeaderName::AccessControlRequestHeaders => 11,
-                crate::api::http_types::HttpHeaderName::AccessControlRequestMethod => 12,
-                crate::api::http_types::HttpHeaderName::Age => 13,
-                crate::api::http_types::HttpHeaderName::Allow => 14,
-                crate::api::http_types::HttpHeaderName::AltSvc => 15,
-                crate::api::http_types::HttpHeaderName::Authorization => 16,
-                crate::api::http_types::HttpHeaderName::CacheControl => 17,
-                crate::api::http_types::HttpHeaderName::CacheStatus => 18,
-                crate::api::http_types::HttpHeaderName::CdnCacheControl => 19,
-                crate::api::http_types::HttpHeaderName::Connection => 20,
-                crate::api::http_types::HttpHeaderName::ContentDisposition => 21,
-                crate::api::http_types::HttpHeaderName::ContentEncoding => 22,
-                crate::api::http_types::HttpHeaderName::ContentLanguage => 23,
-                crate::api::http_types::HttpHeaderName::ContentLength => 24,
-                crate::api::http_types::HttpHeaderName::ContentLocation => 25,
-                crate::api::http_types::HttpHeaderName::ContentRange => 26,
-                crate::api::http_types::HttpHeaderName::ContentSecurityPolicy => 27,
-                crate::api::http_types::HttpHeaderName::ContentSecurityPolicyReportOnly => 28,
-                crate::api::http_types::HttpHeaderName::ContentType => 29,
-                crate::api::http_types::HttpHeaderName::Cookie => 30,
-                crate::api::http_types::HttpHeaderName::Dnt => 31,
-                crate::api::http_types::HttpHeaderName::Date => 32,
-                crate::api::http_types::HttpHeaderName::Etag => 33,
-                crate::api::http_types::HttpHeaderName::Expect => 34,
-                crate::api::http_types::HttpHeaderName::Expires => 35,
-                crate::api::http_types::HttpHeaderName::Forwarded => 36,
-                crate::api::http_types::HttpHeaderName::From => 37,
-                crate::api::http_types::HttpHeaderName::Host => 38,
-                crate::api::http_types::HttpHeaderName::IfMatch => 39,
-                crate::api::http_types::HttpHeaderName::IfModifiedSince => 40,
-                crate::api::http_types::HttpHeaderName::IfNoneMatch => 41,
-                crate::api::http_types::HttpHeaderName::IfRange => 42,
-                crate::api::http_types::HttpHeaderName::IfUnmodifiedSince => 43,
-                crate::api::http_types::HttpHeaderName::LastModified => 44,
-                crate::api::http_types::HttpHeaderName::Link => 45,
-                crate::api::http_types::HttpHeaderName::Location => 46,
-                crate::api::http_types::HttpHeaderName::MaxForwards => 47,
-                crate::api::http_types::HttpHeaderName::Origin => 48,
-                crate::api::http_types::HttpHeaderName::Pragma => 49,
-                crate::api::http_types::HttpHeaderName::ProxyAuthenticate => 50,
-                crate::api::http_types::HttpHeaderName::ProxyAuthorization => 51,
-                crate::api::http_types::HttpHeaderName::PublicKeyPins => 52,
-                crate::api::http_types::HttpHeaderName::PublicKeyPinsReportOnly => 53,
-                crate::api::http_types::HttpHeaderName::Range => 54,
-                crate::api::http_types::HttpHeaderName::Referer => 55,
-                crate::api::http_types::HttpHeaderName::ReferrerPolicy => 56,
-                crate::api::http_types::HttpHeaderName::Refresh => 57,
-                crate::api::http_types::HttpHeaderName::RetryAfter => 58,
-                crate::api::http_types::HttpHeaderName::SecWebSocketAccept => 59,
-                crate::api::http_types::HttpHeaderName::SecWebSocketExtensions => 60,
-                crate::api::http_types::HttpHeaderName::SecWebSocketKey => 61,
-                crate::api::http_types::HttpHeaderName::SecWebSocketProtocol => 62,
-                crate::api::http_types::HttpHeaderName::SecWebSocketVersion => 63,
-                crate::api::http_types::HttpHeaderName::Server => 64,
-                crate::api::http_types::HttpHeaderName::SetCookie => 65,
-                crate::api::http_types::HttpHeaderName::StrictTransportSecurity => 66,
-                crate::api::http_types::HttpHeaderName::Te => 67,
-                crate::api::http_types::HttpHeaderName::Trailer => 68,
-                crate::api::http_types::HttpHeaderName::TransferEncoding => 69,
-                crate::api::http_types::HttpHeaderName::UserAgent => 70,
-                crate::api::http_types::HttpHeaderName::Upgrade => 71,
-                crate::api::http_types::HttpHeaderName::UpgradeInsecureRequests => 72,
-                crate::api::http_types::HttpHeaderName::Vary => 73,
-                crate::api::http_types::HttpHeaderName::Via => 74,
-                crate::api::http_types::HttpHeaderName::Warning => 75,
-                crate::api::http_types::HttpHeaderName::WwwAuthenticate => 76,
-                crate::api::http_types::HttpHeaderName::XContentTypeOptions => 77,
-                crate::api::http_types::HttpHeaderName::XDnsPrefetchControl => 78,
-                crate::api::http_types::HttpHeaderName::XFrameOptions => 79,
-                crate::api::http_types::HttpHeaderName::XXssProtection => 80,
-                _ => {
-                    unimplemented!("");
-                }
-            },
-            serializer,
-        );
-    }
-}
-
 impl SseEncode for crate::api::http::HttpHeaders {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         match self {
             crate::api::http::HttpHeaders::Map(field0) => {
                 <i32>::sse_encode(0, serializer);
-                <std::collections::HashMap<crate::api::http_types::HttpHeaderName, String>>::sse_encode(field0, serializer);
-            }
-            crate::api::http::HttpHeaders::RawMap(field0) => {
-                <i32>::sse_encode(1, serializer);
                 <std::collections::HashMap<String, String>>::sse_encode(field0, serializer);
             }
             crate::api::http::HttpHeaders::List(field0) => {
-                <i32>::sse_encode(2, serializer);
+                <i32>::sse_encode(1, serializer);
                 <Vec<(String, String)>>::sse_encode(field0, serializer);
             }
             _ => {
@@ -2075,16 +1766,6 @@ impl SseEncode for Vec<u8> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <u8>::sse_encode(item, serializer);
-        }
-    }
-}
-
-impl SseEncode for Vec<(crate::api::http_types::HttpHeaderName, String)> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <i32>::sse_encode(self.len() as _, serializer);
-        for item in self {
-            <(crate::api::http_types::HttpHeaderName, String)>::sse_encode(item, serializer);
         }
     }
 }
@@ -2270,14 +1951,6 @@ impl SseEncode for crate::api::client::ProxySettings {
             },
             serializer,
         );
-    }
-}
-
-impl SseEncode for (crate::api::http_types::HttpHeaderName, String) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <crate::api::http_types::HttpHeaderName>::sse_encode(self.0, serializer);
-        <String>::sse_encode(self.1, serializer);
     }
 }
 

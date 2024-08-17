@@ -1,6 +1,9 @@
 ## 0.5.1
 
+- feat: add `RhttpClient.createSync`
+- feat: add `HttpHeaders.copyWith`, `HttpHeaders.copyWithout`
 - feat: add convenience method: `HttpTextResponse.bodyToJson`
+- fix: reset parameters in `RetryInterceptor.shouldRetry` before retrying
 
 ## 0.5.0
 

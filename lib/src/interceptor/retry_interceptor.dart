@@ -119,6 +119,8 @@ class RetryInterceptor extends Interceptor {
       request.additionalData[key] = true;
 
       try {
+        response = null;
+        exception = null;
         response = await request.send();
       } on RhttpException catch (e) {
         exception = e;
