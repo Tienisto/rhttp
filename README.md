@@ -325,7 +325,10 @@ class TestInterceptor extends Interceptor {
   Future<InterceptorResult<HttpRequest>> beforeRequest(
     HttpRequest request,
   ) async {
-    return Interceptor.next();
+    return Interceptor.next(request.addHeader(
+      name: HttpHeaderName.accept,
+      value: 'application/json',
+    ));
   }
 
   @override

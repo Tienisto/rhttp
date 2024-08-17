@@ -133,6 +133,20 @@ class HttpRequest extends BaseHttpRequest {
 
     return request;
   }
+
+  /// Convenience method to add a header to the request.
+  /// Returns a new instance of [HttpRequest] with the added header.
+  HttpRequest addHeader({
+    required HttpHeaderName name,
+    required String value,
+  }) {
+    return copyWith(
+      headers: (headers ?? HttpHeaders.empty).copyWith(
+        name: name,
+        value: value,
+      ),
+    );
+  }
 }
 
 enum HttpExpectBody {
@@ -201,38 +215,41 @@ sealed class HttpHeaders {
   /// Adds a header to the headers.
   /// Returns a new instance of [HttpHeaders] with the added header.
   /// Converts [HttpHeaderMap] to [HttpHeaderRawMap].
-  HttpHeaders copyWithRaw(String key, String value) {
+  HttpHeaders copyWithRaw({required String name, required String value}) {
     return switch (this) {
       HttpHeaderMap map => HttpHeaders.rawMap({
           for (final entry in map.map.entries) entry.key.httpName: entry.value,
-          key: value,
+          name: value,
         }),
       HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
           ...rawMap.map,
-          key: value,
+          name: value,
         }),
       HttpHeaderList list => HttpHeaders.list([
           ...list.list,
-          (key, value),
+          (name, value),
         ]),
     };
   }
 
   /// Adds a header to the headers.
   /// Returns a new instance of [HttpHeaders] with the added header.
-  HttpHeaders copyWith(HttpHeaderName key, String value) {
+  HttpHeaders copyWith({
+    required HttpHeaderName name,
+    required String value,
+  }) {
     return switch (this) {
       HttpHeaderMap map => HttpHeaders.map({
           ...map.map,
-          key: value,
+          name: value,
         }),
       HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
           ...rawMap.map,
-          key.httpName: value,
+          name.httpName: value,
         }),
       HttpHeaderList list => HttpHeaders.list([
           ...list.list,
-          (key.httpName, value),
+          (name.httpName, value),
         ]),
     };
   }

@@ -41,11 +41,9 @@ class AuthInterceptor extends Interceptor {
   ) async {
     final auth = ref.read(authProvider);
     if (auth != null) {
-      return Interceptor.next(request.copyWith(
-        headers: (request.headers ?? HttpHeaders.empty).copyWith(
-          HttpHeaderName.authorization,
-          'Bearer ${auth.accessToken}',
-        ),
+      return Interceptor.next(request.addHeader(
+        name: HttpHeaderName.authorization,
+        value: 'Bearer ${auth.accessToken}',
       ));
     }
     return Interceptor.next();
@@ -141,8 +139,8 @@ class _MyAppState extends ConsumerState<MyApp> {
                 onPressed: () async {
                   try {
                     final res = await ref.read(clientProvider).get(
-                      'https://dummyjson.com/auth/me',
-                    );
+                          'https://dummyjson.com/auth/me',
+                        );
 
                     setState(() {
                       response = res;
