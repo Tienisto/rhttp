@@ -16,7 +16,7 @@ On Rust's side, the [reqwest](https://crates.io/crates/reqwest) crate is used to
 Why shouldn't I use [cronet_http](https://pub.dev/packages/cronet_http) or [cupertino_http](https://pub.dev/packages/cupertino_http)?
 These packages for instance only support Android or iOS, while rhttp supports all platforms (except web currently) with a single configuration.
 
-The APK size will increase by 2.5 MB on arm64 and 7 MB if compiled for all platforms.
+The APK size will increase by 2 MB on arm64 and 6 MB if compiled for all architectures (x64, arm32, arm64).
 
 ## Features
 
