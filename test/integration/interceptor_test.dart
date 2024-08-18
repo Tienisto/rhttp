@@ -10,8 +10,7 @@ void main() {
   setUpAll(() async {
     mockApi = MockRustLibApi.createAndRegister();
 
-    // ignore: invalid_use_of_protected_member
-    RustLib.instance.initMockImpl(api: mockApi);
+    RustLib.initMock(api: mockApi);
   });
 
   group('beforeRequest', () {

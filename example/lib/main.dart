@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   try {
                     final res = await Rhttp.get(
-                      'https://reqres.in/apis/userse',
+                      'https://reqres.in/api/users',
                       query: {'page': '5'},
                       settings: const ClientSettings(
                         httpVersionPref: HttpVersionPref.http3,
