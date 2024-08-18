@@ -29,7 +29,7 @@ jobs:
         run: flutter analyze
 
   test:
-    name: Test (newest Flutter version)
+    name: Test
     runs-on: ubuntu-latest
 
     steps:
