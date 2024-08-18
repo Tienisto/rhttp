@@ -31,9 +31,9 @@ These packages for instance only support Android or iOS, while rhttp supports al
 
 rhttp is much faster at downloading large files and a bit faster at downloading small files compared to the default HTTP client in Dart.
 
-![benchmark-small](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-small.png)
-
-![benchmark-large](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-large.png)
+| Small Files (1 KB)                                                                                   | Large Files (10 MB)                                                                                  |
+|------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| ![benchmark-small](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-small.png) | ![benchmark-large](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-large.png) |
 
 Referred packages: [dio](https://pub.dev/packages/dio) (5.5.0+1), [http](https://pub.dev/packages/http) (1.2.2), [rhttp](https://pub.dev/packages/rhttp) (0.3.0)
 
