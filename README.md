@@ -16,6 +16,8 @@ On Rust's side, the [reqwest](https://crates.io/crates/reqwest) crate is used to
 Why shouldn't I use [cronet_http](https://pub.dev/packages/cronet_http) or [cupertino_http](https://pub.dev/packages/cupertino_http)?
 These packages for instance only support Android or iOS, while rhttp supports all platforms (except web currently) with a single configuration.
 
+The APK size will increase by 2.5 MB on arm64 and 7 MB if compiled for all platforms.
+
 ## Features
 
 - ✅ HTTP/1, HTTP/1.1, HTTP/2, and HTTP/3 support
@@ -285,6 +287,7 @@ The following exceptions can be thrown:
 | `RhttpStatusCodeException`         | Response has 4xx or 5xx status code.    |
 | `RhttpInvalidCertificateException` | Server certificate is invalid.          |
 | `RhttpInvalidClientException`      | Request is made with an invalid client. |
+| `RhttpInterceptorException`        | Interceptor threw an exception.         |
 | `RhttpUnknownException`            | Unknown error occurred.                 |
 
 ### ➤ Timeout
@@ -318,6 +321,9 @@ await Rhttp.get(
 ### ➤ Interceptors
 
 You can add interceptors to the client to modify requests / responses, handle errors, observe requests, etc.
+
+Any exception thrown by an interceptor that is not a subclass of `RhttpException`
+will be caught and wrapped in a `RhttpInterceptorException`.
 
 ```dart
 class TestInterceptor extends Interceptor {
