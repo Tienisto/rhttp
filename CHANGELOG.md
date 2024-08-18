@@ -1,3 +1,7 @@
+## 0.5.2
+
+- fix: `RetryInterceptor` should throw `RhttpCancelException` if request is canceled during retry
+
 ## 0.5.1
 
 - feat: add `RhttpClient.createSync`

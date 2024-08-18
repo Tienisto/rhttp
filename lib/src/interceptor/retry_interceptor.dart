@@ -136,6 +136,9 @@ class RetryInterceptor extends Interceptor {
         exception = null;
         response = await request.send();
       } on RhttpException catch (e) {
+        if (e is RhttpCancelException) {
+          rethrow;
+        }
         exception = e;
       }
 
