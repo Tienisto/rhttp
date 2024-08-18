@@ -9,6 +9,8 @@ import 'package:rhttp/src/request.dart';
 import 'package:rhttp/src/rust/frb_generated.dart';
 
 class Rhttp {
+  const Rhttp._();
+
   /// Initializes the Rust library.
   static Future<void> init() async {
     await RustLib.init();
