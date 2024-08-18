@@ -10,7 +10,7 @@ export 'src/interceptor/interceptor.dart'
         InterceptorNextResult,
         InterceptorStopResult,
         InterceptorResolveResult;
-export 'src/interceptor/queued_interceptor.dart' show QueuedInterceptor;
+export 'src/interceptor/sequential_interceptor.dart' show SequentialInterceptor;
 export 'src/interceptor/retry_interceptor.dart';
 export 'src/model/cancel_token.dart' show CancelToken;
 export 'src/model/exception.dart'

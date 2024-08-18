@@ -4,10 +4,10 @@ import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
 
 /// An interceptor that queues other interceptors sequentially.
-class QueuedInterceptor extends Interceptor {
+class SequentialInterceptor extends Interceptor {
   final List<Interceptor> interceptors;
 
-  QueuedInterceptor({
+  SequentialInterceptor({
     required this.interceptors,
   });
 

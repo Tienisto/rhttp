@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:rhttp/src/interceptor/queued_interceptor.dart';
+import 'package:rhttp/src/interceptor/sequential_interceptor.dart';
 import 'package:rhttp/src/model/exception.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
@@ -99,7 +99,7 @@ Interceptor? parseInterceptorList(List<Interceptor>? interceptors) {
     null => null,
     [] => null,
     _ when interceptors.length == 1 => interceptors[0],
-    _ => QueuedInterceptor(interceptors: interceptors),
+    _ => SequentialInterceptor(interceptors: interceptors),
   };
 }
 
