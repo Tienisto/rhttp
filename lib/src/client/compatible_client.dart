@@ -1,6 +1,7 @@
 import 'package:http/http.dart';
 import 'package:rhttp/src/client/rhttp_client.dart';
 import 'package:rhttp/src/interceptor/interceptor.dart';
+import 'package:rhttp/src/model/exception.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/settings.dart';
 
@@ -89,8 +90,16 @@ class RhttpCompatibleClient with BaseClient {
         // TODO: Is this even relevant nowadays?
         reasonPhrase: null,
       );
-    } catch (e) {
-      throw ClientException(e.toString(), request.url);
+    } on RhttpException catch (e, st) {
+      Error.throwWithStackTrace(
+        RhttpWrappedClientException(e.toString(), request.url, e),
+        st,
+      );
+    } catch (e, st) {
+      Error.throwWithStackTrace(
+        ClientException(e.toString(), request.url),
+        st,
+      );
     }
   }
 
@@ -98,4 +107,16 @@ class RhttpCompatibleClient with BaseClient {
   void close() {
     client.dispose();
   }
+}
+
+/// Every exception must be a subclass of [ClientException]
+/// as per contract of [BaseClient].
+class RhttpWrappedClientException extends ClientException {
+  /// The original exception that was thrown by rhttp.
+  final RhttpException rhttpException;
+
+  RhttpWrappedClientException(super.message, super.uri, this.rhttpException);
+
+  @override
+  String toString() => rhttpException.toString();
 }

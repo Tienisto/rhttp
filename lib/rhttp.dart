@@ -1,6 +1,7 @@
 library rhttp;
 
-export 'src/client/compatible_client.dart' show RhttpCompatibleClient;
+export 'src/client/compatible_client.dart'
+    show RhttpCompatibleClient, RhttpWrappedClientException;
 export 'src/client/rhttp_client.dart' show RhttpClient;
 export 'src/interceptor/interceptor.dart'
     show

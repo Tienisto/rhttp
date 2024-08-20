@@ -1,3 +1,7 @@
+## 0.5.4
+
+- feat: wrap any exception in `RhttpCompatibleClient` into `RhttpWrappedClientException`
+
 ## 0.5.3
 
 - feat: add `RhttpConnectionException` to catch connection errors like no internet, server not reachable, etc.

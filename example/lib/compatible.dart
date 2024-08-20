@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rhttp/rhttp.dart';
@@ -31,14 +33,18 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               ElevatedButton(
                 onPressed: () async {
-                  _client ??= await RhttpCompatibleClient.create();
+                  try {
+                    _client ??= await RhttpCompatibleClient.create();
 
-                  final res = await _client!.get(
-                    Uri.https('reqres.in', '/api/users', {'page': '5'}),
-                  );
-                  setState(() {
-                    response = res;
-                  });
+                    final res = await _client!.get(
+                      Uri.https('reqres.in', '/apis/users', {'page': '5'}),
+                    );
+                    setState(() {
+                      response = res;
+                    });
+                  } on RhttpWrappedClientException catch (e) {
+                    print(e);
+                  }
                 },
                 child: const Text('Test'),
               ),
