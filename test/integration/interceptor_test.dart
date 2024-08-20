@@ -63,6 +63,7 @@ void main() {
       mockApi.mockErrorResponse();
 
       Object? exception;
+      StackTrace? stackTrace;
       try {
         await Rhttp.get(
           'https://some-url-123',
@@ -74,8 +75,9 @@ void main() {
             )
           ],
         );
-      } catch (e) {
+      } catch (e, st) {
         exception = e;
+        stackTrace = st;
       }
 
       expect(
@@ -89,7 +91,7 @@ void main() {
       expect(
         exception,
         isA<RhttpInterceptorException>().having(
-          (e) => e.stackTrace.toString(),
+          (e) => stackTrace.toString(),
           'stackTrace',
           contains('interceptor_test.dart'),
         ),
@@ -235,6 +237,7 @@ void main() {
       mockApi.mockDefaultResponse();
 
       Object? exception;
+      StackTrace? stackTrace;
       try {
         await Rhttp.get(
           'https://some-url-123',
@@ -246,8 +249,9 @@ void main() {
             )
           ],
         );
-      } catch (e) {
+      } catch (e, st) {
         exception = e;
+        stackTrace = st;
       }
 
       expect(
@@ -261,7 +265,7 @@ void main() {
       expect(
         exception,
         isA<RhttpInterceptorException>().having(
-          (e) => e.stackTrace.toString(),
+          (e) => stackTrace.toString(),
           'stackTrace',
           contains('interceptor_test.dart'),
         ),
@@ -410,6 +414,7 @@ void main() {
       mockApi.mockErrorResponse(exception: fakeRhttpError('Test exception'));
 
       Object? exception;
+      StackTrace? stackTrace;
       try {
         await Rhttp.get(
           'https://example.com',
@@ -421,8 +426,9 @@ void main() {
             )
           ],
         );
-      } catch (e) {
+      } catch (e, st) {
         exception = e;
+        stackTrace = st;
       }
 
       expect(
@@ -436,7 +442,7 @@ void main() {
       expect(
         exception,
         isA<RhttpInterceptorException>().having(
-          (e) => e.stackTrace.toString(),
+          (e) => stackTrace.toString(),
           'stackTrace',
           contains('interceptor_test.dart'),
         ),
