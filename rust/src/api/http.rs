@@ -122,7 +122,8 @@ pub enum HttpResponseBody {
     Stream,
 }
 
-pub fn register_client(settings: ClientSettings) -> Result<i64, RhttpError> {
+// It must be async so that frb provides an async context.
+pub async fn register_client(settings: ClientSettings) -> Result<i64, RhttpError> {
     register_client_internal(settings)
 }
 

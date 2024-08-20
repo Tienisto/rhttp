@@ -247,7 +247,7 @@ fn wire__crate__api__http__register_client_impl(
     rust_vec_len_: i32,
     data_len_: i32,
 ) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "register_client",
             port: Some(port_),
@@ -265,11 +265,14 @@ fn wire__crate__api__http__register_client_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_settings = <crate::api::client::ClientSettings>::sse_decode(&mut deserializer);
             deserializer.end();
-            move |context| {
-                transform_result_sse::<_, crate::api::error::RhttpError>((move || {
-                    let output_ok = crate::api::http::register_client(api_settings)?;
-                    Ok(output_ok)
-                })())
+            move |context| async move {
+                transform_result_sse::<_, crate::api::error::RhttpError>(
+                    (move || async move {
+                        let output_ok = crate::api::http::register_client(api_settings).await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
             }
         },
     )
