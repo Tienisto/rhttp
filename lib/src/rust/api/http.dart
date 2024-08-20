@@ -19,8 +19,11 @@ Future<PlatformInt64> registerClient({required ClientSettings settings}) =>
 PlatformInt64 registerClientSync({required ClientSettings settings}) =>
     RustLib.instance.api.crateApiHttpRegisterClientSync(settings: settings);
 
-Future<void> removeClient({required PlatformInt64 address}) =>
-    RustLib.instance.api.crateApiHttpRemoveClient(address: address);
+Future<void> removeClient(
+        {required PlatformInt64 address,
+        required bool cancelRunningRequests}) =>
+    RustLib.instance.api.crateApiHttpRemoveClient(
+        address: address, cancelRunningRequests: cancelRunningRequests);
 
 Future<HttpResponse> makeHttpRequest(
         {PlatformInt64? clientAddress,

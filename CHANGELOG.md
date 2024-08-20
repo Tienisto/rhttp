@@ -1,6 +1,7 @@
 ## 0.5.3
 
 - feat: add `RhttpCompatibleClient.createSync`
+- feat: add `cancelRunningRequests` parameter to `RhttpClient.dispose`
 - fix: creating a client with HTTP/3 fails with `no async runtime found`
 
 ## 0.5.2

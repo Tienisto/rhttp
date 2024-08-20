@@ -139,8 +139,13 @@ fn register_client_internal(settings: ClientSettings) -> Result<i64, RhttpError>
     Ok(address)
 }
 
-pub fn remove_client(address: i64) {
-    client_pool::remove_client(address);
+pub fn remove_client(address: i64, cancel_running_requests: bool) {
+    let client = client_pool::remove_client(address);
+    if cancel_running_requests {
+        if let Some(client) = client {
+            client.cancel_token.cancel();
+        }
+    }
 }
 
 pub async fn make_http_request(
@@ -155,33 +160,53 @@ pub async fn make_http_request(
     on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
     cancelable: bool,
 ) -> Result<HttpResponse, RhttpError> {
-    if cancelable {
-        let token = CancellationToken::new();
-        let cloned_token = token.clone();
+    let cancel_tokens = build_cancel_tokens(cancelable, client_address);
 
-        let address = request_pool::register_token(token);
+    if let Some(address) = cancel_tokens.request_cancel_address {
         on_cancel_token(address).await;
+    }
 
-        tokio::select! {
-            _ = cloned_token.cancelled() => Err(RhttpError::RhttpCancelError),
-            response = make_http_request_inner(client_address, settings, method, url.to_owned(), query, headers, body, expect_body) => {
+    tokio::select! {
+        _ = cancel_tokens.request_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
+        _ = cancel_tokens.client_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
+        response = make_http_request_inner(client_address, settings, method, url.to_owned(), query, headers, body, expect_body) => {
+            if let Some(address) = cancel_tokens.request_cancel_address {
                 request_pool::remove_token(address);
-                response
-            },
+            }
+            response
+        },
+    }
+}
+
+struct RequestCancelTokens {
+    request_cancel_token: CancellationToken,
+    client_cancel_token: CancellationToken,
+    request_cancel_address: Option<i64>,
+}
+
+fn build_cancel_tokens(cancelable: bool, client_address: Option<i64>) -> RequestCancelTokens {
+    let (request_cancel_token, request_cancel_address) = match cancelable {
+        true => {
+            let token = CancellationToken::new();
+            let cloned_token = token.clone();
+
+            let address = request_pool::register_token(token);
+
+            (cloned_token, Some(address))
         }
-    } else {
-        // request is not cancelable
-        make_http_request_inner(
-            client_address,
-            settings,
-            method,
-            url,
-            query,
-            headers,
-            body,
-            expect_body,
-        )
-        .await
+        false => (CancellationToken::new(), None),
+    };
+
+    let client_cancel_token = match client_address {
+        Some(address) => client_pool::get_client(address).map(|client| client.cancel_token),
+        None => None,
+    }
+    .unwrap_or_else(|| CancellationToken::new());
+
+    RequestCancelTokens {
+        request_cancel_token,
+        client_cancel_token,
+        request_cancel_address,
     }
 }
 
@@ -242,44 +267,31 @@ pub async fn make_http_request_receive_stream(
     on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
     cancelable: bool,
 ) -> Result<(), RhttpError> {
-    if cancelable {
-        let token = CancellationToken::new();
-        let cloned_token = token.clone();
+    let cancel_tokens = build_cancel_tokens(cancelable, client_address);
 
-        let address = request_pool::register_token(token);
+    if let Some(address) = cancel_tokens.request_cancel_address {
         on_cancel_token(address).await;
+    }
 
-        tokio::select! {
-            _ = cloned_token.cancelled() => Err(RhttpError::RhttpCancelError),
-            _ = make_http_request_receive_stream_inner(
-                client_address,
-                settings,
-                method,
-                url.to_owned(),
-                query,
-                headers,
-                body,
-                stream_sink,
-                on_response,
-            ) => {
-                request_pool::remove_token(address);
-                Ok(())
-            },
-        }
-    } else {
-        // request is not cancelable
-        make_http_request_receive_stream_inner(
+    tokio::select! {
+        _ = cancel_tokens.request_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
+        _ = cancel_tokens.client_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
+        _ = make_http_request_receive_stream_inner(
             client_address,
             settings,
             method,
-            url,
+            url.to_owned(),
             query,
             headers,
             body,
             stream_sink,
             on_response,
-        )
-        .await
+        ) => {
+            if let Some(address) = cancel_tokens.request_cancel_address {
+                request_pool::remove_token(address);
+            }
+            Ok(())
+        },
     }
 }
 

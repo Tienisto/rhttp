@@ -115,7 +115,8 @@ abstract class RustLibApi extends BaseApi {
   PlatformInt64 crateApiHttpRegisterClientSync(
       {required ClientSettings settings});
 
-  Future<void> crateApiHttpRemoveClient({required PlatformInt64 address});
+  Future<void> crateApiHttpRemoveClient(
+      {required PlatformInt64 address, required bool cancelRunningRequests});
 
   Future<void> crateApiInitInitApp();
 }
@@ -367,11 +368,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> crateApiHttpRemoveClient({required PlatformInt64 address}) {
+  Future<void> crateApiHttpRemoveClient(
+      {required PlatformInt64 address, required bool cancelRunningRequests}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_i_64(address, serializer);
+        sse_encode_bool(cancelRunningRequests, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 7, port: port_);
       },
@@ -380,14 +383,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateApiHttpRemoveClientConstMeta,
-      argValues: [address],
+      argValues: [address, cancelRunningRequests],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateApiHttpRemoveClientConstMeta => const TaskConstMeta(
         debugName: "remove_client",
-        argNames: ["address"],
+        argNames: ["address", "cancelRunningRequests"],
       );
 
   @override

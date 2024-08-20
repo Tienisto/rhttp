@@ -71,8 +71,11 @@ class RhttpClient {
   /// Disposes the client.
   /// This frees the resources associated with the client.
   /// After calling this method, the client should not be used anymore.
-  void dispose() {
-    rust.removeClient(address: ref);
+  void dispose({bool cancelRunningRequests = false}) async {
+    await rust.removeClient(
+      address: ref,
+      cancelRunningRequests: cancelRunningRequests,
+    );
   }
 
   /// Makes an HTTP request.

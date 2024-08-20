@@ -25,8 +25,10 @@ pub(crate) fn get_client(address: i64) -> Option<RequestClient> {
     Some(client.clone())
 }
 
-pub(crate) fn remove_client(address: i64) {
+pub(crate) fn remove_client(address: i64) -> Option<RequestClient> {
     if let Ok(mut clients) = HTTP_CLIENTS.lock() {
-        clients.remove(&address);
+        clients.remove(&address)
+    } else {
+        None
     }
 }

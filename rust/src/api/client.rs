@@ -2,6 +2,7 @@ use crate::api::error::RhttpError;
 use crate::api::http::HttpVersionPref;
 use chrono::Duration;
 use reqwest::{tls, Certificate};
+use tokio_util::sync::CancellationToken;
 
 pub struct ClientSettings {
     pub http_version_pref: HttpVersionPref,
@@ -53,6 +54,9 @@ pub(crate) struct RequestClient {
     pub(crate) client: reqwest::Client,
     pub(crate) http_version_pref: HttpVersionPref,
     pub(crate) throw_on_status_code: bool,
+
+    /// A token that can be used to cancel all requests made by this client.
+    pub(crate) cancel_token: CancellationToken,
 }
 
 impl RequestClient {
@@ -152,5 +156,6 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
         client,
         http_version_pref: settings.http_version_pref,
         throw_on_status_code: settings.throw_on_status_code,
+        cancel_token: CancellationToken::new(),
     })
 }

@@ -330,11 +330,12 @@ fn wire__crate__api__http__remove_client_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_address = <i64>::sse_decode(&mut deserializer);
+            let api_cancel_running_requests = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::http::remove_client(api_address);
+                        crate::api::http::remove_client(api_address, api_cancel_running_requests);
                     })?;
                     Ok(output_ok)
                 })())
