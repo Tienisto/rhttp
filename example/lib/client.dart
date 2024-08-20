@@ -1,5 +1,8 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:rhttp/rhttp.dart';
+import 'package:rhttp_example/widgets/response_card.dart';
 
 Future<void> main() async {
   await Rhttp.init();
@@ -30,22 +33,24 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               ElevatedButton(
                 onPressed: () async {
-                  _client ??= await RhttpClient.create();
+                  try {
+                    _client ??= await RhttpClient.create();
 
-                  final res = await _client!.get(
-                    'https://reqres.in/api/users',
-                    query: {'page': '5'},
-                  );
-                  setState(() {
-                    response = res;
-                  });
+                    final res = await _client!.get(
+                      'https://reqres.in/api/users',
+                      query: {'page': '5'},
+                    );
+                    setState(() {
+                      response = res;
+                    });
+                  } catch (e, st) {
+                    print(e);
+                    print(st);
+                  }
                 },
                 child: const Text('Test'),
               ),
-              if (response != null) Text(response!.version.toString()),
-              if (response != null) Text(response!.statusCode.toString()),
-              if (response != null) Text(response!.body.substring(0, 100).toString()),
-              if (response != null) Text(response!.headers.toString()),
+              if (response != null) ResponseCard(response: response!),
             ],
           ),
         ),
