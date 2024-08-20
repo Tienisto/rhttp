@@ -555,6 +555,19 @@ void main() async {
 }
 ```
 
+Since this client is compatible with [http](https://pub.dev/packages/http),
+you can use [dio_compatibility_layer](https://pub.dev/packages/dio_compatibility_layer)
+to use rhttp with the [dio](https://pub.dev/packages/dio) package.
+
+```dart
+Future<Dio> createDioClient() async {
+  final dio = Dio();
+  final compatibleClient = await RhttpCompatibleClient.create(); // or createSync()
+  dio.httpClientAdapter = ConversionLayerAdapter(compatibleClient);
+  return dio;
+}
+```
+
 ## License
 
 MIT License
