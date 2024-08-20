@@ -30,7 +30,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     } on RhttpException {
       rethrow;
     } catch (e, st) {
-      throw RhttpInterceptorException(request, e, st);
+      Error.throwWithStackTrace(RhttpInterceptorException(request, e), st);
     }
   }
 
@@ -54,6 +54,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         headers: headers?._toRustType(),
         body: request.body?._toRustType(),
         onResponse: (r) => responseCompleter.complete(r),
+        onError: (e) => responseCompleter.completeError(e),
         onCancelToken: (int cancelRef) =>
             cancelRefCompleter.complete(cancelRef),
         cancelable: request.cancelToken != null,
@@ -88,7 +89,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
           rethrow;
         } catch (e, st) {
           exceptionByInterceptor = true;
-          throw RhttpInterceptorException(request, e, st);
+          Error.throwWithStackTrace(RhttpInterceptorException(request, e), st);
         }
       }
 
@@ -137,37 +138,38 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
           rethrow;
         } catch (e, st) {
           exceptionByInterceptor = true;
-          throw RhttpInterceptorException(request, e, st);
+          Error.throwWithStackTrace(RhttpInterceptorException(request, e), st);
         }
       }
 
       return response;
     }
-  } catch (e) {
+  } catch (e, st) {
     if (exceptionByInterceptor) {
       rethrow;
     }
     if (e is rust_error.RhttpError) {
       RhttpException exception = parseError(request, e);
-
-      if (interceptors != null) {
-        try {
-          final result = await interceptors.onError(exception);
-          switch (result) {
-            case InterceptorNextResult<RhttpException>() ||
-                  InterceptorStopResult<RhttpException>():
-              exception = result.value ?? exception;
-            case InterceptorResolveResult<RhttpException>():
-              return result.response;
-          }
-        } on RhttpException {
-          rethrow;
-        } catch (e, st) {
-          throw RhttpInterceptorException(request, e, st);
-        }
+      if (interceptors == null) {
+        // throw converted exception with same stack trace
+        Error.throwWithStackTrace(exception, st);
       }
 
-      throw exception;
+      try {
+        final result = await interceptors.onError(exception);
+        switch (result) {
+          case InterceptorNextResult<RhttpException>() ||
+                InterceptorStopResult<RhttpException>():
+            exception = result.value ?? exception;
+          case InterceptorResolveResult<RhttpException>():
+            return result.response;
+        }
+        Error.throwWithStackTrace(exception, st);
+      } on RhttpException {
+        rethrow;
+      } catch (e, st) {
+        Error.throwWithStackTrace(RhttpInterceptorException(request, e), st);
+      }
     } else {
       rethrow;
     }

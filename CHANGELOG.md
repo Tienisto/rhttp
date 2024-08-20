@@ -1,5 +1,6 @@
 ## 0.5.3
 
+- feat: add `RhttpConnectionException` to catch connection errors like no internet, server not reachable, etc.
 - feat: add `RhttpCompatibleClient.createSync`
 - feat: add `cancelRunningRequests` parameter to `RhttpClient.dispose`
 - fix: creating a client with HTTP/3 fails with `no async runtime found`

@@ -1,12 +1,13 @@
 use crate::api::http::HttpResponseBody;
 use std::fmt::Display;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum RhttpError {
     RhttpCancelError,
     RhttpTimeoutError,
     RhttpStatusCodeError(u16, Vec<(String, String)>, HttpResponseBody),
     RhttpInvalidCertificateError(String),
+    RhttpConnectionError(String),
     RhttpInvalidClientError,
     RhttpUnknownError(String),
 }
@@ -22,6 +23,7 @@ impl Display for RhttpError {
             RhttpError::RhttpInvalidCertificateError(d) => {
                 write!(f, "RhttpInvalidCertificateError: {d}")
             }
+            RhttpError::RhttpConnectionError(e) => write!(f, "RhttpConnectionError: {e}"),
             RhttpError::RhttpInvalidClientError => write!(f, "RhttpInvalidClientError"),
             RhttpError::RhttpUnknownError(e) => write!(f, "{}", e),
         }

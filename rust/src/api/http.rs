@@ -115,7 +115,7 @@ pub struct HttpResponse {
     pub body: HttpResponseBody,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum HttpResponseBody {
     Text(String),
     Bytes(Vec<u8>),
@@ -264,6 +264,7 @@ pub async fn make_http_request_receive_stream(
     body: Option<HttpBody>,
     stream_sink: StreamSink<Vec<u8>>,
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
+    on_error: impl Fn(RhttpError) -> DartFnFuture<()>,
     on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
     cancelable: bool,
 ) -> Result<(), RhttpError> {
@@ -286,6 +287,7 @@ pub async fn make_http_request_receive_stream(
             body,
             stream_sink,
             on_response,
+            on_error,
         ) => {
             if let Some(address) = cancel_tokens.request_cancel_address {
                 request_pool::remove_token(address);
@@ -305,6 +307,7 @@ async fn make_http_request_receive_stream_inner(
     body: Option<HttpBody>,
     stream_sink: StreamSink<Vec<u8>>,
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
+    on_error: impl Fn(RhttpError) -> DartFnFuture<()>,
 ) -> Result<(), RhttpError> {
     let response = make_http_request_helper(
         client_address,
@@ -316,7 +319,15 @@ async fn make_http_request_receive_stream_inner(
         body,
         None,
     )
-    .await?;
+    .await;
+
+    let response = match response {
+        Ok(_) => response,
+        Err(e) => {
+            on_error(e.clone()).await;
+            Err(e)
+        }
+    }?;
 
     let http_response = HttpResponse {
         headers: header_to_vec(response.headers()),
@@ -327,14 +338,18 @@ async fn make_http_request_receive_stream_inner(
 
     on_response(http_response).await;
 
-    let stream_sink = stream_sink;
     let mut stream = response.bytes_stream();
 
     while let Some(chunk) = stream.next().await {
-        let chunk = chunk.map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
-        stream_sink
-            .add(chunk.to_vec())
-            .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
+        let chunk = chunk.map_err(|e| {
+            let _ = stream_sink.add_error(RhttpError::RhttpUnknownError(e.to_string()));
+            RhttpError::RhttpUnknownError(e.to_string())
+        })?;
+
+        stream_sink.add(chunk.to_vec()).map_err(|e| {
+            let _ = stream_sink.add_error(RhttpError::RhttpUnknownError(e.to_string()));
+            RhttpError::RhttpUnknownError(e.to_string())
+        })?;
     }
 
     Ok(())
@@ -460,6 +475,8 @@ async fn make_http_request_helper(
 
             if is_cert_error {
                 RhttpError::RhttpInvalidCertificateError(format!("{:?}", inner.unwrap()))
+            } else if e.is_connect() {
+                RhttpError::RhttpConnectionError(format!("{:?}", inner.unwrap()))
             } else {
                 RhttpError::RhttpUnknownError(match inner {
                     Some(inner) => format!("{inner:?}"),

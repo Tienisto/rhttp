@@ -77,6 +77,18 @@ class RhttpInvalidCertificateException extends RhttpException {
       '[$runtimeType] Invalid certificate. $message URL: ${request.url}';
 }
 
+/// An exception thrown when a connection error occurs.
+/// For example, when the server is unreachable or internet is not available.
+class RhttpConnectionException extends RhttpException {
+  final String message;
+
+  const RhttpConnectionException(super.request, this.message);
+
+  @override
+  String toString() =>
+      '[$runtimeType] Connection error. URL: ${request.url} ($message)';
+}
+
 /// An exception thrown a request is made with an invalid client.
 class RhttpInvalidClientException extends RhttpException {
   const RhttpInvalidClientException(super.request);
@@ -91,9 +103,7 @@ class RhttpInvalidClientException extends RhttpException {
 class RhttpInterceptorException extends RhttpException {
   final Object error;
 
-  final StackTrace stackTrace;
-
-  RhttpInterceptorException(super.request, this.error, this.stackTrace);
+  RhttpInterceptorException(super.request, this.error);
 
   @override
   String toString() => '[$runtimeType] $error. URL: ${request.url}';
@@ -127,6 +137,8 @@ RhttpException parseError(HttpRequest request, rust.RhttpError error) {
     ),
     rhttpInvalidCertificateError: (message) =>
         RhttpInvalidCertificateException(request: request, message: message),
+    rhttpConnectionError: (message) =>
+        RhttpConnectionException(request, message),
     rhttpInvalidClientError: () => RhttpInvalidClientException(request),
     rhttpUnknownError: (message) => RhttpUnknownException(request, message),
   );

@@ -280,15 +280,16 @@ All exceptions are subclasses of `RhttpException`.
 
 The following exceptions can be thrown:
 
-| Exception                          | Description                             |
-|------------------------------------|-----------------------------------------|
-| `RhttpCancelException`             | Request was canceled.                   |
-| `RhttpTimeoutException`            | Request timed out.                      |
-| `RhttpStatusCodeException`         | Response has 4xx or 5xx status code.    |
-| `RhttpInvalidCertificateException` | Server certificate is invalid.          |
-| `RhttpInvalidClientException`      | Request is made with an invalid client. |
-| `RhttpInterceptorException`        | Interceptor threw an exception.         |
-| `RhttpUnknownException`            | Unknown error occurred.                 |
+| Exception                          | Description                                           |
+|------------------------------------|-------------------------------------------------------|
+| `RhttpCancelException`             | Request was canceled.                                 |
+| `RhttpTimeoutException`            | Request timed out.                                    |
+| `RhttpStatusCodeException`         | Response has 4xx or 5xx status code.                  |
+| `RhttpInvalidCertificateException` | Server certificate is invalid.                        |
+| `RhttpConnectionException`         | Connection error. (no internet, server not reachable) |
+| `RhttpInvalidClientException`      | Request is made with an invalid client.               |
+| `RhttpInterceptorException`        | Interceptor threw an exception.                       |
+| `RhttpUnknownException`            | Unknown error occurred.                               |
 
 ### ➤ Timeout
 

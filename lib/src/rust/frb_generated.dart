@@ -106,6 +106,7 @@ abstract class RustLibApi extends BaseApi {
       HttpHeaders? headers,
       HttpBody? body,
       required FutureOr<void> Function(HttpResponse) onResponse,
+      required FutureOr<void> Function(RhttpError) onError,
       required FutureOr<void> Function(PlatformInt64) onCancelToken,
       required bool cancelable});
 
@@ -254,6 +255,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       HttpHeaders? headers,
       HttpBody? body,
       required FutureOr<void> Function(HttpResponse) onResponse,
+      required FutureOr<void> Function(RhttpError) onError,
       required FutureOr<void> Function(PlatformInt64) onCancelToken,
       required bool cancelable}) {
     final streamSink = RustStreamSink<Uint8List>();
@@ -270,6 +272,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_StreamSink_list_prim_u_8_strict_Sse(streamSink, serializer);
         sse_encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
             onResponse, serializer);
+        sse_encode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+            onError, serializer);
         sse_encode_DartFn_Inputs_i_64_Output_unit_AnyhowException(
             onCancelToken, serializer);
         sse_encode_bool(cancelable, serializer);
@@ -291,6 +295,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         body,
         streamSink,
         onResponse,
+        onError,
         onCancelToken,
         cancelable
       ],
@@ -312,6 +317,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           "body",
           "streamSink",
           "onResponse",
+          "onError",
           "onCancelToken",
           "cancelable"
         ],
@@ -482,6 +488,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     };
   }
 
+  Future<void> Function(int, dynamic)
+      encode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+          FutureOr<void> Function(RhttpError) raw) {
+    return (callId, rawArg0) async {
+      final arg0 = dco_decode_rhttp_error(rawArg0);
+
+      Box<void>? rawOutput;
+      Box<AnyhowException>? rawError;
+      try {
+        rawOutput = Box(await raw(arg0));
+      } catch (e, s) {
+        rawError = Box(AnyhowException("$e\n\n$s"));
+      }
+
+      final serializer = SseSerializer(generalizedFrbRustBinding);
+      assert((rawOutput != null) ^ (rawError != null));
+      if (rawOutput != null) {
+        serializer.buffer.putUint8(0);
+        sse_encode_unit(rawOutput.value, serializer);
+      } else {
+        serializer.buffer.putUint8(1);
+        sse_encode_AnyhowException(rawError!.value, serializer);
+      }
+      final output = serializer.intoRaw();
+
+      generalizedFrbRustBinding.dartFnDeliverOutput(
+          callId: callId,
+          ptr: output.ptr,
+          rustVecLen: output.rustVecLen,
+          dataLen: output.dataLen);
+    };
+  }
+
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -505,6 +544,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   FutureOr<void> Function(PlatformInt64)
       dco_decode_DartFn_Inputs_i_64_Output_unit_AnyhowException(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    throw UnimplementedError('');
+  }
+
+  @protected
+  FutureOr<void> Function(RhttpError)
+      dco_decode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+          dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     throw UnimplementedError('');
   }
@@ -937,8 +984,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_String(raw[1]),
         );
       case 4:
-        return RhttpError_RhttpInvalidClientError();
+        return RhttpError_RhttpConnectionError(
+          dco_decode_String(raw[1]),
+        );
       case 5:
+        return RhttpError_RhttpInvalidClientError();
+      case 6:
         return RhttpError_RhttpUnknownError(
           dco_decode_String(raw[1]),
         );
@@ -1517,8 +1568,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_String(deserializer);
         return RhttpError_RhttpInvalidCertificateError(var_field0);
       case 4:
-        return RhttpError_RhttpInvalidClientError();
+        var var_field0 = sse_decode_String(deserializer);
+        return RhttpError_RhttpConnectionError(var_field0);
       case 5:
+        return RhttpError_RhttpInvalidClientError();
+      case 6:
         var var_field0 = sse_decode_String(deserializer);
         return RhttpError_RhttpUnknownError(var_field0);
       default:
@@ -1606,6 +1660,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_DartOpaque(
         encode_DartFn_Inputs_i_64_Output_unit_AnyhowException(self),
+        serializer);
+  }
+
+  @protected
+  void sse_encode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+      FutureOr<void> Function(RhttpError) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_DartOpaque(
+        encode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(self),
         serializer);
   }
 
@@ -2084,10 +2147,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case RhttpError_RhttpInvalidCertificateError(field0: final field0):
         sse_encode_i_32(3, serializer);
         sse_encode_String(field0, serializer);
-      case RhttpError_RhttpInvalidClientError():
+      case RhttpError_RhttpConnectionError(field0: final field0):
         sse_encode_i_32(4, serializer);
-      case RhttpError_RhttpUnknownError(field0: final field0):
+        sse_encode_String(field0, serializer);
+      case RhttpError_RhttpInvalidClientError():
         sse_encode_i_32(5, serializer);
+      case RhttpError_RhttpUnknownError(field0: final field0):
+        sse_encode_i_32(6, serializer);
         sse_encode_String(field0, serializer);
       default:
         throw UnimplementedError('');

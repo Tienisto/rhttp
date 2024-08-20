@@ -9,7 +9,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'error.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`
 
 @freezed
 sealed class RhttpError with _$RhttpError implements FrbException {
@@ -25,6 +25,9 @@ sealed class RhttpError with _$RhttpError implements FrbException {
   const factory RhttpError.rhttpInvalidCertificateError(
     String field0,
   ) = RhttpError_RhttpInvalidCertificateError;
+  const factory RhttpError.rhttpConnectionError(
+    String field0,
+  ) = RhttpError_RhttpConnectionError;
   const factory RhttpError.rhttpInvalidClientError() =
       RhttpError_RhttpInvalidClientError;
   const factory RhttpError.rhttpUnknownError(

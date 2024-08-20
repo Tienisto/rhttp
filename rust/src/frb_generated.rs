@@ -211,6 +211,9 @@ fn wire__crate__api__http__make_http_request_receive_stream_impl(
             let api_on_response = decode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
                 <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
             );
+            let api_on_error = decode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+                <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
+            );
             let api_on_cancel_token = decode_DartFn_Inputs_i_64_Output_unit_AnyhowException(
                 <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
             );
@@ -229,6 +232,7 @@ fn wire__crate__api__http__make_http_request_receive_stream_impl(
                             api_body,
                             api_stream_sink,
                             api_on_response,
+                            api_on_error,
                             api_on_cancel_token,
                             api_cancelable,
                         )
@@ -441,6 +445,41 @@ fn decode_DartFn_Inputs_i_64_Output_unit_AnyhowException(
     }
 
     move |arg0: i64| {
+        flutter_rust_bridge::for_generated::convert_into_dart_fn_future(body(
+            dart_opaque.clone(),
+            arg0,
+        ))
+    }
+}
+fn decode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+    dart_opaque: flutter_rust_bridge::DartOpaque,
+) -> impl Fn(crate::api::error::RhttpError) -> flutter_rust_bridge::DartFnFuture<()> {
+    use flutter_rust_bridge::IntoDart;
+
+    async fn body(
+        dart_opaque: flutter_rust_bridge::DartOpaque,
+        arg0: crate::api::error::RhttpError,
+    ) -> () {
+        let args = vec![arg0.into_into_dart().into_dart()];
+        let message = FLUTTER_RUST_BRIDGE_HANDLER
+            .dart_fn_invoke(dart_opaque, args)
+            .await;
+
+        let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+        let action = deserializer.cursor.read_u8().unwrap();
+        let ans = match action {
+            0 => std::result::Result::Ok(<()>::sse_decode(&mut deserializer)),
+            1 => std::result::Result::Err(
+                <flutter_rust_bridge::for_generated::anyhow::Error>::sse_decode(&mut deserializer),
+            ),
+            _ => unreachable!(),
+        };
+        deserializer.end();
+        let ans = ans.expect("Dart throws exception but Rust side assume it is not failable");
+        ans
+    }
+
+    move |arg0: crate::api::error::RhttpError| {
         flutter_rust_bridge::for_generated::convert_into_dart_fn_future(body(
             dart_opaque.clone(),
             arg0,
@@ -981,9 +1020,13 @@ impl SseDecode for crate::api::error::RhttpError {
                 return crate::api::error::RhttpError::RhttpInvalidCertificateError(var_field0);
             }
             4 => {
-                return crate::api::error::RhttpError::RhttpInvalidClientError;
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::error::RhttpError::RhttpConnectionError(var_field0);
             }
             5 => {
+                return crate::api::error::RhttpError::RhttpInvalidClientError;
+            }
+            6 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::error::RhttpError::RhttpUnknownError(var_field0);
             }
@@ -1446,9 +1489,12 @@ impl flutter_rust_bridge::IntoDart for crate::api::error::RhttpError {
             crate::api::error::RhttpError::RhttpInvalidCertificateError(field0) => {
                 [3.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
-            crate::api::error::RhttpError::RhttpInvalidClientError => [4.into_dart()].into_dart(),
+            crate::api::error::RhttpError::RhttpConnectionError(field0) => {
+                [4.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::error::RhttpError::RhttpInvalidClientError => [5.into_dart()].into_dart(),
             crate::api::error::RhttpError::RhttpUnknownError(field0) => {
-                [5.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+                [6.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -1994,11 +2040,15 @@ impl SseEncode for crate::api::error::RhttpError {
                 <i32>::sse_encode(3, serializer);
                 <String>::sse_encode(field0, serializer);
             }
-            crate::api::error::RhttpError::RhttpInvalidClientError => {
+            crate::api::error::RhttpError::RhttpConnectionError(field0) => {
                 <i32>::sse_encode(4, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::error::RhttpError::RhttpInvalidClientError => {
+                <i32>::sse_encode(5, serializer);
             }
             crate::api::error::RhttpError::RhttpUnknownError(field0) => {
-                <i32>::sse_encode(5, serializer);
+                <i32>::sse_encode(6, serializer);
                 <String>::sse_encode(field0, serializer);
             }
             _ => {
