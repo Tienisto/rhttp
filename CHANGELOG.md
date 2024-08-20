@@ -1,3 +1,8 @@
+## 0.5.3
+
+- feat: add `RhttpCompatibleClient.createSync`
+- fix: creating a client with HTTP/3 fails with `no async runtime found`
+
 ## 0.5.2
 
 - fix: `RetryInterceptor` should throw `RhttpCancelException` if request is canceled during retry
