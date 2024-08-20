@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 # Data setup
-libraries = ['rhttp', 'http\n(IOClient)', 'dio\n(IOClient)']
+libraries = ['rhttp', 'http\n(IOClient)', 'dio\n(HttpClient)']
 colors = ['orange', 'darkblue', 'darkblue']  # Color configuration
 
 title = '10 MB x 100 Downloads\n(lower is better)'
