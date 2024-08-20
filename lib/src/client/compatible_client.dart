@@ -32,6 +32,23 @@ class RhttpCompatibleClient with BaseClient {
     return RhttpCompatibleClient._(client);
   }
 
+  /// Use this method if your app is starting up to simplify the code
+  /// that might arise by using async/await.
+  ///
+  /// Note:
+  /// This method crashes when configured to use HTTP/3.
+  /// See: https://github.com/Tienisto/rhttp/issues/10
+  factory RhttpCompatibleClient.createSync({
+    ClientSettings? settings,
+    List<Interceptor>? interceptors,
+  }) {
+    final client = RhttpClient.createSync(
+      settings: settings,
+      interceptors: interceptors,
+    );
+    return RhttpCompatibleClient._(client);
+  }
+
   @override
   Future<StreamedResponse> send(BaseRequest request) async {
     try {

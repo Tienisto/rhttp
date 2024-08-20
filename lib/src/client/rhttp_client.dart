@@ -49,6 +49,10 @@ class RhttpClient {
   /// Creates a new HTTP client synchronously.
   /// Use this method if your app is starting up to simplify the code
   /// that might arise by using async/await.
+  ///
+  /// Note:
+  /// This method crashes when configured to use HTTP/3.
+  /// See: https://github.com/Tienisto/rhttp/issues/10
   factory RhttpClient.createSync({
     ClientSettings? settings,
     List<Interceptor>? interceptors,
