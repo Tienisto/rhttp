@@ -14,6 +14,9 @@ part 'http.freezed.dart';
 // These types are ignored because they are not used by any `pub` functions: `RequestCancelTokens`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`
 
+Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)> createStream() =>
+    RustLib.instance.api.crateApiHttpCreateStream();
+
 Future<PlatformInt64> registerClient({required ClientSettings settings}) =>
     RustLib.instance.api.crateApiHttpRegisterClient(settings: settings);
 
@@ -34,6 +37,7 @@ Future<HttpResponse> makeHttpRequest(
         List<(String, String)>? query,
         HttpHeaders? headers,
         HttpBody? body,
+        Dart2RustStreamReceiver? bodyStream,
         required HttpExpectBody expectBody,
         required FutureOr<void> Function(PlatformInt64) onCancelToken,
         required bool cancelable}) =>
@@ -45,6 +49,7 @@ Future<HttpResponse> makeHttpRequest(
         query: query,
         headers: headers,
         body: body,
+        bodyStream: bodyStream,
         expectBody: expectBody,
         onCancelToken: onCancelToken,
         cancelable: cancelable);
@@ -57,6 +62,7 @@ Stream<Uint8List> makeHttpRequestReceiveStream(
         List<(String, String)>? query,
         HttpHeaders? headers,
         HttpBody? body,
+        Dart2RustStreamReceiver? bodyStream,
         required FutureOr<void> Function(HttpResponse) onResponse,
         required FutureOr<void> Function(RhttpError) onError,
         required FutureOr<void> Function(PlatformInt64) onCancelToken,
@@ -69,6 +75,7 @@ Stream<Uint8List> makeHttpRequestReceiveStream(
         query: query,
         headers: headers,
         body: body,
+        bodyStream: bodyStream,
         onResponse: onResponse,
         onError: onError,
         onCancelToken: onCancelToken,
@@ -76,6 +83,14 @@ Stream<Uint8List> makeHttpRequestReceiveStream(
 
 Future<bool> cancelRequest({required PlatformInt64 address}) =>
     RustLib.instance.api.crateApiHttpCancelRequest(address: address);
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Dart2RustStreamReceiver>>
+abstract class Dart2RustStreamReceiver implements RustOpaqueInterface {}
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Dart2RustStreamSink>>
+abstract class Dart2RustStreamSink implements RustOpaqueInterface {
+  Future<void> add({required int data});
+}
 
 @freezed
 sealed class HttpBody with _$HttpBody {
@@ -87,6 +102,7 @@ sealed class HttpBody with _$HttpBody {
   const factory HttpBody.bytes(
     Uint8List field0,
   ) = HttpBody_Bytes;
+  const factory HttpBody.bytesStream() = HttpBody_BytesStream;
   const factory HttpBody.form(
     Map<String, String> field0,
   ) = HttpBody_Form;

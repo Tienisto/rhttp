@@ -16,11 +16,11 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$HttpBody {
-  Object get field0 => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String field0) text,
     required TResult Function(Uint8List field0) bytes,
+    required TResult Function() bytesStream,
     required TResult Function(Map<String, String> field0) form,
     required TResult Function(MultipartPayload field0) multipart,
   }) =>
@@ -29,6 +29,7 @@ mixin _$HttpBody {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? text,
     TResult? Function(Uint8List field0)? bytes,
+    TResult? Function()? bytesStream,
     TResult? Function(Map<String, String> field0)? form,
     TResult? Function(MultipartPayload field0)? multipart,
   }) =>
@@ -37,6 +38,7 @@ mixin _$HttpBody {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? text,
     TResult Function(Uint8List field0)? bytes,
+    TResult Function()? bytesStream,
     TResult Function(Map<String, String> field0)? form,
     TResult Function(MultipartPayload field0)? multipart,
     required TResult orElse(),
@@ -46,6 +48,7 @@ mixin _$HttpBody {
   TResult map<TResult extends Object?>({
     required TResult Function(HttpBody_Text value) text,
     required TResult Function(HttpBody_Bytes value) bytes,
+    required TResult Function(HttpBody_BytesStream value) bytesStream,
     required TResult Function(HttpBody_Form value) form,
     required TResult Function(HttpBody_Multipart value) multipart,
   }) =>
@@ -54,6 +57,7 @@ mixin _$HttpBody {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(HttpBody_Text value)? text,
     TResult? Function(HttpBody_Bytes value)? bytes,
+    TResult? Function(HttpBody_BytesStream value)? bytesStream,
     TResult? Function(HttpBody_Form value)? form,
     TResult? Function(HttpBody_Multipart value)? multipart,
   }) =>
@@ -62,6 +66,7 @@ mixin _$HttpBody {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(HttpBody_Text value)? text,
     TResult Function(HttpBody_Bytes value)? bytes,
+    TResult Function(HttpBody_BytesStream value)? bytesStream,
     TResult Function(HttpBody_Form value)? form,
     TResult Function(HttpBody_Multipart value)? multipart,
     required TResult orElse(),
@@ -152,6 +157,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
   TResult when<TResult extends Object?>({
     required TResult Function(String field0) text,
     required TResult Function(Uint8List field0) bytes,
+    required TResult Function() bytesStream,
     required TResult Function(Map<String, String> field0) form,
     required TResult Function(MultipartPayload field0) multipart,
   }) {
@@ -163,6 +169,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? text,
     TResult? Function(Uint8List field0)? bytes,
+    TResult? Function()? bytesStream,
     TResult? Function(Map<String, String> field0)? form,
     TResult? Function(MultipartPayload field0)? multipart,
   }) {
@@ -174,6 +181,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? text,
     TResult Function(Uint8List field0)? bytes,
+    TResult Function()? bytesStream,
     TResult Function(Map<String, String> field0)? form,
     TResult Function(MultipartPayload field0)? multipart,
     required TResult orElse(),
@@ -189,6 +197,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
   TResult map<TResult extends Object?>({
     required TResult Function(HttpBody_Text value) text,
     required TResult Function(HttpBody_Bytes value) bytes,
+    required TResult Function(HttpBody_BytesStream value) bytesStream,
     required TResult Function(HttpBody_Form value) form,
     required TResult Function(HttpBody_Multipart value) multipart,
   }) {
@@ -200,6 +209,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(HttpBody_Text value)? text,
     TResult? Function(HttpBody_Bytes value)? bytes,
+    TResult? Function(HttpBody_BytesStream value)? bytesStream,
     TResult? Function(HttpBody_Form value)? form,
     TResult? Function(HttpBody_Multipart value)? multipart,
   }) {
@@ -211,6 +221,7 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(HttpBody_Text value)? text,
     TResult Function(HttpBody_Bytes value)? bytes,
+    TResult Function(HttpBody_BytesStream value)? bytesStream,
     TResult Function(HttpBody_Form value)? form,
     TResult Function(HttpBody_Multipart value)? multipart,
     required TResult orElse(),
@@ -226,7 +237,6 @@ abstract class HttpBody_Text extends HttpBody {
   const factory HttpBody_Text(final String field0) = _$HttpBody_TextImpl;
   const HttpBody_Text._() : super._();
 
-  @override
   String get field0;
   @JsonKey(ignore: true)
   _$$HttpBody_TextImplCopyWith<_$HttpBody_TextImpl> get copyWith =>
@@ -301,6 +311,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
   TResult when<TResult extends Object?>({
     required TResult Function(String field0) text,
     required TResult Function(Uint8List field0) bytes,
+    required TResult Function() bytesStream,
     required TResult Function(Map<String, String> field0) form,
     required TResult Function(MultipartPayload field0) multipart,
   }) {
@@ -312,6 +323,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? text,
     TResult? Function(Uint8List field0)? bytes,
+    TResult? Function()? bytesStream,
     TResult? Function(Map<String, String> field0)? form,
     TResult? Function(MultipartPayload field0)? multipart,
   }) {
@@ -323,6 +335,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? text,
     TResult Function(Uint8List field0)? bytes,
+    TResult Function()? bytesStream,
     TResult Function(Map<String, String> field0)? form,
     TResult Function(MultipartPayload field0)? multipart,
     required TResult orElse(),
@@ -338,6 +351,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
   TResult map<TResult extends Object?>({
     required TResult Function(HttpBody_Text value) text,
     required TResult Function(HttpBody_Bytes value) bytes,
+    required TResult Function(HttpBody_BytesStream value) bytesStream,
     required TResult Function(HttpBody_Form value) form,
     required TResult Function(HttpBody_Multipart value) multipart,
   }) {
@@ -349,6 +363,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(HttpBody_Text value)? text,
     TResult? Function(HttpBody_Bytes value)? bytes,
+    TResult? Function(HttpBody_BytesStream value)? bytesStream,
     TResult? Function(HttpBody_Form value)? form,
     TResult? Function(HttpBody_Multipart value)? multipart,
   }) {
@@ -360,6 +375,7 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(HttpBody_Text value)? text,
     TResult Function(HttpBody_Bytes value)? bytes,
+    TResult Function(HttpBody_BytesStream value)? bytesStream,
     TResult Function(HttpBody_Form value)? form,
     TResult Function(HttpBody_Multipart value)? multipart,
     required TResult orElse(),
@@ -375,11 +391,132 @@ abstract class HttpBody_Bytes extends HttpBody {
   const factory HttpBody_Bytes(final Uint8List field0) = _$HttpBody_BytesImpl;
   const HttpBody_Bytes._() : super._();
 
-  @override
   Uint8List get field0;
   @JsonKey(ignore: true)
   _$$HttpBody_BytesImplCopyWith<_$HttpBody_BytesImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$HttpBody_BytesStreamImplCopyWith<$Res> {
+  factory _$$HttpBody_BytesStreamImplCopyWith(_$HttpBody_BytesStreamImpl value,
+          $Res Function(_$HttpBody_BytesStreamImpl) then) =
+      __$$HttpBody_BytesStreamImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$HttpBody_BytesStreamImplCopyWithImpl<$Res>
+    extends _$HttpBodyCopyWithImpl<$Res, _$HttpBody_BytesStreamImpl>
+    implements _$$HttpBody_BytesStreamImplCopyWith<$Res> {
+  __$$HttpBody_BytesStreamImplCopyWithImpl(_$HttpBody_BytesStreamImpl _value,
+      $Res Function(_$HttpBody_BytesStreamImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$HttpBody_BytesStreamImpl extends HttpBody_BytesStream {
+  const _$HttpBody_BytesStreamImpl() : super._();
+
+  @override
+  String toString() {
+    return 'HttpBody.bytesStream()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HttpBody_BytesStreamImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String field0) text,
+    required TResult Function(Uint8List field0) bytes,
+    required TResult Function() bytesStream,
+    required TResult Function(Map<String, String> field0) form,
+    required TResult Function(MultipartPayload field0) multipart,
+  }) {
+    return bytesStream();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String field0)? text,
+    TResult? Function(Uint8List field0)? bytes,
+    TResult? Function()? bytesStream,
+    TResult? Function(Map<String, String> field0)? form,
+    TResult? Function(MultipartPayload field0)? multipart,
+  }) {
+    return bytesStream?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String field0)? text,
+    TResult Function(Uint8List field0)? bytes,
+    TResult Function()? bytesStream,
+    TResult Function(Map<String, String> field0)? form,
+    TResult Function(MultipartPayload field0)? multipart,
+    required TResult orElse(),
+  }) {
+    if (bytesStream != null) {
+      return bytesStream();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(HttpBody_Text value) text,
+    required TResult Function(HttpBody_Bytes value) bytes,
+    required TResult Function(HttpBody_BytesStream value) bytesStream,
+    required TResult Function(HttpBody_Form value) form,
+    required TResult Function(HttpBody_Multipart value) multipart,
+  }) {
+    return bytesStream(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(HttpBody_Text value)? text,
+    TResult? Function(HttpBody_Bytes value)? bytes,
+    TResult? Function(HttpBody_BytesStream value)? bytesStream,
+    TResult? Function(HttpBody_Form value)? form,
+    TResult? Function(HttpBody_Multipart value)? multipart,
+  }) {
+    return bytesStream?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(HttpBody_Text value)? text,
+    TResult Function(HttpBody_Bytes value)? bytes,
+    TResult Function(HttpBody_BytesStream value)? bytesStream,
+    TResult Function(HttpBody_Form value)? form,
+    TResult Function(HttpBody_Multipart value)? multipart,
+    required TResult orElse(),
+  }) {
+    if (bytesStream != null) {
+      return bytesStream(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class HttpBody_BytesStream extends HttpBody {
+  const factory HttpBody_BytesStream() = _$HttpBody_BytesStreamImpl;
+  const HttpBody_BytesStream._() : super._();
 }
 
 /// @nodoc
@@ -456,6 +593,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
   TResult when<TResult extends Object?>({
     required TResult Function(String field0) text,
     required TResult Function(Uint8List field0) bytes,
+    required TResult Function() bytesStream,
     required TResult Function(Map<String, String> field0) form,
     required TResult Function(MultipartPayload field0) multipart,
   }) {
@@ -467,6 +605,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? text,
     TResult? Function(Uint8List field0)? bytes,
+    TResult? Function()? bytesStream,
     TResult? Function(Map<String, String> field0)? form,
     TResult? Function(MultipartPayload field0)? multipart,
   }) {
@@ -478,6 +617,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? text,
     TResult Function(Uint8List field0)? bytes,
+    TResult Function()? bytesStream,
     TResult Function(Map<String, String> field0)? form,
     TResult Function(MultipartPayload field0)? multipart,
     required TResult orElse(),
@@ -493,6 +633,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
   TResult map<TResult extends Object?>({
     required TResult Function(HttpBody_Text value) text,
     required TResult Function(HttpBody_Bytes value) bytes,
+    required TResult Function(HttpBody_BytesStream value) bytesStream,
     required TResult Function(HttpBody_Form value) form,
     required TResult Function(HttpBody_Multipart value) multipart,
   }) {
@@ -504,6 +645,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(HttpBody_Text value)? text,
     TResult? Function(HttpBody_Bytes value)? bytes,
+    TResult? Function(HttpBody_BytesStream value)? bytesStream,
     TResult? Function(HttpBody_Form value)? form,
     TResult? Function(HttpBody_Multipart value)? multipart,
   }) {
@@ -515,6 +657,7 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(HttpBody_Text value)? text,
     TResult Function(HttpBody_Bytes value)? bytes,
+    TResult Function(HttpBody_BytesStream value)? bytesStream,
     TResult Function(HttpBody_Form value)? form,
     TResult Function(HttpBody_Multipart value)? multipart,
     required TResult orElse(),
@@ -531,7 +674,6 @@ abstract class HttpBody_Form extends HttpBody {
       _$HttpBody_FormImpl;
   const HttpBody_Form._() : super._();
 
-  @override
   Map<String, String> get field0;
   @JsonKey(ignore: true)
   _$$HttpBody_FormImplCopyWith<_$HttpBody_FormImpl> get copyWith =>
@@ -605,6 +747,7 @@ class _$HttpBody_MultipartImpl extends HttpBody_Multipart {
   TResult when<TResult extends Object?>({
     required TResult Function(String field0) text,
     required TResult Function(Uint8List field0) bytes,
+    required TResult Function() bytesStream,
     required TResult Function(Map<String, String> field0) form,
     required TResult Function(MultipartPayload field0) multipart,
   }) {
@@ -616,6 +759,7 @@ class _$HttpBody_MultipartImpl extends HttpBody_Multipart {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? text,
     TResult? Function(Uint8List field0)? bytes,
+    TResult? Function()? bytesStream,
     TResult? Function(Map<String, String> field0)? form,
     TResult? Function(MultipartPayload field0)? multipart,
   }) {
@@ -627,6 +771,7 @@ class _$HttpBody_MultipartImpl extends HttpBody_Multipart {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? text,
     TResult Function(Uint8List field0)? bytes,
+    TResult Function()? bytesStream,
     TResult Function(Map<String, String> field0)? form,
     TResult Function(MultipartPayload field0)? multipart,
     required TResult orElse(),
@@ -642,6 +787,7 @@ class _$HttpBody_MultipartImpl extends HttpBody_Multipart {
   TResult map<TResult extends Object?>({
     required TResult Function(HttpBody_Text value) text,
     required TResult Function(HttpBody_Bytes value) bytes,
+    required TResult Function(HttpBody_BytesStream value) bytesStream,
     required TResult Function(HttpBody_Form value) form,
     required TResult Function(HttpBody_Multipart value) multipart,
   }) {
@@ -653,6 +799,7 @@ class _$HttpBody_MultipartImpl extends HttpBody_Multipart {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(HttpBody_Text value)? text,
     TResult? Function(HttpBody_Bytes value)? bytes,
+    TResult? Function(HttpBody_BytesStream value)? bytesStream,
     TResult? Function(HttpBody_Form value)? form,
     TResult? Function(HttpBody_Multipart value)? multipart,
   }) {
@@ -664,6 +811,7 @@ class _$HttpBody_MultipartImpl extends HttpBody_Multipart {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(HttpBody_Text value)? text,
     TResult Function(HttpBody_Bytes value)? bytes,
+    TResult Function(HttpBody_BytesStream value)? bytesStream,
     TResult Function(HttpBody_Form value)? form,
     TResult Function(HttpBody_Multipart value)? multipart,
     required TResult orElse(),
@@ -680,7 +828,6 @@ abstract class HttpBody_Multipart extends HttpBody {
       _$HttpBody_MultipartImpl;
   const HttpBody_Multipart._() : super._();
 
-  @override
   MultipartPayload get field0;
   @JsonKey(ignore: true)
   _$$HttpBody_MultipartImplCopyWith<_$HttpBody_MultipartImpl> get copyWith =>

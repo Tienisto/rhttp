@@ -1,11 +1,11 @@
+use flutter_rust_bridge::for_generated::futures::channel::mpsc;
+use flutter_rust_bridge::{frb, DartFnFuture};
+use futures_util::{SinkExt, StreamExt};
+use reqwest::header::{HeaderName, HeaderValue};
+use reqwest::{Method, Response, Url, Version};
 use std::collections::HashMap;
 use std::error::Error;
 use std::str::FromStr;
-
-use flutter_rust_bridge::{frb, DartFnFuture};
-use futures_util::StreamExt;
-use reqwest::header::{HeaderName, HeaderValue};
-use reqwest::{Method, Response, Url, Version};
 use tokio_util::sync::CancellationToken;
 
 use crate::api::client::{ClientSettings, RequestClient};
@@ -49,6 +49,7 @@ pub enum HttpHeaders {
 pub enum HttpBody {
     Text(String),
     Bytes(Vec<u8>),
+    BytesStream,
     Form(HashMap<String, String>),
     Multipart(MultipartPayload),
 }
@@ -122,6 +123,31 @@ pub enum HttpResponseBody {
     Stream,
 }
 
+pub struct Dart2RustStreamSink {
+    sender: mpsc::Sender<Vec<u8>>,
+}
+
+pub struct Dart2RustStreamReceiver {
+    receiver: mpsc::Receiver<Vec<u8>>,
+}
+
+pub fn create_stream() -> (Dart2RustStreamSink, Dart2RustStreamReceiver) {
+    let (sender, receiver) = mpsc::channel(4);
+    (
+        Dart2RustStreamSink { sender },
+        Dart2RustStreamReceiver { receiver },
+    )
+}
+
+impl Dart2RustStreamSink {
+    pub async fn add(&mut self, data: u8) -> Result<(), RhttpError> {
+        self.sender
+            .send(vec![data])
+            .await
+            .map_err(|_| RhttpError::RhttpUnknownError("Failed to send data".to_string()))
+    }
+}
+
 // It must be async so that frb provides an async context.
 pub async fn register_client(settings: ClientSettings) -> Result<i64, RhttpError> {
     register_client_internal(settings)
@@ -156,6 +182,7 @@ pub async fn make_http_request(
     query: Option<Vec<(String, String)>>,
     headers: Option<HttpHeaders>,
     body: Option<HttpBody>,
+    body_stream: Option<Dart2RustStreamReceiver>,
     expect_body: HttpExpectBody,
     on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
     cancelable: bool,
@@ -169,7 +196,7 @@ pub async fn make_http_request(
     tokio::select! {
         _ = cancel_tokens.request_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
         _ = cancel_tokens.client_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
-        response = make_http_request_inner(client_address, settings, method, url.to_owned(), query, headers, body, expect_body) => {
+        response = make_http_request_inner(client_address, settings, method, url.to_owned(), query, headers, body, body_stream, expect_body) => {
             if let Some(address) = cancel_tokens.request_cancel_address {
                 request_pool::remove_token(address);
             }
@@ -218,6 +245,7 @@ async fn make_http_request_inner(
     query: Option<Vec<(String, String)>>,
     headers: Option<HttpHeaders>,
     body: Option<HttpBody>,
+    body_stream: Option<Dart2RustStreamReceiver>,
     expect_body: HttpExpectBody,
 ) -> Result<HttpResponse, RhttpError> {
     let response = make_http_request_helper(
@@ -228,6 +256,7 @@ async fn make_http_request_inner(
         query,
         headers,
         body,
+        body_stream,
         Some(expect_body),
     )
     .await?;
@@ -262,6 +291,7 @@ pub async fn make_http_request_receive_stream(
     query: Option<Vec<(String, String)>>,
     headers: Option<HttpHeaders>,
     body: Option<HttpBody>,
+    body_stream: Option<Dart2RustStreamReceiver>,
     stream_sink: StreamSink<Vec<u8>>,
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
     on_error: impl Fn(RhttpError) -> DartFnFuture<()>,
@@ -285,6 +315,7 @@ pub async fn make_http_request_receive_stream(
             query,
             headers,
             body,
+            body_stream,
             stream_sink,
             on_response,
             on_error,
@@ -305,6 +336,7 @@ async fn make_http_request_receive_stream_inner(
     query: Option<Vec<(String, String)>>,
     headers: Option<HttpHeaders>,
     body: Option<HttpBody>,
+    body_stream: Option<Dart2RustStreamReceiver>,
     stream_sink: StreamSink<Vec<u8>>,
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
     on_error: impl Fn(RhttpError) -> DartFnFuture<()>,
@@ -317,6 +349,7 @@ async fn make_http_request_receive_stream_inner(
         query,
         headers,
         body,
+        body_stream,
         None,
     )
     .await;
@@ -364,6 +397,7 @@ async fn make_http_request_helper(
     query: Option<Vec<(String, String)>>,
     headers: Option<HttpHeaders>,
     body: Option<HttpBody>,
+    body_stream: Option<Dart2RustStreamReceiver>,
     expect_body: Option<HttpExpectBody>,
 ) -> Result<Response, RhttpError> {
     let client: RequestClient = match client_address {
@@ -421,6 +455,15 @@ async fn make_http_request_helper(
         request = match body {
             Some(HttpBody::Text(text)) => request.body(text),
             Some(HttpBody::Bytes(bytes)) => request.body(bytes),
+            Some(HttpBody::BytesStream) => {
+                let stream = body_stream
+                    .expect("body_stream should exist for HttpBody::BytesStream")
+                    .receiver
+                    .map(|v| Ok::<Vec<u8>, RhttpError>(v));
+
+                let body = reqwest::Body::wrap_stream(stream);
+                request.body(body)
+            }
             Some(HttpBody::Form(form)) => request.form(&form),
             Some(HttpBody::Multipart(body)) => {
                 let mut form = reqwest::multipart::Form::new();

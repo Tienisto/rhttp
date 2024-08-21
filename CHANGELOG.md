@@ -1,5 +1,6 @@
-## 0.5.5
+## 0.6.0
 
+- feat: add `HttpBody.stream` to send a stream as request body
 - feat: `RhttpCompatibleClient` sets `throwOnStatusCode` to `false` to conform with `http` package
 
 ## 0.5.4

@@ -70,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.3.0';
 
   @override
-  int get rustContentHash => 2133635912;
+  int get rustContentHash => 1538750230;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -83,7 +83,13 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 abstract class RustLibApi extends BaseApi {
   Future<ClientSettings> crateApiClientClientSettingsDefault();
 
+  Future<void> crateApiHttpDart2RustStreamSinkAdd(
+      {required Dart2RustStreamSink that, required int data});
+
   Future<bool> crateApiHttpCancelRequest({required PlatformInt64 address});
+
+  Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)>
+      crateApiHttpCreateStream();
 
   Future<HttpResponse> crateApiHttpMakeHttpRequest(
       {PlatformInt64? clientAddress,
@@ -93,6 +99,7 @@ abstract class RustLibApi extends BaseApi {
       List<(String, String)>? query,
       HttpHeaders? headers,
       HttpBody? body,
+      Dart2RustStreamReceiver? bodyStream,
       required HttpExpectBody expectBody,
       required FutureOr<void> Function(PlatformInt64) onCancelToken,
       required bool cancelable});
@@ -105,6 +112,7 @@ abstract class RustLibApi extends BaseApi {
       List<(String, String)>? query,
       HttpHeaders? headers,
       HttpBody? body,
+      Dart2RustStreamReceiver? bodyStream,
       required FutureOr<void> Function(HttpResponse) onResponse,
       required FutureOr<void> Function(RhttpError) onError,
       required FutureOr<void> Function(PlatformInt64) onCancelToken,
@@ -120,6 +128,24 @@ abstract class RustLibApi extends BaseApi {
       {required PlatformInt64 address, required bool cancelRunningRequests});
 
   Future<void> crateApiInitInitApp();
+
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_Dart2RustStreamReceiver;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_Dart2RustStreamReceiver;
+
+  CrossPlatformFinalizerArg
+      get rust_arc_decrement_strong_count_Dart2RustStreamReceiverPtr;
+
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_Dart2RustStreamSink;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_Dart2RustStreamSink;
+
+  CrossPlatformFinalizerArg
+      get rust_arc_decrement_strong_count_Dart2RustStreamSinkPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -155,13 +181,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiHttpDart2RustStreamSinkAdd(
+      {required Dart2RustStreamSink that, required int data}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+            that, serializer);
+        sse_encode_u_8(data, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 2, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_rhttp_error,
+      ),
+      constMeta: kCrateApiHttpDart2RustStreamSinkAddConstMeta,
+      argValues: [that, data],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiHttpDart2RustStreamSinkAddConstMeta =>
+      const TaskConstMeta(
+        debugName: "Dart2RustStreamSink_add",
+        argNames: ["that", "data"],
+      );
+
+  @override
   Future<bool> crateApiHttpCancelRequest({required PlatformInt64 address}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_i_64(address, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 2, port: port_);
+            funcId: 3, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_bool,
@@ -179,6 +233,31 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)>
+      crateApiHttpCreateStream() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 4, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData:
+            sse_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_sink_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_receiver,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiHttpCreateStreamConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiHttpCreateStreamConstMeta => const TaskConstMeta(
+        debugName: "create_stream",
+        argNames: [],
+      );
+
+  @override
   Future<HttpResponse> crateApiHttpMakeHttpRequest(
       {PlatformInt64? clientAddress,
       ClientSettings? settings,
@@ -187,6 +266,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       List<(String, String)>? query,
       HttpHeaders? headers,
       HttpBody? body,
+      Dart2RustStreamReceiver? bodyStream,
       required HttpExpectBody expectBody,
       required FutureOr<void> Function(PlatformInt64) onCancelToken,
       required bool cancelable}) {
@@ -200,12 +280,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_opt_list_record_string_string(query, serializer);
         sse_encode_opt_box_autoadd_http_headers(headers, serializer);
         sse_encode_opt_box_autoadd_http_body(body, serializer);
+        sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+            bodyStream, serializer);
         sse_encode_http_expect_body(expectBody, serializer);
         sse_encode_DartFn_Inputs_i_64_Output_unit_AnyhowException(
             onCancelToken, serializer);
         sse_encode_bool(cancelable, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 3, port: port_);
+            funcId: 5, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_http_response,
@@ -220,6 +302,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         query,
         headers,
         body,
+        bodyStream,
         expectBody,
         onCancelToken,
         cancelable
@@ -239,6 +322,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           "query",
           "headers",
           "body",
+          "bodyStream",
           "expectBody",
           "onCancelToken",
           "cancelable"
@@ -254,6 +338,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       List<(String, String)>? query,
       HttpHeaders? headers,
       HttpBody? body,
+      Dart2RustStreamReceiver? bodyStream,
       required FutureOr<void> Function(HttpResponse) onResponse,
       required FutureOr<void> Function(RhttpError) onError,
       required FutureOr<void> Function(PlatformInt64) onCancelToken,
@@ -269,6 +354,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_opt_list_record_string_string(query, serializer);
         sse_encode_opt_box_autoadd_http_headers(headers, serializer);
         sse_encode_opt_box_autoadd_http_body(body, serializer);
+        sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+            bodyStream, serializer);
         sse_encode_StreamSink_list_prim_u_8_strict_Sse(streamSink, serializer);
         sse_encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
             onResponse, serializer);
@@ -278,7 +365,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             onCancelToken, serializer);
         sse_encode_bool(cancelable, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 4, port: port_);
+            funcId: 6, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -293,6 +380,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         query,
         headers,
         body,
+        bodyStream,
         streamSink,
         onResponse,
         onError,
@@ -315,6 +403,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           "query",
           "headers",
           "body",
+          "bodyStream",
           "streamSink",
           "onResponse",
           "onError",
@@ -331,7 +420,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_client_settings(settings, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 5, port: port_);
+            funcId: 7, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_i_64,
@@ -355,7 +444,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_client_settings(settings, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_i_64,
@@ -382,7 +471,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_64(address, serializer);
         sse_encode_bool(cancelRunningRequests, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 7, port: port_);
+            funcId: 9, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -405,7 +494,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 8, port: port_);
+            funcId: 10, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -521,10 +610,51 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     };
   }
 
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_Dart2RustStreamReceiver => wire
+          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_Dart2RustStreamReceiver => wire
+          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver;
+
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_Dart2RustStreamSink => wire
+          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_Dart2RustStreamSink => wire
+          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink;
+
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return AnyhowException(raw as String);
+  }
+
+  @protected
+  Dart2RustStreamReceiver
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Dart2RustStreamReceiverImpl.frbInternalDcoDecode(
+        raw as List<dynamic>);
+  }
+
+  @protected
+  Dart2RustStreamSink
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Dart2RustStreamSinkImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  Dart2RustStreamSink
+      dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Dart2RustStreamSinkImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -570,6 +700,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Dart2RustStreamReceiver
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Dart2RustStreamReceiverImpl.frbInternalDcoDecode(
+        raw as List<dynamic>);
+  }
+
+  @protected
+  Dart2RustStreamSink
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Dart2RustStreamSinkImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
   RustStreamSink<Uint8List> dco_decode_StreamSink_list_prim_u_8_strict_Sse(
       dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -586,6 +733,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   bool dco_decode_bool(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as bool;
+  }
+
+  @protected
+  Dart2RustStreamReceiver
+      dco_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+        raw);
   }
 
   @protected
@@ -695,10 +851,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_list_prim_u_8_strict(raw[1]),
         );
       case 2:
+        return HttpBody_BytesStream();
+      case 3:
         return HttpBody_Form(
           dco_decode_Map_String_String(raw[1]),
         );
-      case 3:
+      case 4:
         return HttpBody_Multipart(
           dco_decode_box_autoadd_multipart_payload(raw[1]),
         );
@@ -872,6 +1030,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Dart2RustStreamReceiver?
+      dco_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null
+        ? null
+        : dco_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+            raw);
+  }
+
+  @protected
   Duration? dco_decode_opt_box_autoadd_Chrono_Duration(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_Chrono_Duration(raw);
@@ -937,6 +1106,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ProxySettings dco_decode_proxy_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return ProxySettings.values[raw as int];
+  }
+
+  @protected
+  (
+    Dart2RustStreamSink,
+    Dart2RustStreamReceiver
+  ) dco_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_sink_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_receiver(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+          arr[0]),
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          arr[1]),
+    );
   }
 
   @protected
@@ -1052,6 +1240,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Dart2RustStreamReceiver
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return Dart2RustStreamReceiverImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  Dart2RustStreamSink
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return Dart2RustStreamSinkImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  Dart2RustStreamSink
+      sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return Dart2RustStreamSinkImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
   Duration sse_decode_Chrono_Duration(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_i_64(deserializer);
@@ -1074,6 +1289,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Dart2RustStreamReceiver
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return Dart2RustStreamReceiverImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  Dart2RustStreamSink
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return Dart2RustStreamSinkImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
   RustStreamSink<Uint8List> sse_decode_StreamSink_list_prim_u_8_strict_Sse(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1091,6 +1324,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   bool sse_decode_bool(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8() != 0;
+  }
+
+  @protected
+  Dart2RustStreamReceiver
+      sse_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+        deserializer));
   }
 
   @protected
@@ -1210,9 +1452,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_list_prim_u_8_strict(deserializer);
         return HttpBody_Bytes(var_field0);
       case 2:
+        return HttpBody_BytesStream();
+      case 3:
         var var_field0 = sse_decode_Map_String_String(deserializer);
         return HttpBody_Form(var_field0);
-      case 3:
+      case 4:
         var var_field0 = sse_decode_box_autoadd_multipart_payload(deserializer);
         return HttpBody_Multipart(var_field0);
       default:
@@ -1405,6 +1649,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  Dart2RustStreamReceiver?
+      sse_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   Duration? sse_decode_opt_box_autoadd_Chrono_Duration(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1530,6 +1788,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  (
+    Dart2RustStreamSink,
+    Dart2RustStreamReceiver
+  ) sse_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_sink_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_receiver(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 =
+        sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+            deserializer);
+    var var_field1 =
+        sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+            deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
   (String, MultipartItem) sse_decode_record_string_multipart_item(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1640,6 +1914,36 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          Dart2RustStreamReceiver self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as Dart2RustStreamReceiverImpl).frbInternalSseEncode(move: true),
+        serializer);
+  }
+
+  @protected
+  void
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+          Dart2RustStreamSink self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as Dart2RustStreamSinkImpl).frbInternalSseEncode(move: true),
+        serializer);
+  }
+
+  @protected
+  void
+      sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+          Dart2RustStreamSink self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as Dart2RustStreamSinkImpl).frbInternalSseEncode(move: false),
+        serializer);
+  }
+
+  @protected
   void sse_encode_Chrono_Duration(Duration self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_64(PlatformInt64Util.from(self.inMicroseconds), serializer);
@@ -1691,6 +1995,26 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          Dart2RustStreamReceiver self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as Dart2RustStreamReceiverImpl).frbInternalSseEncode(move: null),
+        serializer);
+  }
+
+  @protected
+  void
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+          Dart2RustStreamSink self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as Dart2RustStreamSinkImpl).frbInternalSseEncode(move: null),
+        serializer);
+  }
+
+  @protected
   void sse_encode_StreamSink_list_prim_u_8_strict_Sse(
       RustStreamSink<Uint8List> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1713,6 +2037,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_bool(bool self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self ? 1 : 0);
+  }
+
+  @protected
+  void
+      sse_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          Dart2RustStreamReceiver self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+        self, serializer);
   }
 
   @protected
@@ -1822,11 +2155,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case HttpBody_Bytes(field0: final field0):
         sse_encode_i_32(1, serializer);
         sse_encode_list_prim_u_8_strict(field0, serializer);
-      case HttpBody_Form(field0: final field0):
+      case HttpBody_BytesStream():
         sse_encode_i_32(2, serializer);
+      case HttpBody_Form(field0: final field0):
+        sse_encode_i_32(3, serializer);
         sse_encode_Map_String_String(field0, serializer);
       case HttpBody_Multipart(field0: final field0):
-        sse_encode_i_32(3, serializer);
+        sse_encode_i_32(4, serializer);
         sse_encode_box_autoadd_multipart_payload(field0, serializer);
       default:
         throw UnimplementedError('');
@@ -1996,6 +2331,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void
+      sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          Dart2RustStreamReceiver? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+          self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_Chrono_Duration(
       Duration? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2112,6 +2460,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void
+      sse_encode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_sink_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_receiver(
+          (Dart2RustStreamSink, Dart2RustStreamReceiver) self,
+          SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+        self.$1, serializer);
+    sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+        self.$2, serializer);
+  }
+
+  @protected
   void sse_encode_record_string_multipart_item(
       (String, MultipartItem) self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2201,4 +2561,51 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putBigUint64(self);
   }
+}
+
+@sealed
+class Dart2RustStreamReceiverImpl extends RustOpaque
+    implements Dart2RustStreamReceiver {
+  // Not to be used by end users
+  Dart2RustStreamReceiverImpl.frbInternalDcoDecode(List<dynamic> wire)
+      : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  Dart2RustStreamReceiverImpl.frbInternalSseDecode(
+      BigInt ptr, int externalSizeOnNative)
+      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount: RustLib
+        .instance.api.rust_arc_increment_strong_count_Dart2RustStreamReceiver,
+    rustArcDecrementStrongCount: RustLib
+        .instance.api.rust_arc_decrement_strong_count_Dart2RustStreamReceiver,
+    rustArcDecrementStrongCountPtr: RustLib.instance.api
+        .rust_arc_decrement_strong_count_Dart2RustStreamReceiverPtr,
+  );
+}
+
+@sealed
+class Dart2RustStreamSinkImpl extends RustOpaque
+    implements Dart2RustStreamSink {
+  // Not to be used by end users
+  Dart2RustStreamSinkImpl.frbInternalDcoDecode(List<dynamic> wire)
+      : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  Dart2RustStreamSinkImpl.frbInternalSseDecode(
+      BigInt ptr, int externalSizeOnNative)
+      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount: RustLib
+        .instance.api.rust_arc_increment_strong_count_Dart2RustStreamSink,
+    rustArcDecrementStrongCount: RustLib
+        .instance.api.rust_arc_decrement_strong_count_Dart2RustStreamSink,
+    rustArcDecrementStrongCountPtr: RustLib
+        .instance.api.rust_arc_decrement_strong_count_Dart2RustStreamSinkPtr,
+  );
+
+  Future<void> add({required int data}) => RustLib.instance.api
+      .crateApiHttpDart2RustStreamSinkAdd(that: this, data: data);
 }

@@ -159,7 +159,6 @@ Pass JSON map to the `HttpBody.json` constructor.
 The Content-Type header will be set to `application/json` if not provided.
 
 ```dart
-// JSON body
 await Rhttp.post(
   url: 'https://example.com',
   body: HttpBody.json({'key': 'value'}),
@@ -171,10 +170,26 @@ await Rhttp.post(
 Pass a `Uint8List` to the `HttpBody.bytes` constructor.
 
 ```dart
-// Binary body
 await Rhttp.post(
-  url: 'https://example.com',
+  'https://example.com',
   body: HttpBody.bytes(Uint8List.fromList([0, 1, 2])),
+);
+```
+
+**Stream**
+
+Pass a `Stream<int>` to the `HttpBody.stream` constructor.
+
+It is recommended to also provide a length (e.g. `HttpBody.stream(stream, length: bytesLength)`).
+This will set the Content-Length header.
+
+```dart
+await Rhttp.post(
+  'https://example.com',
+  body: HttpBody.stream(
+    Stream.fromIterable([0, 1, 2]),
+    length: 3,
+  ),
 );
 ```
 
@@ -185,9 +200,8 @@ Pass a flat map to the `HttpBody.form` constructor.
 The Content-Type header will be set to `application/x-www-form-urlencoded` if not provided.
 
 ```dart
-// Form body
 await Rhttp.post(
-  url: 'https://example.com',
+  'https://example.com',
   body: HttpBody.form({'key': 'value'}),
 );
 ```
@@ -200,7 +214,7 @@ The Content-Type header will be overridden to `multipart/form-data` with a rando
 
 ```dart
 await Rhttp.post(
-  url: 'https://example.com',
+  'https://example.com',
   body: HttpBody.multipart({
     'name': const MultipartItem.text(
       text: 'Tom',

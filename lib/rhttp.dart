@@ -39,6 +39,7 @@ export 'src/model/request.dart'
         HttpBodyText,
         HttpBodyJson,
         HttpBodyBytes,
+        HttpBodyBytesStream,
         HttpBodyForm,
         HttpBodyMultipart,
         MultipartItem,

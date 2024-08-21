@@ -10,6 +10,7 @@ import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
+import 'package:rhttp/src/util/stream_listener.dart';
 
 /// Non-Generated helper function that is used by
 /// the client and also by the static class.
@@ -40,6 +41,19 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     body: request.body,
   );
 
+  final rust.Dart2RustStreamReceiver? bodyStream;
+  if (request.body is HttpBodyBytesStream) {
+    final stream = (request.body as HttpBodyBytesStream).stream;
+    final (sender, receiver) = await rust.createStream();
+    listenToStreamWithBackpressure(
+      stream: stream,
+      onData: (data) async => await sender.add(data: data),
+    );
+    bodyStream = receiver;
+  } else {
+    bodyStream = null;
+  }
+
   bool exceptionByInterceptor = false;
   try {
     if (request.expectBody == HttpExpectBody.stream) {
@@ -53,6 +67,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         query: request.query?.entries.map((e) => (e.key, e.value)).toList(),
         headers: headers?._toRustType(),
         body: request.body?._toRustType(),
+        bodyStream: bodyStream,
         onResponse: (r) => responseCompleter.complete(r),
         onError: (e) => responseCompleter.completeError(e),
         onCancelToken: (int cancelRef) =>
@@ -104,6 +119,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         query: request.query?.entries.map((e) => (e.key, e.value)).toList(),
         headers: headers?._toRustType(),
         body: request.body?._toRustType(),
+        bodyStream: bodyStream,
         expectBody: request.expectBody.toRustType(),
         onCancelToken: (int cancelRef) =>
             cancelRefCompleter.complete(cancelRef),
@@ -181,33 +197,35 @@ HttpHeaders? _digestHeaders({
   required HttpBody? body,
 }) {
   if (body is HttpBodyJson) {
-    switch (headers) {
-      case HttpHeaderMap map:
-        if (map.map.containsKey(HttpHeaderName.contentType)) {
-          break;
-        }
-        headers = HttpHeaders.map({
-          ...map.map,
-          HttpHeaderName.contentType: 'application/json',
-        });
-        break;
-      case HttpHeaderRawMap rawMap:
-        if (rawMap.map.keys.any((e) => e.toLowerCase() == 'content-type')) {
-          break;
-        }
-        headers = HttpHeaders.rawMap({
-          ...rawMap.map,
-          'Content-Type': 'application/json',
-        });
-        break;
-      default:
-        headers = const HttpHeaders.map({
-          HttpHeaderName.contentType: 'application/json',
-        });
-        break;
-    }
+    headers = _addHeaderIfNotExists(
+      headers: headers,
+      name: HttpHeaderName.contentType,
+      value: 'application/json',
+    );
   }
 
+  if (body is HttpBodyBytesStream && body.length != null) {
+    headers = _addHeaderIfNotExists(
+      headers: headers,
+      name: HttpHeaderName.contentLength,
+      value: body.length.toString(),
+    );
+  }
+
+  return headers;
+}
+
+HttpHeaders? _addHeaderIfNotExists({
+  required HttpHeaders? headers,
+  required HttpHeaderName name,
+  required String value,
+}) {
+  if (headers == null || !headers.containsKey(name)) {
+    return (headers ?? HttpHeaders.empty).copyWith(
+      name: name,
+      value: value,
+    );
+  }
   return headers;
 }
 
@@ -245,6 +263,7 @@ extension on HttpBody {
       HttpBodyText text => rust.HttpBody.text(text.text),
       HttpBodyJson json => rust.HttpBody.text(jsonEncode(json.json)),
       HttpBodyBytes bytes => rust.HttpBody.bytes(bytes.bytes),
+      HttpBodyBytesStream _ => const rust.HttpBody.bytesStream(),
       HttpBodyForm form => rust.HttpBody.form(form.form),
       HttpBodyMultipart multipart =>
         rust.HttpBody.multipart(rust.MultipartPayload(

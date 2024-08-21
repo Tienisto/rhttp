@@ -212,6 +212,17 @@ sealed class HttpHeaders {
   /// An empty header map.
   static const HttpHeaders empty = HttpHeaderMap._({});
 
+  /// Returns true if the headers contain the [key].
+  bool containsKey(HttpHeaderName key) {
+    return switch (this) {
+      HttpHeaderMap map => map.map.containsKey(key),
+      HttpHeaderRawMap rawMap =>
+        rawMap.map.keys.any((e) => e.toLowerCase() == key.httpName),
+      HttpHeaderList list =>
+        list.list.any((e) => e.$1.toLowerCase() == key.httpName),
+    };
+  }
+
   /// Adds a header to the headers.
   /// Returns a new instance of [HttpHeaders] with the added header.
   /// Converts [HttpHeaderMap] to [HttpHeaderRawMap].
@@ -345,6 +356,12 @@ sealed class HttpBody {
   /// A body of raw bytes.
   const factory HttpBody.bytes(Uint8List bytes) = HttpBodyBytes._;
 
+  /// A body of a raw bytes stream.
+  /// This is useful to avoid loading the entire body into memory.
+  /// The Content-Length header will be set if [length] is provided.
+  const factory HttpBody.stream(Stream<int> stream, {int? length}) =
+      HttpBodyBytesStream._;
+
   /// A www-form-urlencoded body.
   /// The Content-Type header will be set to `application/x-www-form-urlencoded`
   /// if not provided.
@@ -377,6 +394,16 @@ class HttpBodyBytes extends HttpBody {
   final Uint8List bytes;
 
   const HttpBodyBytes._(this.bytes);
+}
+
+/// A body of a raw bytes stream.
+/// This is useful to avoid loading the entire body into memory.
+/// The Content-Length header will be set if [length] is provided.
+class HttpBodyBytesStream extends HttpBody {
+  final int? length;
+  final Stream<int> stream;
+
+  const HttpBodyBytesStream._(this.stream, {this.length});
 }
 
 /// A www-form-urlencoded body.
