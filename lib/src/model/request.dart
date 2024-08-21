@@ -10,9 +10,9 @@ import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/request.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 
-const Map<String, String> _keepQuery = {};
-const HttpHeaders _keepHeaders = HttpHeaders.map({});
-const HttpBody _keepBody = HttpBody.text('');
+const Map<String, String> _keepQuery = {'__rhttp_keep__': '__rhttp_keep__'};
+const HttpHeaders _keepHeaders = HttpHeaders.rawMap({'__keep__': '__keep__'});
+const HttpBody _keepBody = HttpBody.text('__rhttp_keep__');
 
 /// An HTTP request that can be used
 /// on a client or statically.
