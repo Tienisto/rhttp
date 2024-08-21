@@ -27,7 +27,7 @@ class RhttpCompatibleClient with BaseClient {
     List<Interceptor>? interceptors,
   }) async {
     final client = await RhttpClient.create(
-      settings: settings,
+      settings: (settings ?? const ClientSettings()).digest(),
       interceptors: interceptors,
     );
     return RhttpCompatibleClient._(client);
@@ -44,7 +44,7 @@ class RhttpCompatibleClient with BaseClient {
     List<Interceptor>? interceptors,
   }) {
     final client = RhttpClient.createSync(
-      settings: settings,
+      settings: (settings ?? const ClientSettings()).digest(),
       interceptors: interceptors,
     );
     return RhttpCompatibleClient._(client);
@@ -119,4 +119,18 @@ class RhttpWrappedClientException extends ClientException {
 
   @override
   String toString() => rhttpException.toString();
+}
+
+extension on ClientSettings {
+  /// Makes sure that the settings conform to the requirements of [BaseClient].
+  ClientSettings digest() {
+    ClientSettings settings = this;
+    if (throwOnStatusCode) {
+      settings = settings.copyWith(
+        throwOnStatusCode: false,
+      );
+    }
+
+    return settings;
+  }
 }

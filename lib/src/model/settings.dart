@@ -7,6 +7,10 @@ import 'package:rhttp/src/rust/api/http.dart' as rust;
 
 export 'package:rhttp/src/rust/api/client.dart' show TlsVersion;
 
+const _keepDuration = Duration(microseconds: -9999);
+const _keepProxySettings = ProxySettings.noProxy();
+const _keepTlsSettings = TlsSettings();
+
 class ClientSettings {
   /// The preferred HTTP version to use.
   final HttpVersionPref httpVersionPref;
@@ -35,6 +39,30 @@ class ClientSettings {
     this.proxySettings,
     this.tlsSettings,
   });
+
+  ClientSettings copyWith({
+    HttpVersionPref? httpVersionPref,
+    Duration? timeout = _keepDuration,
+    Duration? connectTimeout = _keepDuration,
+    bool? throwOnStatusCode,
+    ProxySettings? proxySettings = _keepProxySettings,
+    TlsSettings? tlsSettings = _keepTlsSettings,
+  }) {
+    return ClientSettings(
+      httpVersionPref: httpVersionPref ?? this.httpVersionPref,
+      timeout: identical(timeout, _keepDuration) ? this.timeout : timeout,
+      connectTimeout: identical(connectTimeout, _keepDuration)
+          ? this.connectTimeout
+          : connectTimeout,
+      throwOnStatusCode: throwOnStatusCode ?? this.throwOnStatusCode,
+      proxySettings: identical(proxySettings, _keepProxySettings)
+          ? this.proxySettings
+          : proxySettings,
+      tlsSettings: identical(tlsSettings, _keepTlsSettings)
+          ? this.tlsSettings
+          : tlsSettings,
+    );
+  }
 }
 
 sealed class ProxySettings {

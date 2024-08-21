@@ -1,3 +1,7 @@
+## 0.5.5
+
+- feat: `RhttpCompatibleClient` sets `throwOnStatusCode` to `false` to conform with `http` package
+
 ## 0.5.4
 
 - feat: wrap any exception in `RhttpCompatibleClient` into `RhttpWrappedClientException`
