@@ -16,21 +16,21 @@ class Interceptor {
   Future<InterceptorResult<HttpRequest>> beforeRequest(
     HttpRequest request,
   ) async {
-    return next(request);
+    return next();
   }
 
   /// Called before the response is returned.
   Future<InterceptorResult<HttpResponse>> afterResponse(
     HttpResponse response,
   ) async {
-    return next(response);
+    return next();
   }
 
   /// Called when an exception is thrown.
   Future<InterceptorResult<RhttpException>> onError(
     RhttpException exception,
   ) async {
-    return next(exception);
+    return next();
   }
 
   /// Continues to the next interceptor.
