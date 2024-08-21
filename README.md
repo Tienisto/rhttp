@@ -129,7 +129,7 @@ You can add headers to the request:
 
 ```dart
 await Rhttp.post(
-  url: 'https://example.com',
+  'https://example.com',
   headers: const HttpHeaders.map({
     HttpHeaderName.contentType: 'application/json',
   }),
@@ -147,7 +147,7 @@ Pass a string to the `HttpBody.text` constructor.
 ```dart
 // Raw body
 await Rhttp.post(
-  url: 'https://example.com',
+  'https://example.com',
   body: HttpBody.text('raw body'),
 );
 ```
@@ -160,7 +160,7 @@ The Content-Type header will be set to `application/json` if not provided.
 
 ```dart
 await Rhttp.post(
-  url: 'https://example.com',
+  'https://example.com',
   body: HttpBody.json({'key': 'value'}),
 );
 ```
@@ -180,8 +180,7 @@ await Rhttp.post(
 
 Pass a `Stream<int>` to the `HttpBody.stream` constructor.
 
-It is recommended to also provide a length (e.g. `HttpBody.stream(stream, length: bytesLength)`).
-This will set the Content-Length header.
+It is recommended to also provide a `length` to automatically set the `Content-Length` header.
 
 ```dart
 await Rhttp.post(
