@@ -132,7 +132,7 @@ pub struct Dart2RustStreamReceiver {
 }
 
 pub fn create_stream() -> (Dart2RustStreamSink, Dart2RustStreamReceiver) {
-    let (sender, receiver) = mpsc::channel(4);
+    let (sender, receiver) = mpsc::channel(16 * 1024); // 16KB buffer
     (
         Dart2RustStreamSink { sender },
         Dart2RustStreamReceiver { receiver },
