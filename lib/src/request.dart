@@ -10,6 +10,7 @@ import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
+import 'package:rhttp/src/rust/api/stream.dart' as rust_stream;
 import 'package:rhttp/src/util/stream_listener.dart';
 
 /// Non-Generated helper function that is used by
@@ -41,10 +42,10 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     body: request.body,
   );
 
-  final rust.Dart2RustStreamReceiver? bodyStream;
+  final rust_stream.Dart2RustStreamReceiver? bodyStream;
   if (request.body is HttpBodyBytesStream) {
     final stream = (request.body as HttpBodyBytesStream).stream;
-    final (sender, receiver) = await rust.createStream();
+    final (sender, receiver) = await rust_stream.createStream();
     listenToStreamWithBackpressure(
       stream: stream,
       onData: (data) async => await sender.add(data: data),

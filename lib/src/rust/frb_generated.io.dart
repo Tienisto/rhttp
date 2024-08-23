@@ -6,6 +6,7 @@
 import 'api/client.dart';
 import 'api/error.dart';
 import 'api/http.dart';
+import 'api/stream.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;

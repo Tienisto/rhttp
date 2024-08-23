@@ -6,6 +6,7 @@
 import 'api/client.dart';
 import 'api/error.dart';
 import 'api/http.dart';
+import 'api/stream.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -70,7 +71,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.3.0';
 
   @override
-  int get rustContentHash => 1538750230;
+  int get rustContentHash => -2112869887;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -83,13 +84,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 abstract class RustLibApi extends BaseApi {
   Future<ClientSettings> crateApiClientClientSettingsDefault();
 
-  Future<void> crateApiHttpDart2RustStreamSinkAdd(
-      {required Dart2RustStreamSink that, required int data});
-
   Future<bool> crateApiHttpCancelRequest({required PlatformInt64 address});
-
-  Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)>
-      crateApiHttpCreateStream();
 
   Future<HttpResponse> crateApiHttpMakeHttpRequest(
       {PlatformInt64? clientAddress,
@@ -128,6 +123,12 @@ abstract class RustLibApi extends BaseApi {
       {required PlatformInt64 address, required bool cancelRunningRequests});
 
   Future<void> crateApiInitInitApp();
+
+  Future<void> crateApiStreamDart2RustStreamSinkAdd(
+      {required Dart2RustStreamSink that, required int data});
+
+  Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)>
+      crateApiStreamCreateStream();
 
   RustArcIncrementStrongCountFnType
       get rust_arc_increment_strong_count_Dart2RustStreamReceiver;
@@ -181,41 +182,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<void> crateApiHttpDart2RustStreamSinkAdd(
-      {required Dart2RustStreamSink that, required int data}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
-            that, serializer);
-        sse_encode_u_8(data, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 2, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
-        decodeErrorData: sse_decode_rhttp_error,
-      ),
-      constMeta: kCrateApiHttpDart2RustStreamSinkAddConstMeta,
-      argValues: [that, data],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiHttpDart2RustStreamSinkAddConstMeta =>
-      const TaskConstMeta(
-        debugName: "Dart2RustStreamSink_add",
-        argNames: ["that", "data"],
-      );
-
-  @override
   Future<bool> crateApiHttpCancelRequest({required PlatformInt64 address}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_i_64(address, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 3, port: port_);
+            funcId: 2, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_bool,
@@ -230,31 +203,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiHttpCancelRequestConstMeta => const TaskConstMeta(
         debugName: "cancel_request",
         argNames: ["address"],
-      );
-
-  @override
-  Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)>
-      crateApiHttpCreateStream() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 4, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData:
-            sse_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_sink_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_receiver,
-        decodeErrorData: null,
-      ),
-      constMeta: kCrateApiHttpCreateStreamConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
-  }
-
-  TaskConstMeta get kCrateApiHttpCreateStreamConstMeta => const TaskConstMeta(
-        debugName: "create_stream",
-        argNames: [],
       );
 
   @override
@@ -287,7 +235,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             onCancelToken, serializer);
         sse_encode_bool(cancelable, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 5, port: port_);
+            funcId: 3, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_http_response,
@@ -365,7 +313,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             onCancelToken, serializer);
         sse_encode_bool(cancelable, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 6, port: port_);
+            funcId: 4, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -420,7 +368,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_client_settings(settings, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 7, port: port_);
+            funcId: 5, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_i_64,
@@ -444,7 +392,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_client_settings(settings, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_i_64,
@@ -471,7 +419,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_64(address, serializer);
         sse_encode_bool(cancelRunningRequests, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 9, port: port_);
+            funcId: 7, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -494,7 +442,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 10, port: port_);
+            funcId: 8, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -508,6 +456,59 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiInitInitAppConstMeta => const TaskConstMeta(
         debugName: "init_app",
+        argNames: [],
+      );
+
+  @override
+  Future<void> crateApiStreamDart2RustStreamSinkAdd(
+      {required Dart2RustStreamSink that, required int data}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+            that, serializer);
+        sse_encode_u_8(data, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 9, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_rhttp_error,
+      ),
+      constMeta: kCrateApiStreamDart2RustStreamSinkAddConstMeta,
+      argValues: [that, data],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiStreamDart2RustStreamSinkAddConstMeta =>
+      const TaskConstMeta(
+        debugName: "Dart2RustStreamSink_add",
+        argNames: ["that", "data"],
+      );
+
+  @override
+  Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)>
+      crateApiStreamCreateStream() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 10, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData:
+            sse_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_sink_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_receiver,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiStreamCreateStreamConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiStreamCreateStreamConstMeta => const TaskConstMeta(
+        debugName: "create_stream",
         argNames: [],
       );
 
@@ -2607,5 +2608,5 @@ class Dart2RustStreamSinkImpl extends RustOpaque
   );
 
   Future<void> add({required int data}) => RustLib.instance.api
-      .crateApiHttpDart2RustStreamSinkAdd(that: this, data: data);
+      .crateApiStreamDart2RustStreamSinkAdd(that: this, data: data);
 }

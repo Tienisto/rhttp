@@ -8,14 +8,12 @@ import 'client.dart';
 import 'error.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+import 'stream.dart';
 part 'http.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `build_cancel_tokens`, `from_version`, `header_to_vec`, `make_http_request_helper`, `make_http_request_inner`, `make_http_request_receive_stream_inner`, `register_client_internal`, `to_method`
 // These types are ignored because they are not used by any `pub` functions: `RequestCancelTokens`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`
-
-Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)> createStream() =>
-    RustLib.instance.api.crateApiHttpCreateStream();
 
 Future<PlatformInt64> registerClient({required ClientSettings settings}) =>
     RustLib.instance.api.crateApiHttpRegisterClient(settings: settings);
@@ -83,14 +81,6 @@ Stream<Uint8List> makeHttpRequestReceiveStream(
 
 Future<bool> cancelRequest({required PlatformInt64 address}) =>
     RustLib.instance.api.crateApiHttpCancelRequest(address: address);
-
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Dart2RustStreamReceiver>>
-abstract class Dart2RustStreamReceiver implements RustOpaqueInterface {}
-
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Dart2RustStreamSink>>
-abstract class Dart2RustStreamSink implements RustOpaqueInterface {
-  Future<void> add({required int data});
-}
 
 @freezed
 sealed class HttpBody with _$HttpBody {
