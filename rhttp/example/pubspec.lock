@@ -280,7 +280,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.5.3"
+    version: "0.6.0"
   riverpod:
     dependency: transitive
     description:

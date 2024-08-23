@@ -22,10 +22,13 @@ jobs:
           channel: "stable"
 
       - name: Dependencies
+        working-directory: rhttp
         run: flutter pub get
       - name: Check format
+        working-directory: rhttp
         run: dart format --set-exit-if-changed lib bin test
       - name: Analyze
+        working-directory: rhttp
         run: flutter analyze
 
   test:
@@ -40,6 +43,8 @@ jobs:
           channel: "stable"
 
       - name: Dependencies
+        working-directory: rhttp
         run: flutter pub get
       - name: Test
+        working-directory: rhttp
         run: flutter test

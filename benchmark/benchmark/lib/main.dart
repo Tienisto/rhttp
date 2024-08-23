@@ -1,9 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:benchmark/dio.dart';
-import 'package:benchmark/http.dart';
-import 'package:benchmark/rhttp.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
