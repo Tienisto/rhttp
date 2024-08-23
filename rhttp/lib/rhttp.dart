@@ -26,6 +26,7 @@ export 'src/model/exception.dart'
 export 'src/model/header.dart';
 export 'src/model/request.dart'
     show
+        ProgressCallback,
         BaseHttpRequest,
         HttpRequest,
         HttpExpectBody,

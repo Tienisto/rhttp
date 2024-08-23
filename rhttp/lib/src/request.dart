@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/exception.dart';
@@ -11,6 +12,8 @@ import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/rust/api/stream.dart' as rust_stream;
+import 'package:rhttp/src/util/collection.dart';
+import 'package:rhttp/src/util/progress_notifier.dart';
 import 'package:rhttp/src/util/stream_listener.dart';
 
 /// Non-Generated helper function that is used by
@@ -36,6 +39,34 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     }
   }
 
+  final ProgressNotifier? sendNotifier;
+  if (request.onSendProgress != null) {
+    switch (request.body) {
+      case HttpBodyBytesStream():
+        sendNotifier = ProgressNotifier(request.onSendProgress!);
+        break;
+      case HttpBodyBytes body:
+        // transform to Stream
+        request = request.copyWith(
+          body: HttpBody.stream(
+            Stream.fromIterable(body.bytes),
+            length: body.bytes.length,
+          ),
+        );
+        sendNotifier = ProgressNotifier(request.onSendProgress!);
+        break;
+      default:
+        sendNotifier = null;
+        if (kDebugMode) {
+          print(
+            'Progress callback is not supported for ${request.body.runtimeType}',
+          );
+        }
+    }
+  } else {
+    sendNotifier = null;
+  }
+
   HttpHeaders? headers = request.headers;
   headers = _digestHeaders(
     headers: headers,
@@ -44,15 +75,50 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
 
   final rust_stream.Dart2RustStreamReceiver? bodyStream;
   if (request.body is HttpBodyBytesStream) {
-    final stream = (request.body as HttpBodyBytesStream).stream;
+    final body = request.body as HttpBodyBytesStream;
+    final bodyLength = body.length ?? -1;
     final (sender, receiver) = await rust_stream.createStream();
     listenToStreamWithBackpressure(
-      stream: stream,
-      onData: (data) async => await sender.add(data: data),
-    );
+        stream: body.stream,
+        onData: sendNotifier == null
+            ? (data) async {
+                await sender.add(data: data);
+              }
+            : (data) async {
+                sendNotifier!.notify(data.length, bodyLength);
+                await sender.add(data: data);
+              },
+        onDone: () async {
+          await sender.close();
+        });
     bodyStream = receiver;
   } else {
     bodyStream = null;
+  }
+
+  final ProgressNotifier? receiveNotifier;
+  final bool convertToBytes = request.expectBody == HttpExpectBody.bytes;
+  if (request.onReceiveProgress != null) {
+    switch (request.expectBody) {
+      case HttpExpectBody.stream:
+        receiveNotifier = ProgressNotifier(request.onReceiveProgress!);
+        break;
+      case HttpExpectBody.bytes:
+        request = request.copyWith(
+          expectBody: HttpExpectBody.stream,
+        );
+        receiveNotifier = ProgressNotifier(request.onReceiveProgress!);
+        break;
+      default:
+        receiveNotifier = null;
+        if (kDebugMode) {
+          print(
+            'Progress callback is not supported for ${request.expectBody}',
+          );
+        }
+    }
+  } else {
+    receiveNotifier = null;
   }
 
   bool exceptionByInterceptor = false;
@@ -60,7 +126,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     if (request.expectBody == HttpExpectBody.stream) {
       final cancelRefCompleter = Completer<int>();
       final responseCompleter = Completer<rust.HttpResponse>();
-      final stream = rust.makeHttpRequestReceiveStream(
+      Stream<Uint8List> stream = rust.makeHttpRequestReceiveStream(
         clientAddress: request.client?.ref,
         settings: request.settings?.toRustType(),
         method: request.method._toRustType(),
@@ -84,11 +150,36 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
 
       final rustResponse = await responseCompleter.future;
 
+      if (receiveNotifier != null) {
+        final contentLengthStr = rustResponse.headers
+                .firstWhereOrNull(
+                  (e) => e.$1.toLowerCase() == 'content-length',
+                )
+                ?.$2 ??
+            '-1';
+        final contentLength = int.tryParse(contentLengthStr) ?? -1;
+        stream = stream.map((event) {
+          receiveNotifier!.notify(event.length, contentLength);
+          return event;
+        });
+      }
+
       HttpResponse response = parseHttpResponse(
         request,
         rustResponse,
         bodyStream: stream,
       );
+
+      if (convertToBytes) {
+        final bytes = await stream.toList();
+        response = HttpBytesResponse(
+          request: request,
+          version: response.version,
+          statusCode: response.statusCode,
+          headers: response.headers,
+          body: Uint8List.fromList(bytes.expand((e) => e).toList()),
+        );
+      }
 
       if (interceptors != null) {
         try {

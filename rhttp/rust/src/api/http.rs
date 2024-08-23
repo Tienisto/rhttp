@@ -171,7 +171,17 @@ pub async fn make_http_request(
     tokio::select! {
         _ = cancel_tokens.request_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
         _ = cancel_tokens.client_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
-        response = make_http_request_inner(client_address, settings, method, url.to_owned(), query, headers, body, body_stream, expect_body) => {
+        response = make_http_request_inner(
+            client_address,
+            settings,
+            method,
+            url.to_owned(),
+            query,
+            headers,
+            body,
+            body_stream,
+            expect_body,
+        ) => {
             if let Some(address) = cancel_tokens.request_cancel_address {
                 request_pool::remove_token(address);
             }

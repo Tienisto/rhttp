@@ -1,3 +1,9 @@
+## 0.6.1
+
+- feat: add `onSendProgress` and `onReceiveProgress`
+- feat: increase performance of `HttpBody.stream`
+- feat: always compile Rust in release mode
+
 ## 0.6.0
 
 - feat: add `HttpBody.stream` to send a stream as request body

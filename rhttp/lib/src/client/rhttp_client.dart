@@ -88,6 +88,8 @@ class RhttpClient {
     HttpBody? body,
     required HttpExpectBody expectBody,
     CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestInternalGeneric(HttpRequest(
         client: this,
@@ -100,6 +102,8 @@ class RhttpClient {
         body: body,
         expectBody: expectBody,
         cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
       ));
 
   /// Similar to [request], but uses a [BaseHttpRequest] object
@@ -120,6 +124,8 @@ class RhttpClient {
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) async {
     final response = await request(
       method: method,
@@ -129,6 +135,8 @@ class RhttpClient {
       body: body,
       expectBody: HttpExpectBody.text,
       cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
     );
     return response as HttpTextResponse;
   }
@@ -141,6 +149,8 @@ class RhttpClient {
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) async {
     final response = await request(
       method: method,
@@ -150,6 +160,8 @@ class RhttpClient {
       body: body,
       expectBody: HttpExpectBody.bytes,
       cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
     );
     return response as HttpBytesResponse;
   }
@@ -162,6 +174,8 @@ class RhttpClient {
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) async {
     final response = await request(
       method: method,
@@ -171,6 +185,8 @@ class RhttpClient {
       body: body,
       expectBody: HttpExpectBody.stream,
       cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
     );
     return response as HttpStreamResponse;
   }
@@ -181,6 +197,7 @@ class RhttpClient {
     Map<String, String>? query,
     HttpHeaders? headers,
     CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestText(
         method: HttpMethod.get,
@@ -188,6 +205,7 @@ class RhttpClient {
         query: query,
         headers: headers,
         cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
       );
 
   /// Makes an HTTP GET request and returns the response as text.
@@ -196,6 +214,7 @@ class RhttpClient {
     Map<String, String>? query,
     HttpHeaders? headers,
     CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestText(
         method: HttpMethod.get,
@@ -203,6 +222,7 @@ class RhttpClient {
         query: query,
         headers: headers,
         cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
       );
 
   /// Makes an HTTP GET request and returns the response as bytes.
@@ -211,6 +231,7 @@ class RhttpClient {
     Map<String, String>? query,
     HttpHeaders? headers,
     CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestBytes(
         method: HttpMethod.get,
@@ -218,6 +239,7 @@ class RhttpClient {
         query: query,
         headers: headers,
         cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
       );
 
   /// Makes an HTTP GET request and returns the response as a stream.
@@ -226,6 +248,7 @@ class RhttpClient {
     Map<String, String>? query,
     HttpHeaders? headers,
     CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestStream(
         method: HttpMethod.get,
@@ -233,6 +256,7 @@ class RhttpClient {
         query: query,
         headers: headers,
         cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
       );
 
   /// Makes an HTTP POST request and returns the response as text.
@@ -243,6 +267,8 @@ class RhttpClient {
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestText(
         method: HttpMethod.post,
@@ -251,6 +277,8 @@ class RhttpClient {
         headers: headers,
         body: body,
         cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
       );
 
   /// Makes an HTTP PUT request and returns the response as text.
@@ -261,6 +289,8 @@ class RhttpClient {
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestText(
         method: HttpMethod.put,
@@ -269,6 +299,8 @@ class RhttpClient {
         headers: headers,
         body: body,
         cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
       );
 
   /// Makes an HTTP DELETE request and returns the response as text.
@@ -279,6 +311,8 @@ class RhttpClient {
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestText(
         method: HttpMethod.delete,
@@ -287,6 +321,8 @@ class RhttpClient {
         headers: headers,
         body: body,
         cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
       );
 
   /// Makes an HTTP HEAD request and returns the response as text.
@@ -296,6 +332,7 @@ class RhttpClient {
     Map<String, String>? query,
     HttpHeaders? headers,
     CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestText(
         method: HttpMethod.head,
@@ -303,6 +340,7 @@ class RhttpClient {
         query: query,
         headers: headers,
         cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
       );
 
   /// Makes an HTTP PATCH request and returns the response as text.
@@ -313,6 +351,8 @@ class RhttpClient {
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestText(
         method: HttpMethod.patch,
@@ -321,6 +361,8 @@ class RhttpClient {
         headers: headers,
         body: body,
         cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
       );
 
   /// Makes an HTTP OPTIONS request and returns the response as text.
@@ -331,6 +373,8 @@ class RhttpClient {
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestText(
         method: HttpMethod.options,
@@ -339,6 +383,8 @@ class RhttpClient {
         headers: headers,
         body: body,
         cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
       );
 
   /// Makes an HTTP TRACE request and returns the response as text.
@@ -349,6 +395,8 @@ class RhttpClient {
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
   }) =>
       requestText(
         method: HttpMethod.trace,
@@ -357,5 +405,7 @@ class RhttpClient {
         headers: headers,
         body: body,
         cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
       );
 }

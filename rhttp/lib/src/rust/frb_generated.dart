@@ -71,7 +71,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.3.0';
 
   @override
-  int get rustContentHash => -2112869887;
+  int get rustContentHash => 1702545142;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -125,7 +125,10 @@ abstract class RustLibApi extends BaseApi {
   Future<void> crateApiInitInitApp();
 
   Future<void> crateApiStreamDart2RustStreamSinkAdd(
-      {required Dart2RustStreamSink that, required int data});
+      {required Dart2RustStreamSink that, required List<int> data});
+
+  Future<void> crateApiStreamDart2RustStreamSinkClose(
+      {required Dart2RustStreamSink that});
 
   Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)>
       crateApiStreamCreateStream();
@@ -461,13 +464,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<void> crateApiStreamDart2RustStreamSinkAdd(
-      {required Dart2RustStreamSink that, required int data}) {
+      {required Dart2RustStreamSink that, required List<int> data}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
             that, serializer);
-        sse_encode_u_8(data, serializer);
+        sse_encode_list_prim_u_8_loose(data, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 9, port: port_);
       },
@@ -488,13 +491,40 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<void> crateApiStreamDart2RustStreamSinkClose(
+      {required Dart2RustStreamSink that}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
+            that, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 10, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_rhttp_error,
+      ),
+      constMeta: kCrateApiStreamDart2RustStreamSinkCloseConstMeta,
+      argValues: [that],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiStreamDart2RustStreamSinkCloseConstMeta =>
+      const TaskConstMeta(
+        debugName: "Dart2RustStreamSink_close",
+        argNames: ["that"],
+      );
+
+  @override
   Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)>
       crateApiStreamCreateStream() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 10, port: port_);
+            funcId: 11, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -956,6 +986,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_list_prim_u_8_strict).toList();
+  }
+
+  @protected
+  List<int> dco_decode_list_prim_u_8_loose(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as List<int>;
   }
 
   @protected
@@ -1566,6 +1602,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ans_.add(sse_decode_list_prim_u_8_strict(deserializer));
     }
     return ans_;
+  }
+
+  @protected
+  List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var len_ = sse_decode_i_32(deserializer);
+    return deserializer.buffer.getUint8List(len_);
   }
 
   @protected
@@ -2260,6 +2303,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_prim_u_8_loose(
+      List<int> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    serializer.buffer
+        .putUint8List(self is Uint8List ? self : Uint8List.fromList(self));
+  }
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2607,6 +2659,11 @@ class Dart2RustStreamSinkImpl extends RustOpaque
         .instance.api.rust_arc_decrement_strong_count_Dart2RustStreamSinkPtr,
   );
 
-  Future<void> add({required int data}) => RustLib.instance.api
+  Future<void> add({required List<int> data}) => RustLib.instance.api
       .crateApiStreamDart2RustStreamSinkAdd(that: this, data: data);
+
+  Future<void> close() =>
+      RustLib.instance.api.crateApiStreamDart2RustStreamSinkClose(
+        that: this,
+      );
 }

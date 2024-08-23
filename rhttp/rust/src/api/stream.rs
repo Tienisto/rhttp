@@ -19,10 +19,17 @@ pub fn create_stream() -> (Dart2RustStreamSink, Dart2RustStreamReceiver) {
 }
 
 impl Dart2RustStreamSink {
-    pub async fn add(&mut self, data: u8) -> Result<(), RhttpError> {
+    pub async fn add(&mut self, data: Vec<u8>) -> Result<(), RhttpError> {
         self.sender
-            .send(vec![data])
+            .send(data)
             .await
             .map_err(|_| RhttpError::RhttpUnknownError("Failed to send data".to_string()))
+    }
+
+    pub async fn close(&mut self) -> Result<(), RhttpError> {
+        self.sender
+            .close()
+            .await
+            .map_err(|_| RhttpError::RhttpUnknownError("Failed to close stream".to_string()))
     }
 }

@@ -14,6 +14,15 @@ const Map<String, String> _keepQuery = {'__rhttp_keep__': '__rhttp_keep__'};
 const HttpHeaders _keepHeaders = HttpHeaders.rawMap({'__keep__': '__keep__'});
 const HttpBody _keepBody = HttpBody.text('__rhttp_keep__');
 
+/// A callback that can be used to report progress.
+/// [count] is the current count of bytes received / sent.
+/// [total] is the total count of bytes to receive / send.
+/// [total] might be -1 when it is unknown (e.g. missing Content-Length header).
+///
+/// Note:
+/// This is currently only implemented for byte(stream) requests and responses.
+typedef ProgressCallback = void Function(int count, int total);
+
 /// An HTTP request that can be used
 /// on a client or statically.
 class BaseHttpRequest {
@@ -40,6 +49,12 @@ class BaseHttpRequest {
   /// The cancel token to use for the request.
   final CancelToken? cancelToken;
 
+  /// Send progress callback.
+  final ProgressCallback? onSendProgress;
+
+  /// Receive progress callback.
+  final ProgressCallback? onReceiveProgress;
+
   /// Map that can be used to store additional information.
   /// Primarily used by interceptors.
   /// This is not const to allow for modifications.
@@ -53,6 +68,8 @@ class BaseHttpRequest {
     required this.body,
     required this.expectBody,
     required this.cancelToken,
+    required this.onSendProgress,
+    required this.onReceiveProgress,
   });
 }
 
@@ -80,6 +97,8 @@ class HttpRequest extends BaseHttpRequest {
     required super.body,
     required super.expectBody,
     required super.cancelToken,
+    required super.onSendProgress,
+    required super.onReceiveProgress,
   });
 
   factory HttpRequest.from({
@@ -99,6 +118,8 @@ class HttpRequest extends BaseHttpRequest {
         body: request.body,
         expectBody: request.expectBody,
         cancelToken: request.cancelToken,
+        onSendProgress: request.onSendProgress,
+        onReceiveProgress: request.onReceiveProgress,
       );
 
   /// Sends the request using the specified client / settings
@@ -127,6 +148,8 @@ class HttpRequest extends BaseHttpRequest {
       body: identical(body, _keepBody) ? this.body : body,
       expectBody: expectBody ?? this.expectBody,
       cancelToken: cancelToken ?? this.cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
     );
 
     request.additionalData.addAll(additionalData);

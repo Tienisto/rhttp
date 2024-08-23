@@ -287,6 +287,25 @@ cancelToken.cancel();
 await request;
 ```
 
+### ➤ Progress
+
+You can observe the progress of the request, by providing `onSendProgress` or `onReceiveProgress` callbacks.
+
+Please note, that request and response bodies must be either `Stream` or `Uint8List`.
+
+```dart
+final request = Rhttp.post(
+  'https://example.com',
+  body: HttpBody.bytes(Uint8List.fromList(bytes)),
+  onSendProgress: (sent, total) {
+    print('Sent: $sent, Total: $total');
+  },
+  onReceiveProgress: (received, total) {
+    print('Received: $received, Total: $total');
+  },
+);
+```
+
 ### ➤ Error Handling
 
 All exceptions are subclasses of `RhttpException`.
