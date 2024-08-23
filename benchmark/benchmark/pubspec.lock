@@ -66,10 +66,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_rust_bridge
-      sha256: fac14d2dd67eeba29a20e5d99fac0d4d9fcd552cdf6bf4f8945f7679c6b07b1d
+      sha256: b0271cc147d5afccf9774809e4eef52b7357babe1a1a31db649df6f02dd27580
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.3.0"
   freezed_annotation:
     dependency: transitive
     description:
@@ -137,11 +137,10 @@ packages:
   rhttp:
     dependency: "direct main"
     description:
-      name: rhttp
-      sha256: "58734a46de8c115e6040808d5dbd4e400ba8fee2d7e475c8f18b3c7befb62173"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.0"
+      path: "../.."
+      relative: true
+    source: path
+    version: "0.6.0"
   sky_engine:
     dependency: transitive
     description: flutter
