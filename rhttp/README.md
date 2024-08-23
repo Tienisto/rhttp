@@ -289,14 +289,16 @@ await request;
 
 ### ➤ Progress
 
-You can observe the progress of the request, by providing `onSendProgress` or `onReceiveProgress` callbacks.
+You can observe the progress of the request, by providing `onSendProgress` and `onReceiveProgress` callbacks.
 
-Please note, that request and response bodies must be either `Stream` or `Uint8List`.
+Please note that request and response bodies must be either `Stream` or `Uint8List`.
+
+The parameter `total` can be `-1` if the total size is unknown.
 
 ```dart
 final request = Rhttp.post(
   'https://example.com',
-  body: HttpBody.bytes(Uint8List.fromList(bytes)),
+  body: HttpBody.bytes(bytes),
   onSendProgress: (sent, total) {
     print('Sent: $sent, Total: $total');
   },
