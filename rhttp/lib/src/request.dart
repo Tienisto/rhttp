@@ -122,6 +122,11 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
   }
 
   bool exceptionByInterceptor = false;
+  final url = switch (request.settings?.baseUrl) {
+    String baseUrl => baseUrl + request.url,
+    null => request.url,
+  };
+
   try {
     if (request.expectBody == HttpExpectBody.stream) {
       final cancelRefCompleter = Completer<int>();
@@ -130,7 +135,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         clientAddress: request.client?.ref,
         settings: request.settings?.toRustType(),
         method: request.method._toRustType(),
-        url: request.url,
+        url: url,
         query: request.query?.entries.map((e) => (e.key, e.value)).toList(),
         headers: headers?._toRustType(),
         body: request.body?._toRustType(),
@@ -207,7 +212,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         clientAddress: request.client?.ref,
         settings: request.settings?.toRustType(),
         method: request.method._toRustType(),
-        url: request.url,
+        url: url,
         query: request.query?.entries.map((e) => (e.key, e.value)).toList(),
         headers: headers?._toRustType(),
         body: request.body?._toRustType(),

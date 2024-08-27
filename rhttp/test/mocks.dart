@@ -1,7 +1,7 @@
-import 'dart:typed_data';
-
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:rhttp/src/model/response.dart';
+import 'package:rhttp/src/rust/api/client.dart';
 import 'package:rhttp/src/rust/frb_generated.dart';
 import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust_http;
@@ -10,6 +10,10 @@ class MockRustLibApi extends Mock implements RustLibApi {
   MockRustLibApi.createAndRegister() {
     registerFallbackValue(rust_http.HttpMethod.get_);
     registerFallbackValue(rust_http.HttpExpectBody.text);
+    registerFallbackValue(const ClientSettings(
+      httpVersionPref: rust_http.HttpVersionPref.http11,
+      throwOnStatusCode: true,
+    ));
   }
 
   void mockCustomResponse({
@@ -66,6 +70,8 @@ class MockRustLibApi extends Mock implements RustLibApi {
   void mockDefaultResponse({void Function(String) onAnswer = _noop}) {
     when<Future<rust_http.HttpResponse>>(
       () => crateApiHttpMakeHttpRequest(
+        clientAddress: any(named: 'clientAddress'),
+        settings: any(named: 'settings'),
         method: any(named: 'method'),
         url: any(named: 'url'),
         expectBody: any(named: 'expectBody'),
@@ -106,6 +112,16 @@ class MockRustLibApi extends Mock implements RustLibApi {
       ),
     ).thenAnswer((invocation) async {
       return onAnswer(invocation.namedArguments[#address]);
+    });
+  }
+
+  void mockCreateClient() {
+    when<Future<PlatformInt64>>(
+      () => crateApiHttpRegisterClient(
+        settings: any(named: 'settings'),
+      ),
+    ).thenAnswer((invocation) async {
+      return 1;
     });
   }
 }

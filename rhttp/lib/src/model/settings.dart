@@ -7,11 +7,15 @@ import 'package:rhttp/src/rust/api/http.dart' as rust;
 
 export 'package:rhttp/src/rust/api/client.dart' show TlsVersion;
 
+const _keepBaseUrl = '__rhttp_keep__';
 const _keepDuration = Duration(microseconds: -9999);
 const _keepProxySettings = ProxySettings.noProxy();
 const _keepTlsSettings = TlsSettings();
 
 class ClientSettings {
+  /// Base URL to be prefixed to all requests.
+  final String? baseUrl;
+
   /// The preferred HTTP version to use.
   final HttpVersionPref httpVersionPref;
 
@@ -32,6 +36,7 @@ class ClientSettings {
   final TlsSettings? tlsSettings;
 
   const ClientSettings({
+    this.baseUrl,
     this.httpVersionPref = HttpVersionPref.all,
     this.timeout,
     this.connectTimeout,
@@ -41,6 +46,7 @@ class ClientSettings {
   });
 
   ClientSettings copyWith({
+    String? baseUrl = _keepBaseUrl,
     HttpVersionPref? httpVersionPref,
     Duration? timeout = _keepDuration,
     Duration? connectTimeout = _keepDuration,
@@ -49,6 +55,7 @@ class ClientSettings {
     TlsSettings? tlsSettings = _keepTlsSettings,
   }) {
     return ClientSettings(
+      baseUrl: identical(baseUrl, _keepBaseUrl) ? this.baseUrl : baseUrl,
       httpVersionPref: httpVersionPref ?? this.httpVersionPref,
       timeout: identical(timeout, _keepDuration) ? this.timeout : timeout,
       connectTimeout: identical(connectTimeout, _keepDuration)

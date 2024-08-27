@@ -1,3 +1,7 @@
+## 0.6.2
+
+- feat: add `baseUrl` setting to `ClientSettings`
+
 ## 0.6.1
 
 - feat: add `onSendProgress` and `onReceiveProgress`

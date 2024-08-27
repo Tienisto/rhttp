@@ -353,6 +353,18 @@ await Rhttp.get(
 );
 ```
 
+### ➤ Base URL
+
+Add a base URL to the client to avoid repeating the same URL or to change the base URL easily.
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    baseUrl: 'https://example.com',
+  ),
+);
+```
+
 ### ➤ Interceptors
 
 You can add interceptors to the client to modify requests / responses, handle errors, observe requests, etc.
