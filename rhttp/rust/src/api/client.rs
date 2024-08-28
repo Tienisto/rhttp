@@ -2,7 +2,7 @@ use crate::api::error::RhttpError;
 use crate::api::http::HttpVersionPref;
 use chrono::Duration;
 use reqwest::{tls, Certificate};
-use tokio_util::sync::CancellationToken;
+pub use tokio_util::sync::CancellationToken;
 
 pub struct ClientSettings {
     pub http_version_pref: HttpVersionPref,

@@ -12,6 +12,7 @@ import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/rust/api/stream.dart' as rust_stream;
+import 'package:rhttp/src/rust/lib.dart' as rust_lib;
 import 'package:rhttp/src/util/collection.dart';
 import 'package:rhttp/src/util/progress_notifier.dart';
 import 'package:rhttp/src/util/stream_listener.dart';
@@ -133,7 +134,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
 
   try {
     if (request.expectBody == HttpExpectBody.stream) {
-      final cancelRefCompleter = Completer<int>();
+      final cancelRefCompleter = Completer<rust_lib.CancellationToken>();
       final responseCompleter = Completer<rust.HttpResponse>();
       Stream<Uint8List> stream = rust.makeHttpRequestReceiveStream(
         client: request.client?.ref,
@@ -146,8 +147,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         bodyStream: bodyStream,
         onResponse: (r) => responseCompleter.complete(r),
         onError: (e) => responseCompleter.completeError(e),
-        onCancelToken: (int cancelRef) =>
-            cancelRefCompleter.complete(cancelRef),
+        onCancelToken: (cancelRef) => cancelRefCompleter.complete(cancelRef),
         cancelable: request.cancelToken != null,
       );
 
@@ -211,7 +211,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
 
       return response;
     } else {
-      final cancelRefCompleter = Completer<int>();
+      final cancelRefCompleter = Completer<rust_lib.CancellationToken>();
       final responseFuture = rust.makeHttpRequest(
         client: request.client?.ref,
         settings: request.settings?.toRustType(),
@@ -222,8 +222,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         body: request.body?._toRustType(),
         bodyStream: bodyStream,
         expectBody: request.expectBody.toRustType(),
-        onCancelToken: (int cancelRef) =>
-            cancelRefCompleter.complete(cancelRef),
+        onCancelToken: (cancelRef) => cancelRefCompleter.complete(cancelRef),
         cancelable: request.cancelToken != null,
       );
 

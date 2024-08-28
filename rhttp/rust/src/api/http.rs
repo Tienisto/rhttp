@@ -9,7 +9,6 @@ use tokio_util::sync::CancellationToken;
 
 use crate::api::client::{ClientSettings, RequestClient};
 use crate::api::error::RhttpError;
-use crate::api::request_pool;
 use crate::api::stream;
 use crate::frb_generated::StreamSink;
 
@@ -152,13 +151,13 @@ pub async fn make_http_request(
     body: Option<HttpBody>,
     body_stream: Option<stream::Dart2RustStreamReceiver>,
     expect_body: HttpExpectBody,
-    on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
+    on_cancel_token: impl Fn(CancellationToken) -> DartFnFuture<()>,
     cancelable: bool,
 ) -> Result<HttpResponse, RhttpError> {
-    let cancel_tokens = build_cancel_tokens(cancelable, client.as_ref());
+    let cancel_tokens = build_cancel_tokens(client.as_ref());
 
-    if let Some(address) = cancel_tokens.request_cancel_address {
-        on_cancel_token(address).await;
+    if cancelable {
+        on_cancel_token(cancel_tokens.request_cancel_token.clone()).await;
     }
 
     tokio::select! {
@@ -174,34 +173,16 @@ pub async fn make_http_request(
             body,
             body_stream,
             expect_body,
-        ) => {
-            if let Some(address) = cancel_tokens.request_cancel_address {
-                request_pool::remove_token(address);
-            }
-            response
-        },
+        ) => response,
     }
 }
 
 struct RequestCancelTokens {
     request_cancel_token: CancellationToken,
     client_cancel_token: CancellationToken,
-    request_cancel_address: Option<i64>,
 }
 
-fn build_cancel_tokens(cancelable: bool, client: Option<&RequestClient>) -> RequestCancelTokens {
-    let (request_cancel_token, request_cancel_address) = match cancelable {
-        true => {
-            let token = CancellationToken::new();
-            let cloned_token = token.clone();
-
-            let address = request_pool::register_token(token);
-
-            (cloned_token, Some(address))
-        }
-        false => (CancellationToken::new(), None),
-    };
-
+fn build_cancel_tokens(client: Option<&RequestClient>) -> RequestCancelTokens {
     let client_cancel_token = match client {
         Some(ref client) => Some(client.cancel_token.clone()),
         None => None,
@@ -209,9 +190,8 @@ fn build_cancel_tokens(cancelable: bool, client: Option<&RequestClient>) -> Requ
     .unwrap_or_else(|| CancellationToken::new());
 
     RequestCancelTokens {
-        request_cancel_token,
+        request_cancel_token: CancellationToken::new(),
         client_cancel_token,
-        request_cancel_address,
     }
 }
 
@@ -273,13 +253,13 @@ pub async fn make_http_request_receive_stream(
     stream_sink: StreamSink<Vec<u8>>,
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
     on_error: impl Fn(RhttpError) -> DartFnFuture<()>,
-    on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
+    on_cancel_token: impl Fn(CancellationToken) -> DartFnFuture<()>,
     cancelable: bool,
 ) -> Result<(), RhttpError> {
-    let cancel_tokens = build_cancel_tokens(cancelable, client.as_ref());
+    let cancel_tokens = build_cancel_tokens(client.as_ref());
 
-    if let Some(address) = cancel_tokens.request_cancel_address {
-        on_cancel_token(address).await;
+    if cancelable {
+        on_cancel_token(cancel_tokens.request_cancel_token.clone()).await;
     }
 
     tokio::select! {
@@ -297,12 +277,7 @@ pub async fn make_http_request_receive_stream(
             stream_sink,
             on_response,
             on_error,
-        ) => {
-            if let Some(address) = cancel_tokens.request_cancel_address {
-                request_pool::remove_token(address);
-            }
-            Ok(())
-        },
+        ) => Ok(()),
     }
 }
 
@@ -542,11 +517,6 @@ fn header_to_vec(headers: &reqwest::header::HeaderMap) -> Vec<(String, String)> 
         .collect()
 }
 
-pub fn cancel_request(address: i64) -> bool {
-    if let Some(token) = request_pool::get_token(address) {
-        token.cancel();
-        request_pool::remove_token(address).is_some()
-    } else {
-        false
-    }
+pub fn cancel_request(token: CancellationToken) {
+    token.cancel();
 }

@@ -12,6 +12,7 @@ import 'dart:convert';
 import 'frb_generated.dart';
 import 'frb_generated.io.dart'
     if (dart.library.js_interop) 'frb_generated.web.dart';
+import 'lib.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 /// Main entrypoint of the Rust API
@@ -84,7 +85,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 abstract class RustLibApi extends BaseApi {
   Future<ClientSettings> crateApiClientClientSettingsDefault();
 
-  Future<bool> crateApiHttpCancelRequest({required PlatformInt64 address});
+  Future<void> crateApiHttpCancelRequest({required CancellationToken token});
 
   Future<void> crateApiHttpCancelRunningRequests(
       {required RequestClient client});
@@ -99,7 +100,7 @@ abstract class RustLibApi extends BaseApi {
       HttpBody? body,
       Dart2RustStreamReceiver? bodyStream,
       required HttpExpectBody expectBody,
-      required FutureOr<void> Function(PlatformInt64) onCancelToken,
+      required FutureOr<void> Function(CancellationToken) onCancelToken,
       required bool cancelable});
 
   Stream<Uint8List> crateApiHttpMakeHttpRequestReceiveStream(
@@ -113,7 +114,7 @@ abstract class RustLibApi extends BaseApi {
       Dart2RustStreamReceiver? bodyStream,
       required FutureOr<void> Function(HttpResponse) onResponse,
       required FutureOr<void> Function(RhttpError) onError,
-      required FutureOr<void> Function(PlatformInt64) onCancelToken,
+      required FutureOr<void> Function(CancellationToken) onCancelToken,
       required bool cancelable});
 
   Future<RequestClient> crateApiHttpRegisterClient(
@@ -132,6 +133,15 @@ abstract class RustLibApi extends BaseApi {
 
   Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)>
       crateApiStreamCreateStream();
+
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_CancellationToken;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_CancellationToken;
+
+  CrossPlatformFinalizerArg
+      get rust_arc_decrement_strong_count_CancellationTokenPtr;
 
   RustArcIncrementStrongCountFnType
       get rust_arc_increment_strong_count_Dart2RustStreamReceiver;
@@ -194,27 +204,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<bool> crateApiHttpCancelRequest({required PlatformInt64 address}) {
+  Future<void> crateApiHttpCancelRequest({required CancellationToken token}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_i_64(address, serializer);
+        sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+            token, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 2, port: port_);
       },
       codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
+        decodeSuccessData: sse_decode_unit,
         decodeErrorData: null,
       ),
       constMeta: kCrateApiHttpCancelRequestConstMeta,
-      argValues: [address],
+      argValues: [token],
       apiImpl: this,
     ));
   }
 
   TaskConstMeta get kCrateApiHttpCancelRequestConstMeta => const TaskConstMeta(
         debugName: "cancel_request",
-        argNames: ["address"],
+        argNames: ["token"],
       );
 
   @override
@@ -255,7 +266,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       HttpBody? body,
       Dart2RustStreamReceiver? bodyStream,
       required HttpExpectBody expectBody,
-      required FutureOr<void> Function(PlatformInt64) onCancelToken,
+      required FutureOr<void> Function(CancellationToken) onCancelToken,
       required bool cancelable}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
@@ -271,7 +282,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
             bodyStream, serializer);
         sse_encode_http_expect_body(expectBody, serializer);
-        sse_encode_DartFn_Inputs_i_64_Output_unit_AnyhowException(
+        sse_encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
             onCancelToken, serializer);
         sse_encode_bool(cancelable, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
@@ -329,7 +340,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       Dart2RustStreamReceiver? bodyStream,
       required FutureOr<void> Function(HttpResponse) onResponse,
       required FutureOr<void> Function(RhttpError) onError,
-      required FutureOr<void> Function(PlatformInt64) onCancelToken,
+      required FutureOr<void> Function(CancellationToken) onCancelToken,
       required bool cancelable}) {
     final streamSink = RustStreamSink<Uint8List>();
     unawaited(handler.executeNormal(NormalTask(
@@ -350,7 +361,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             onResponse, serializer);
         sse_encode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
             onError, serializer);
-        sse_encode_DartFn_Inputs_i_64_Output_unit_AnyhowException(
+        sse_encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
             onCancelToken, serializer);
         sse_encode_bool(cancelable, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
@@ -557,10 +568,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   Future<void> Function(int, dynamic)
-      encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
-          FutureOr<void> Function(HttpResponse) raw) {
+      encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
+          FutureOr<void> Function(CancellationToken) raw) {
     return (callId, rawArg0) async {
-      final arg0 = dco_decode_http_response(rawArg0);
+      final arg0 =
+          dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+              rawArg0);
 
       Box<void>? rawOutput;
       Box<AnyhowException>? rawError;
@@ -590,10 +603,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   Future<void> Function(int, dynamic)
-      encode_DartFn_Inputs_i_64_Output_unit_AnyhowException(
-          FutureOr<void> Function(PlatformInt64) raw) {
+      encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
+          FutureOr<void> Function(HttpResponse) raw) {
     return (callId, rawArg0) async {
-      final arg0 = dco_decode_i_64(rawArg0);
+      final arg0 = dco_decode_http_response(rawArg0);
 
       Box<void>? rawOutput;
       Box<AnyhowException>? rawError;
@@ -656,6 +669,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_CancellationToken => wire
+          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_CancellationToken => wire
+          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken;
+
+  RustArcIncrementStrongCountFnType
       get rust_arc_increment_strong_count_Dart2RustStreamReceiver => wire
           .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver;
 
@@ -683,6 +704,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return AnyhowException(raw as String);
+  }
+
+  @protected
+  CancellationToken
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -725,16 +754,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  FutureOr<void> Function(HttpResponse)
-      dco_decode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
+  FutureOr<void> Function(CancellationToken)
+      dco_decode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
           dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     throw UnimplementedError('');
   }
 
   @protected
-  FutureOr<void> Function(PlatformInt64)
-      dco_decode_DartFn_Inputs_i_64_Output_unit_AnyhowException(dynamic raw) {
+  FutureOr<void> Function(HttpResponse)
+      dco_decode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
+          dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     throw UnimplementedError('');
   }
@@ -758,6 +788,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return Map.fromEntries(dco_decode_list_record_string_string(raw)
         .map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  CancellationToken
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -1351,6 +1389,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  CancellationToken
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
   Dart2RustStreamReceiver
       sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
           SseDeserializer deserializer) {
@@ -1406,6 +1453,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_list_record_string_string(deserializer);
     return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  CancellationToken
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
   @protected
@@ -2095,6 +2151,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          CancellationToken self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as CancellationTokenImpl).frbInternalSseEncode(move: true),
+        serializer);
+  }
+
+  @protected
+  void
       sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
           Dart2RustStreamReceiver self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2140,20 +2206,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void
+      sse_encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
+          FutureOr<void> Function(CancellationToken) self,
+          SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_DartOpaque(
+        encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
+            self),
+        serializer);
+  }
+
+  @protected
   void sse_encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
       FutureOr<void> Function(HttpResponse) self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_DartOpaque(
         encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(self),
-        serializer);
-  }
-
-  @protected
-  void sse_encode_DartFn_Inputs_i_64_Output_unit_AnyhowException(
-      FutureOr<void> Function(PlatformInt64) self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_DartOpaque(
-        encode_DartFn_Inputs_i_64_Output_unit_AnyhowException(self),
         serializer);
   }
 
@@ -2182,6 +2251,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_record_string_string(
         self.entries.map((e) => (e.key, e.value)).toList(), serializer);
+  }
+
+  @protected
+  void
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          CancellationToken self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as CancellationTokenImpl).frbInternalSseEncode(move: null),
+        serializer);
   }
 
   @protected
@@ -2809,6 +2888,27 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putBigUint64(self);
   }
+}
+
+@sealed
+class CancellationTokenImpl extends RustOpaque implements CancellationToken {
+  // Not to be used by end users
+  CancellationTokenImpl.frbInternalDcoDecode(List<dynamic> wire)
+      : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  CancellationTokenImpl.frbInternalSseDecode(
+      BigInt ptr, int externalSizeOnNative)
+      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_CancellationToken,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_CancellationToken,
+    rustArcDecrementStrongCountPtr: RustLib
+        .instance.api.rust_arc_decrement_strong_count_CancellationTokenPtr,
+  );
 }
 
 @sealed

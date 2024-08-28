@@ -6,6 +6,7 @@ import 'package:rhttp/src/rust/frb_generated.dart';
 import 'package:rhttp/src/rust/api/client.dart' as rust_client;
 import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust_http;
+import 'package:rhttp/src/rust/lib.dart' as rust_lib;
 
 class MockRustLibApi extends Mock implements RustLibApi {
   MockRustLibApi.createAndRegister() {
@@ -15,6 +16,7 @@ class MockRustLibApi extends Mock implements RustLibApi {
       httpVersionPref: rust_http.HttpVersionPref.http11,
       throwOnStatusCode: true,
     ));
+    registerFallbackValue(FakeCancellationToken());
   }
 
   void mockCustomResponse({
@@ -22,7 +24,7 @@ class MockRustLibApi extends Mock implements RustLibApi {
     HttpVersion? version,
     int? statusCode,
     Object? body,
-    int? cancelRef,
+    rust_lib.CancellationToken? cancelRef,
     Duration? cancelDelay,
     Duration? delay,
     void Function(String)? onAnswer,
@@ -40,7 +42,7 @@ class MockRustLibApi extends Mock implements RustLibApi {
           invocation.namedArguments[#onCancelToken] as Function;
       if (cancelDelay != null) {
         Future.delayed(cancelDelay, () {
-          onCancelToken(cancelRef ?? 0);
+          onCancelToken(cancelRef ?? FakeCancellationToken());
         });
       }
 
@@ -106,13 +108,15 @@ class MockRustLibApi extends Mock implements RustLibApi {
     });
   }
 
-  void mockCancelRequest({bool Function(int) onAnswer = _noopCancel}) {
-    when<Future<bool>>(
+  void mockCancelRequest({
+    void Function(FakeCancellationToken) onAnswer = _noopCancel,
+  }) {
+    when<Future<void>>(
       () => crateApiHttpCancelRequest(
-        address: any(named: 'address'),
+        token: any(named: 'token'),
       ),
     ).thenAnswer((invocation) async {
-      return onAnswer(invocation.namedArguments[#address]);
+      return onAnswer(invocation.namedArguments[#token]);
     });
   }
 
@@ -139,6 +143,9 @@ class FakeRequestClient extends Fake implements rust_client.RequestClient {
   bool get isDisposed => false;
 }
 
+class FakeCancellationToken extends Fake
+    implements rust_lib.CancellationToken {}
+
 rust_error.RhttpError fakeRhttpError(String message) {
   return rust_error.RhttpError.rhttpUnknownError(message);
 }
@@ -149,4 +156,4 @@ rust_error.RhttpError fakeCancelError() {
 
 void _noop(String url) {}
 
-bool _noopCancel(int i) => true;
+bool _noopCancel(FakeCancellationToken i) => true;

@@ -4,6 +4,7 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
+import '../lib.dart';
 import 'client.dart';
 import 'error.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
@@ -34,7 +35,7 @@ Future<HttpResponse> makeHttpRequest(
         HttpBody? body,
         Dart2RustStreamReceiver? bodyStream,
         required HttpExpectBody expectBody,
-        required FutureOr<void> Function(PlatformInt64) onCancelToken,
+        required FutureOr<void> Function(CancellationToken) onCancelToken,
         required bool cancelable}) =>
     RustLib.instance.api.crateApiHttpMakeHttpRequest(
         client: client,
@@ -60,7 +61,7 @@ Stream<Uint8List> makeHttpRequestReceiveStream(
         Dart2RustStreamReceiver? bodyStream,
         required FutureOr<void> Function(HttpResponse) onResponse,
         required FutureOr<void> Function(RhttpError) onError,
-        required FutureOr<void> Function(PlatformInt64) onCancelToken,
+        required FutureOr<void> Function(CancellationToken) onCancelToken,
         required bool cancelable}) =>
     RustLib.instance.api.crateApiHttpMakeHttpRequestReceiveStream(
         client: client,
@@ -76,8 +77,8 @@ Stream<Uint8List> makeHttpRequestReceiveStream(
         onCancelToken: onCancelToken,
         cancelable: cancelable);
 
-Future<bool> cancelRequest({required PlatformInt64 address}) =>
-    RustLib.instance.api.crateApiHttpCancelRequest(address: address);
+Future<void> cancelRequest({required CancellationToken token}) =>
+    RustLib.instance.api.crateApiHttpCancelRequest(token: token);
 
 @freezed
 sealed class HttpBody with _$HttpBody {

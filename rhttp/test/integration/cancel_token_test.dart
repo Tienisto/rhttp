@@ -17,13 +17,12 @@ void main() {
     bool receivedCancelRequest = false;
     mockApi.mockCancelRequest(onAnswer: (cancelRef) {
       receivedCancelRequest = true;
-      return true;
     });
 
     mockApi.mockCustomResponse(
       statusCode: 200,
       body: 'Hello, world!',
-      cancelRef: 1,
+      cancelRef: FakeCancellationToken(),
       cancelDelay: const Duration(milliseconds: 10),
       delay: const Duration(milliseconds: 100),
       onAnswer: (_) {
@@ -36,14 +35,13 @@ void main() {
     final cancelToken = CancelToken();
     HttpResponse? response;
     Object? exception;
-    bool cancelResult = false;
     try {
       final responseFuture = Rhttp.get(
         'http://localhost:8080',
         cancelToken: cancelToken,
       );
 
-      cancelResult = await cancelToken.cancel();
+      await cancelToken.cancel();
 
       response = await responseFuture;
     } catch (e) {
@@ -51,7 +49,6 @@ void main() {
     }
 
     expect(receivedCancelRequest, true);
-    expect(cancelResult, true);
     expect(response, isNull);
     expect(exception, isA<RhttpCancelException>());
   });
@@ -59,18 +56,13 @@ void main() {
   test('Should not fail if cancelled multiple times', () async {
     bool receivedCancelRequest = false;
     mockApi.mockCancelRequest(onAnswer: (cancelRef) {
-      if (!receivedCancelRequest) {
-        receivedCancelRequest = true;
-        return true;
-      } else {
-        return false;
-      }
+      receivedCancelRequest = true;
     });
 
     mockApi.mockCustomResponse(
       statusCode: 200,
       body: 'Hello, world!',
-      cancelRef: 1,
+      cancelRef: FakeCancellationToken(),
       cancelDelay: const Duration(milliseconds: 10),
       delay: const Duration(milliseconds: 100),
       onAnswer: (_) {
@@ -83,16 +75,14 @@ void main() {
     final cancelToken = CancelToken();
     HttpResponse? response;
     Object? exception;
-    bool cancelResult = false;
-    bool cancelResult2 = false;
     try {
       final responseFuture = Rhttp.get(
         'http://localhost:8080',
         cancelToken: cancelToken,
       );
 
-      cancelResult = await cancelToken.cancel();
-      cancelResult2 = await cancelToken.cancel();
+      await cancelToken.cancel();
+      await cancelToken.cancel();
 
       response = await responseFuture;
     } catch (e) {
@@ -100,8 +90,6 @@ void main() {
     }
 
     expect(receivedCancelRequest, true);
-    expect(cancelResult, true);
-    expect(cancelResult2, false);
     expect(response, isNull);
     expect(exception, isA<RhttpCancelException>());
   });

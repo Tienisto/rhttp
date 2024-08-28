@@ -17,14 +17,13 @@ void main() {
     bool receivedCancelRequest = false;
     mockApi.mockCancelRequest(onAnswer: (cancelRef) {
       receivedCancelRequest = true;
-      return true;
     });
 
     int called = 0;
     mockApi.mockCustomResponse(
       statusCode: 200,
       body: 'Hello, world!',
-      cancelRef: 1,
+      cancelRef: FakeCancellationToken(),
       cancelDelay: const Duration(milliseconds: 10),
       delay: const Duration(milliseconds: 100),
       onAnswer: (_) {
@@ -79,14 +78,13 @@ void main() {
     bool receivedCancelRequest = false;
     mockApi.mockCancelRequest(onAnswer: (cancelRef) {
       receivedCancelRequest = true;
-      return true;
     });
 
     int called = 0;
     mockApi.mockCustomResponse(
       statusCode: 200,
       body: 'Hello, world!',
-      cancelRef: 1,
+      cancelRef: FakeCancellationToken(),
       cancelDelay: const Duration(milliseconds: 10),
       delay: const Duration(milliseconds: 100),
       onAnswer: (_) {
@@ -137,14 +135,13 @@ void main() {
     bool receivedCancelRequest = false;
     mockApi.mockCancelRequest(onAnswer: (cancelRef) {
       receivedCancelRequest = true;
-      return true;
     });
 
     int called = 0;
     mockApi.mockCustomResponse(
       statusCode: 200,
       body: 'Hello, world!',
-      cancelRef: 1,
+      cancelRef: FakeCancellationToken(),
       cancelDelay: const Duration(milliseconds: 10),
       delay: const Duration(milliseconds: 100),
       onAnswer: (_) {
