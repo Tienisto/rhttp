@@ -137,7 +137,7 @@ fn register_client_internal(settings: ClientSettings) -> Result<RequestClient, R
     Ok(client)
 }
 
-pub fn cancel_running_requests(client: RequestClient) {
+pub fn cancel_running_requests(client: &RequestClient) {
     client.cancel_token.cancel();
 }
 
@@ -517,6 +517,6 @@ fn header_to_vec(headers: &reqwest::header::HeaderMap) -> Vec<(String, String)> 
         .collect()
 }
 
-pub fn cancel_request(token: CancellationToken) {
+pub fn cancel_request(token: &CancellationToken) {
     token.cancel();
 }

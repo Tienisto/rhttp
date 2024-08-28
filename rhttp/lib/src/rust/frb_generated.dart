@@ -72,7 +72,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.3.0';
 
   @override
-  int get rustContentHash => 12034812;
+  int get rustContentHash => -1785893924;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -83,6 +83,34 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  Future<HttpResponse> crateApiClientRequestClientMakeHttpRequestClient(
+      {required RequestClient that,
+      ClientSettings? settings,
+      required HttpMethod method,
+      required String url,
+      List<(String, String)>? query,
+      HttpHeaders? headers,
+      HttpBody? body,
+      Dart2RustStreamReceiver? bodyStream,
+      required HttpExpectBody expectBody,
+      required FutureOr<void> Function(CancellationToken) onCancelToken,
+      required bool cancelable});
+
+  Stream<Uint8List>
+      crateApiClientRequestClientMakeHttpRequestReceiveStreamClient(
+          {required RequestClient that,
+          ClientSettings? settings,
+          required HttpMethod method,
+          required String url,
+          List<(String, String)>? query,
+          HttpHeaders? headers,
+          HttpBody? body,
+          Dart2RustStreamReceiver? bodyStream,
+          required FutureOr<void> Function(HttpResponse) onResponse,
+          required FutureOr<void> Function(RhttpError) onError,
+          required FutureOr<void> Function(CancellationToken) onCancelToken,
+          required bool cancelable});
+
   Future<ClientSettings> crateApiClientClientSettingsDefault();
 
   Future<void> crateApiHttpCancelRequest({required CancellationToken token});
@@ -180,12 +208,173 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
+  Future<HttpResponse> crateApiClientRequestClientMakeHttpRequestClient(
+      {required RequestClient that,
+      ClientSettings? settings,
+      required HttpMethod method,
+      required String url,
+      List<(String, String)>? query,
+      HttpHeaders? headers,
+      HttpBody? body,
+      Dart2RustStreamReceiver? bodyStream,
+      required HttpExpectBody expectBody,
+      required FutureOr<void> Function(CancellationToken) onCancelToken,
+      required bool cancelable}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+            that, serializer);
+        sse_encode_opt_box_autoadd_client_settings(settings, serializer);
+        sse_encode_http_method(method, serializer);
+        sse_encode_String(url, serializer);
+        sse_encode_opt_list_record_string_string(query, serializer);
+        sse_encode_opt_box_autoadd_http_headers(headers, serializer);
+        sse_encode_opt_box_autoadd_http_body(body, serializer);
+        sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+            bodyStream, serializer);
+        sse_encode_http_expect_body(expectBody, serializer);
+        sse_encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
+            onCancelToken, serializer);
+        sse_encode_bool(cancelable, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 1, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_http_response,
+        decodeErrorData: sse_decode_rhttp_error,
+      ),
+      constMeta: kCrateApiClientRequestClientMakeHttpRequestClientConstMeta,
+      argValues: [
+        that,
+        settings,
+        method,
+        url,
+        query,
+        headers,
+        body,
+        bodyStream,
+        expectBody,
+        onCancelToken,
+        cancelable
+      ],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta
+      get kCrateApiClientRequestClientMakeHttpRequestClientConstMeta =>
+          const TaskConstMeta(
+            debugName: "RequestClient_make_http_request_client",
+            argNames: [
+              "that",
+              "settings",
+              "method",
+              "url",
+              "query",
+              "headers",
+              "body",
+              "bodyStream",
+              "expectBody",
+              "onCancelToken",
+              "cancelable"
+            ],
+          );
+
+  @override
+  Stream<Uint8List>
+      crateApiClientRequestClientMakeHttpRequestReceiveStreamClient(
+          {required RequestClient that,
+          ClientSettings? settings,
+          required HttpMethod method,
+          required String url,
+          List<(String, String)>? query,
+          HttpHeaders? headers,
+          HttpBody? body,
+          Dart2RustStreamReceiver? bodyStream,
+          required FutureOr<void> Function(HttpResponse) onResponse,
+          required FutureOr<void> Function(RhttpError) onError,
+          required FutureOr<void> Function(CancellationToken) onCancelToken,
+          required bool cancelable}) {
+    final streamSink = RustStreamSink<Uint8List>();
+    unawaited(handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+            that, serializer);
+        sse_encode_opt_box_autoadd_client_settings(settings, serializer);
+        sse_encode_http_method(method, serializer);
+        sse_encode_String(url, serializer);
+        sse_encode_opt_list_record_string_string(query, serializer);
+        sse_encode_opt_box_autoadd_http_headers(headers, serializer);
+        sse_encode_opt_box_autoadd_http_body(body, serializer);
+        sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+            bodyStream, serializer);
+        sse_encode_StreamSink_list_prim_u_8_strict_Sse(streamSink, serializer);
+        sse_encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
+            onResponse, serializer);
+        sse_encode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+            onError, serializer);
+        sse_encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
+            onCancelToken, serializer);
+        sse_encode_bool(cancelable, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 2, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_rhttp_error,
+      ),
+      constMeta:
+          kCrateApiClientRequestClientMakeHttpRequestReceiveStreamClientConstMeta,
+      argValues: [
+        that,
+        settings,
+        method,
+        url,
+        query,
+        headers,
+        body,
+        bodyStream,
+        streamSink,
+        onResponse,
+        onError,
+        onCancelToken,
+        cancelable
+      ],
+      apiImpl: this,
+    )));
+    return streamSink.stream;
+  }
+
+  TaskConstMeta
+      get kCrateApiClientRequestClientMakeHttpRequestReceiveStreamClientConstMeta =>
+          const TaskConstMeta(
+            debugName: "RequestClient_make_http_request_receive_stream_client",
+            argNames: [
+              "that",
+              "settings",
+              "method",
+              "url",
+              "query",
+              "headers",
+              "body",
+              "bodyStream",
+              "streamSink",
+              "onResponse",
+              "onError",
+              "onCancelToken",
+              "cancelable"
+            ],
+          );
+
+  @override
   Future<ClientSettings> crateApiClientClientSettingsDefault() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 1, port: port_);
+            funcId: 3, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_client_settings,
@@ -208,10 +397,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+        sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
             token, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 2, port: port_);
+            funcId: 4, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -234,10 +423,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+        sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
             client, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 3, port: port_);
+            funcId: 5, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -286,7 +475,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             onCancelToken, serializer);
         sse_encode_bool(cancelable, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 4, port: port_);
+            funcId: 6, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_http_response,
@@ -365,7 +554,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             onCancelToken, serializer);
         sse_encode_bool(cancelable, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 5, port: port_);
+            funcId: 7, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -420,7 +609,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_client_settings(settings, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 6, port: port_);
+            funcId: 8, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -445,7 +634,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_box_autoadd_client_settings(settings, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -470,7 +659,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 8, port: port_);
+            funcId: 10, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -497,7 +686,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that, serializer);
         sse_encode_list_prim_u_8_loose(data, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 9, port: port_);
+            funcId: 11, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -524,7 +713,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
             that, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 10, port: port_);
+            funcId: 12, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -549,7 +738,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 11, port: port_);
+            funcId: 13, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData:
@@ -745,6 +934,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return Dart2RustStreamSinkImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  CancellationToken
+      dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  RequestClient
+      dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return RequestClientImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -1430,6 +1635,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return Dart2RustStreamSinkImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  CancellationToken
+      sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  RequestClient
+      sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return RequestClientImpl.frbInternalSseDecode(
         sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
   }
 
@@ -2196,6 +2419,26 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
         (self as Dart2RustStreamSinkImpl).frbInternalSseEncode(move: false),
+        serializer);
+  }
+
+  @protected
+  void
+      sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          CancellationToken self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as CancellationTokenImpl).frbInternalSseEncode(move: false),
+        serializer);
+  }
+
+  @protected
+  void
+      sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          RequestClient self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as RequestClientImpl).frbInternalSseEncode(move: false),
         serializer);
   }
 
@@ -2981,4 +3224,55 @@ class RequestClientImpl extends RustOpaque implements RequestClient {
     rustArcDecrementStrongCountPtr:
         RustLib.instance.api.rust_arc_decrement_strong_count_RequestClientPtr,
   );
+
+  Future<HttpResponse> makeHttpRequestClient(
+          {ClientSettings? settings,
+          required HttpMethod method,
+          required String url,
+          List<(String, String)>? query,
+          HttpHeaders? headers,
+          HttpBody? body,
+          Dart2RustStreamReceiver? bodyStream,
+          required HttpExpectBody expectBody,
+          required FutureOr<void> Function(CancellationToken) onCancelToken,
+          required bool cancelable}) =>
+      RustLib.instance.api.crateApiClientRequestClientMakeHttpRequestClient(
+          that: this,
+          settings: settings,
+          method: method,
+          url: url,
+          query: query,
+          headers: headers,
+          body: body,
+          bodyStream: bodyStream,
+          expectBody: expectBody,
+          onCancelToken: onCancelToken,
+          cancelable: cancelable);
+
+  Stream<Uint8List> makeHttpRequestReceiveStreamClient(
+          {ClientSettings? settings,
+          required HttpMethod method,
+          required String url,
+          List<(String, String)>? query,
+          HttpHeaders? headers,
+          HttpBody? body,
+          Dart2RustStreamReceiver? bodyStream,
+          required FutureOr<void> Function(HttpResponse) onResponse,
+          required FutureOr<void> Function(RhttpError) onError,
+          required FutureOr<void> Function(CancellationToken) onCancelToken,
+          required bool cancelable}) =>
+      RustLib.instance.api
+          .crateApiClientRequestClientMakeHttpRequestReceiveStreamClient(
+              that: this,
+              settings: settings,
+              method: method,
+              url: url,
+              query: query,
+              headers: headers,
+              body: body,
+              bodyStream: bodyStream,
+              onResponse: onResponse,
+              onError: onError,
+              onCancelToken: onCancelToken,
+              cancelable: cancelable);
 }

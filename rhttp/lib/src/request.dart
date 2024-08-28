@@ -9,6 +9,7 @@ import 'package:rhttp/src/model/header.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
+import 'package:rhttp/src/rust/api/client.dart' as rust_client;
 import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/rust/api/stream.dart' as rust_stream;
@@ -136,7 +137,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     if (request.expectBody == HttpExpectBody.stream) {
       final cancelRefCompleter = Completer<rust_lib.CancellationToken>();
       final responseCompleter = Completer<rust.HttpResponse>();
-      Stream<Uint8List> stream = rust.makeHttpRequestReceiveStream(
+      Stream<Uint8List> stream = _makeHttpRequestReceiveStream(
         client: request.client?.ref,
         settings: request.settings?.toRustType(),
         method: request.method._toRustType(),
@@ -212,7 +213,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
       return response;
     } else {
       final cancelRefCompleter = Completer<rust_lib.CancellationToken>();
-      final responseFuture = rust.makeHttpRequest(
+      final responseFuture = _makeHttpRequest(
         client: request.client?.ref,
         settings: request.settings?.toRustType(),
         method: request.method._toRustType(),
@@ -383,5 +384,94 @@ extension on HttpBody {
           }).toList(),
         )),
     };
+  }
+}
+
+// TODO: https://github.com/fzyzcjy/flutter_rust_bridge/issues/2262
+Stream<Uint8List> _makeHttpRequestReceiveStream({
+  required rust_client.RequestClient? client,
+  required rust_client.ClientSettings? settings,
+  required rust.HttpMethod method,
+  required String url,
+  required List<(String, String)>? query,
+  required rust.HttpHeaders? headers,
+  required rust.HttpBody? body,
+  required rust_stream.Dart2RustStreamReceiver? bodyStream,
+  required FutureOr<void> Function(rust.HttpResponse) onResponse,
+  required FutureOr<void> Function(rust_error.RhttpError) onError,
+  required FutureOr<void> Function(rust_lib.CancellationToken) onCancelToken,
+  required bool cancelable,
+}) {
+  if (client != null) {
+    return client.makeHttpRequestReceiveStreamClient(
+      settings: settings,
+      method: method,
+      url: url,
+      query: query,
+      headers: headers,
+      body: body,
+      bodyStream: bodyStream,
+      onResponse: onResponse,
+      onError: onError,
+      onCancelToken: onCancelToken,
+      cancelable: cancelable,
+    );
+  } else {
+    return rust.makeHttpRequestReceiveStream(
+      settings: settings,
+      method: method,
+      url: url,
+      query: query,
+      headers: headers,
+      body: body,
+      bodyStream: bodyStream,
+      onResponse: onResponse,
+      onError: onError,
+      onCancelToken: onCancelToken,
+      cancelable: cancelable,
+    );
+  }
+}
+
+// TODO: https://github.com/fzyzcjy/flutter_rust_bridge/issues/2262
+Future<rust.HttpResponse> _makeHttpRequest({
+  required rust_client.RequestClient? client,
+  required rust_client.ClientSettings? settings,
+  required rust.HttpMethod method,
+  required String url,
+  required List<(String, String)>? query,
+  required rust.HttpHeaders? headers,
+  required rust.HttpBody? body,
+  required rust_stream.Dart2RustStreamReceiver? bodyStream,
+  required rust.HttpExpectBody expectBody,
+  required FutureOr<void> Function(rust_lib.CancellationToken) onCancelToken,
+  required bool cancelable,
+}) {
+  if (client != null) {
+    return client.makeHttpRequestClient(
+      settings: settings,
+      method: method,
+      url: url,
+      query: query,
+      headers: headers,
+      body: body,
+      bodyStream: bodyStream,
+      expectBody: expectBody,
+      onCancelToken: onCancelToken,
+      cancelable: cancelable,
+    );
+  } else {
+    return rust.makeHttpRequest(
+      settings: settings,
+      method: method,
+      url: url,
+      query: query,
+      headers: headers,
+      body: body,
+      bodyStream: bodyStream,
+      expectBody: expectBody,
+      onCancelToken: onCancelToken,
+      cancelable: cancelable,
+    );
   }
 }

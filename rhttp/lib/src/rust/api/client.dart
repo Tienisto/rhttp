@@ -4,16 +4,44 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
+import '../lib.dart';
+import 'error.dart';
 import 'http.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+import 'stream.dart';
 part 'client.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `create_client`, `new_default`, `new`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>>
-abstract class RequestClient implements RustOpaqueInterface {}
+abstract class RequestClient implements RustOpaqueInterface {
+  Future<HttpResponse> makeHttpRequestClient(
+      {ClientSettings? settings,
+      required HttpMethod method,
+      required String url,
+      List<(String, String)>? query,
+      HttpHeaders? headers,
+      HttpBody? body,
+      Dart2RustStreamReceiver? bodyStream,
+      required HttpExpectBody expectBody,
+      required FutureOr<void> Function(CancellationToken) onCancelToken,
+      required bool cancelable});
+
+  Stream<Uint8List> makeHttpRequestReceiveStreamClient(
+      {ClientSettings? settings,
+      required HttpMethod method,
+      required String url,
+      List<(String, String)>? query,
+      HttpHeaders? headers,
+      HttpBody? body,
+      Dart2RustStreamReceiver? bodyStream,
+      required FutureOr<void> Function(HttpResponse) onResponse,
+      required FutureOr<void> Function(RhttpError) onError,
+      required FutureOr<void> Function(CancellationToken) onCancelToken,
+      required bool cancelable});
+}
 
 class ClientCertificate {
   final Uint8List certificate;
