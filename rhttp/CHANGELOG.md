@@ -3,6 +3,7 @@
 - feat: add `baseUrl` setting to `ClientSettings`
 - feat: add `redirectSettings` to `ClientSettings`
 - feat: add `RhttpRedirectException`
+- feat: `RhttpCompatibleClient.close` cancels all running requests similar to `IOClient` of `http` package
 
 ## 0.6.1
 

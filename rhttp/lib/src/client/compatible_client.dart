@@ -105,7 +105,7 @@ class RhttpCompatibleClient with BaseClient {
 
   @override
   void close() {
-    client.dispose();
+    client.dispose(cancelRunningRequests: true);
   }
 }
 
