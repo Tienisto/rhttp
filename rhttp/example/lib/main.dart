@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:rhttp/rhttp.dart';
+import 'package:rhttp_example/widgets/response_card.dart';
 
 Future<void> main() async {
   await Rhttp.init();
@@ -49,9 +50,7 @@ class _MyAppState extends State<MyApp> {
                 },
                 child: const Text('Test'),
               ),
-              if (response != null) Text(response!.version.toString()),
-              if (response != null) Text(response!.statusCode.toString()),
-              if (response != null) Text(response!.body.substring(0, 100).toString()),
+              if (response != null) ResponseCard(response: response!),
               // if (response != null) Text(response!.headers.toString()),
             ],
           ),
