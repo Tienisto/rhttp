@@ -9,7 +9,6 @@ pub enum RhttpError {
     RhttpStatusCodeError(u16, Vec<(String, String)>, HttpResponseBody),
     RhttpInvalidCertificateError(String),
     RhttpConnectionError(String),
-    RhttpInvalidClientError,
     RhttpUnknownError(String),
 }
 
@@ -26,7 +25,6 @@ impl Display for RhttpError {
                 write!(f, "RhttpInvalidCertificateError: {d}")
             }
             RhttpError::RhttpConnectionError(e) => write!(f, "RhttpConnectionError: {e}"),
-            RhttpError::RhttpInvalidClientError => write!(f, "RhttpInvalidClientError"),
             RhttpError::RhttpUnknownError(e) => write!(f, "{}", e),
         }
     }

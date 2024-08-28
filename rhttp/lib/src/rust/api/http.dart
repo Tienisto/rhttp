@@ -15,20 +15,17 @@ part 'http.freezed.dart';
 // These types are ignored because they are not used by any `pub` functions: `RequestCancelTokens`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`
 
-Future<PlatformInt64> registerClient({required ClientSettings settings}) =>
+Future<RequestClient> registerClient({required ClientSettings settings}) =>
     RustLib.instance.api.crateApiHttpRegisterClient(settings: settings);
 
-PlatformInt64 registerClientSync({required ClientSettings settings}) =>
+RequestClient registerClientSync({required ClientSettings settings}) =>
     RustLib.instance.api.crateApiHttpRegisterClientSync(settings: settings);
 
-Future<void> removeClient(
-        {required PlatformInt64 address,
-        required bool cancelRunningRequests}) =>
-    RustLib.instance.api.crateApiHttpRemoveClient(
-        address: address, cancelRunningRequests: cancelRunningRequests);
+Future<void> cancelRunningRequests({required RequestClient client}) =>
+    RustLib.instance.api.crateApiHttpCancelRunningRequests(client: client);
 
 Future<HttpResponse> makeHttpRequest(
-        {PlatformInt64? clientAddress,
+        {RequestClient? client,
         ClientSettings? settings,
         required HttpMethod method,
         required String url,
@@ -40,7 +37,7 @@ Future<HttpResponse> makeHttpRequest(
         required FutureOr<void> Function(PlatformInt64) onCancelToken,
         required bool cancelable}) =>
     RustLib.instance.api.crateApiHttpMakeHttpRequest(
-        clientAddress: clientAddress,
+        client: client,
         settings: settings,
         method: method,
         url: url,
@@ -53,7 +50,7 @@ Future<HttpResponse> makeHttpRequest(
         cancelable: cancelable);
 
 Stream<Uint8List> makeHttpRequestReceiveStream(
-        {PlatformInt64? clientAddress,
+        {RequestClient? client,
         ClientSettings? settings,
         required HttpMethod method,
         required String url,
@@ -66,7 +63,7 @@ Stream<Uint8List> makeHttpRequestReceiveStream(
         required FutureOr<void> Function(PlatformInt64) onCancelToken,
         required bool cancelable}) =>
     RustLib.instance.api.crateApiHttpMakeHttpRequestReceiveStream(
-        clientAddress: clientAddress,
+        client: client,
         settings: settings,
         method: method,
         url: url,

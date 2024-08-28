@@ -9,8 +9,8 @@ use tokio_util::sync::CancellationToken;
 
 use crate::api::client::{ClientSettings, RequestClient};
 use crate::api::error::RhttpError;
+use crate::api::request_pool;
 use crate::api::stream;
-use crate::api::{client_pool, request_pool};
 use crate::frb_generated::StreamSink;
 
 pub enum HttpMethod {
@@ -124,33 +124,26 @@ pub enum HttpResponseBody {
 }
 
 // It must be async so that frb provides an async context.
-pub async fn register_client(settings: ClientSettings) -> Result<i64, RhttpError> {
+pub async fn register_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> {
     register_client_internal(settings)
 }
 
 #[frb(sync)]
-pub fn register_client_sync(settings: ClientSettings) -> Result<i64, RhttpError> {
+pub fn register_client_sync(settings: ClientSettings) -> Result<RequestClient, RhttpError> {
     register_client_internal(settings)
 }
 
-fn register_client_internal(settings: ClientSettings) -> Result<i64, RhttpError> {
+fn register_client_internal(settings: ClientSettings) -> Result<RequestClient, RhttpError> {
     let client = RequestClient::new(settings)?;
-    let (address, _) = client_pool::register_client(client)?;
-
-    Ok(address)
+    Ok(client)
 }
 
-pub fn remove_client(address: i64, cancel_running_requests: bool) {
-    let client = client_pool::remove_client(address);
-    if cancel_running_requests {
-        if let Some(client) = client {
-            client.cancel_token.cancel();
-        }
-    }
+pub fn cancel_running_requests(client: RequestClient) {
+    client.cancel_token.cancel();
 }
 
 pub async fn make_http_request(
-    client_address: Option<i64>,
+    client: Option<RequestClient>,
     settings: Option<ClientSettings>,
     method: HttpMethod,
     url: String,
@@ -162,7 +155,7 @@ pub async fn make_http_request(
     on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
     cancelable: bool,
 ) -> Result<HttpResponse, RhttpError> {
-    let cancel_tokens = build_cancel_tokens(cancelable, client_address);
+    let cancel_tokens = build_cancel_tokens(cancelable, client.as_ref());
 
     if let Some(address) = cancel_tokens.request_cancel_address {
         on_cancel_token(address).await;
@@ -172,7 +165,7 @@ pub async fn make_http_request(
         _ = cancel_tokens.request_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
         _ = cancel_tokens.client_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
         response = make_http_request_inner(
-            client_address,
+            client,
             settings,
             method,
             url.to_owned(),
@@ -196,7 +189,7 @@ struct RequestCancelTokens {
     request_cancel_address: Option<i64>,
 }
 
-fn build_cancel_tokens(cancelable: bool, client_address: Option<i64>) -> RequestCancelTokens {
+fn build_cancel_tokens(cancelable: bool, client: Option<&RequestClient>) -> RequestCancelTokens {
     let (request_cancel_token, request_cancel_address) = match cancelable {
         true => {
             let token = CancellationToken::new();
@@ -209,8 +202,8 @@ fn build_cancel_tokens(cancelable: bool, client_address: Option<i64>) -> Request
         false => (CancellationToken::new(), None),
     };
 
-    let client_cancel_token = match client_address {
-        Some(address) => client_pool::get_client(address).map(|client| client.cancel_token),
+    let client_cancel_token = match client {
+        Some(ref client) => Some(client.cancel_token.clone()),
         None => None,
     }
     .unwrap_or_else(|| CancellationToken::new());
@@ -223,7 +216,7 @@ fn build_cancel_tokens(cancelable: bool, client_address: Option<i64>) -> Request
 }
 
 async fn make_http_request_inner(
-    client_address: Option<i64>,
+    client: Option<RequestClient>,
     settings: Option<ClientSettings>,
     method: HttpMethod,
     url: String,
@@ -234,7 +227,7 @@ async fn make_http_request_inner(
     expect_body: HttpExpectBody,
 ) -> Result<HttpResponse, RhttpError> {
     let response = make_http_request_helper(
-        client_address,
+        client,
         settings,
         method,
         url,
@@ -269,7 +262,7 @@ async fn make_http_request_inner(
 }
 
 pub async fn make_http_request_receive_stream(
-    client_address: Option<i64>,
+    client: Option<RequestClient>,
     settings: Option<ClientSettings>,
     method: HttpMethod,
     url: String,
@@ -283,7 +276,7 @@ pub async fn make_http_request_receive_stream(
     on_cancel_token: impl Fn(i64) -> DartFnFuture<()>,
     cancelable: bool,
 ) -> Result<(), RhttpError> {
-    let cancel_tokens = build_cancel_tokens(cancelable, client_address);
+    let cancel_tokens = build_cancel_tokens(cancelable, client.as_ref());
 
     if let Some(address) = cancel_tokens.request_cancel_address {
         on_cancel_token(address).await;
@@ -293,7 +286,7 @@ pub async fn make_http_request_receive_stream(
         _ = cancel_tokens.request_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
         _ = cancel_tokens.client_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
         _ = make_http_request_receive_stream_inner(
-            client_address,
+            client,
             settings,
             method,
             url.to_owned(),
@@ -314,7 +307,7 @@ pub async fn make_http_request_receive_stream(
 }
 
 async fn make_http_request_receive_stream_inner(
-    client_address: Option<i64>,
+    client: Option<RequestClient>,
     settings: Option<ClientSettings>,
     method: HttpMethod,
     url: String,
@@ -327,7 +320,7 @@ async fn make_http_request_receive_stream_inner(
     on_error: impl Fn(RhttpError) -> DartFnFuture<()>,
 ) -> Result<(), RhttpError> {
     let response = make_http_request_helper(
-        client_address,
+        client,
         settings,
         method,
         url,
@@ -375,7 +368,7 @@ async fn make_http_request_receive_stream_inner(
 
 /// This function is used to make an HTTP request without any response handling.
 async fn make_http_request_helper(
-    client_address: Option<i64>,
+    client: Option<RequestClient>,
     settings: Option<ClientSettings>,
     method: HttpMethod,
     url: String,
@@ -385,11 +378,8 @@ async fn make_http_request_helper(
     body_stream: Option<stream::Dart2RustStreamReceiver>,
     expect_body: Option<HttpExpectBody>,
 ) -> Result<Response, RhttpError> {
-    let client: RequestClient = match client_address {
-        Some(address) => {
-            client_pool::get_client(address).ok_or_else(|| RhttpError::RhttpInvalidClientError)?
-        }
-
+    let client: RequestClient = match client {
+        Some(client) => client,
         None => match settings {
             Some(settings) => RequestClient::new(settings)
                 .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,

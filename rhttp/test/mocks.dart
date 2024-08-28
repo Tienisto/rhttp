@@ -3,6 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/rust/api/client.dart';
 import 'package:rhttp/src/rust/frb_generated.dart';
+import 'package:rhttp/src/rust/api/client.dart' as rust_client;
 import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust_http;
 
@@ -70,7 +71,7 @@ class MockRustLibApi extends Mock implements RustLibApi {
   void mockDefaultResponse({void Function(String) onAnswer = _noop}) {
     when<Future<rust_http.HttpResponse>>(
       () => crateApiHttpMakeHttpRequest(
-        clientAddress: any(named: 'clientAddress'),
+        client: any(named: 'client'),
         settings: any(named: 'settings'),
         method: any(named: 'method'),
         url: any(named: 'url'),
@@ -116,12 +117,12 @@ class MockRustLibApi extends Mock implements RustLibApi {
   }
 
   void mockCreateClient() {
-    when<Future<PlatformInt64>>(
+    when<Future<rust_client.RequestClient>>(
       () => crateApiHttpRegisterClient(
         settings: any(named: 'settings'),
       ),
     ).thenAnswer((invocation) async {
-      return 1;
+      return FakeRequestClient();
     });
   }
 }
@@ -131,6 +132,11 @@ class FakeHttpResponse extends Fake implements HttpTextResponse {
   final String body;
 
   FakeHttpResponse(this.body);
+}
+
+class FakeRequestClient extends Fake implements rust_client.RequestClient {
+  @override
+  bool get isDisposed => false;
 }
 
 rust_error.RhttpError fakeRhttpError(String message) {

@@ -10,8 +10,10 @@ import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'client.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `create_client`, `new_default`, `new`
-// These types are ignored because they are not used by any `pub` functions: `RequestClient`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>>
+abstract class RequestClient implements RustOpaqueInterface {}
 
 class ClientCertificate {
   final Uint8List certificate;

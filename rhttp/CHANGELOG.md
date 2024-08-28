@@ -1,3 +1,8 @@
+## 0.7.0
+
+- fix: creating a second client might overwrite the first client due to memory address conflict
+- **BREAKING**: change `RhttpInvalidClientException` to `RhttpClientDisposedException`
+
 ## 0.6.2
 
 - feat: add `baseUrl` setting to `ClientSettings`

@@ -322,7 +322,7 @@ The following exceptions can be thrown:
 | `RhttpStatusCodeException`         | Response has 4xx or 5xx status code.                  |
 | `RhttpInvalidCertificateException` | Server certificate is invalid.                        |
 | `RhttpConnectionException`         | Connection error. (no internet, server not reachable) |
-| `RhttpInvalidClientException`      | Request is made with an invalid client.               |
+| `RhttpClientDisposedException`     | Client is already disposed.                           |
 | `RhttpInterceptorException`        | Interceptor threw an exception.                       |
 | `RhttpUnknownException`            | Unknown error occurred.                               |
 

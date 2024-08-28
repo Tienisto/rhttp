@@ -98,12 +98,12 @@ class RhttpConnectionException extends RhttpException {
 }
 
 /// An exception thrown a request is made with an invalid client.
-class RhttpInvalidClientException extends RhttpException {
-  const RhttpInvalidClientException(super.request);
+class RhttpClientDisposedException extends RhttpException {
+  const RhttpClientDisposedException(super.request);
 
   @override
   String toString() =>
-      '[$runtimeType] Invalid client. Is the client already disposed?';
+      '[$runtimeType] Client is already disposed. URL: ${request.url}';
 }
 
 /// An exception thrown by an interceptor.
@@ -148,7 +148,6 @@ RhttpException parseError(HttpRequest request, rust.RhttpError error) {
         RhttpInvalidCertificateException(request: request, message: message),
     rhttpConnectionError: (message) =>
         RhttpConnectionException(request, message),
-    rhttpInvalidClientError: () => RhttpInvalidClientException(request),
     rhttpUnknownError: (message) => RhttpUnknownException(request, message),
   );
 }

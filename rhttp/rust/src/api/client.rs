@@ -57,7 +57,7 @@ impl Default for ClientSettings {
 }
 
 #[derive(Clone)]
-pub(crate) struct RequestClient {
+pub struct RequestClient {
     pub(crate) client: reqwest::Client,
     pub(crate) http_version_pref: HttpVersionPref,
     pub(crate) throw_on_status_code: bool,

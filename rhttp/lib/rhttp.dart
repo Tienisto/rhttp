@@ -21,7 +21,7 @@ export 'src/model/exception.dart'
         RhttpTimeoutException,
         RhttpRedirectException,
         RhttpStatusCodeException,
-        RhttpInvalidClientException,
+        RhttpClientDisposedException,
         RhttpInterceptorException,
         RhttpUnknownException;
 export 'src/model/header.dart';

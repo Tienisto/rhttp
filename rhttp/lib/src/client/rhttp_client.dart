@@ -7,6 +7,7 @@ import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/request.dart';
+import 'package:rhttp/src/rust/api/client.dart' as rust_client;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 
 /// An HTTP client that is used to make requests.
@@ -21,7 +22,7 @@ class RhttpClient {
 
   /// Internal reference to the Rust client.
   @internal
-  final int ref;
+  final rust_client.RequestClient ref;
 
   const RhttpClient._({
     required this.settings,
@@ -71,11 +72,15 @@ class RhttpClient {
   /// Disposes the client.
   /// This frees the resources associated with the client.
   /// After calling this method, the client should not be used anymore.
+  ///
+  /// Note:
+  /// This might improve performance but it is not necessary since the client
+  /// is automatically disposed when the Dart object is garbage collected.
   void dispose({bool cancelRunningRequests = false}) async {
-    await rust.removeClient(
-      address: ref,
-      cancelRunningRequests: cancelRunningRequests,
-    );
+    if (cancelRunningRequests) {
+      await rust.cancelRunningRequests(client: ref);
+    }
+    ref.dispose();
   }
 
   /// Makes an HTTP request.

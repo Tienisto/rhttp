@@ -20,6 +20,10 @@ import 'package:rhttp/src/util/stream_listener.dart';
 /// the client and also by the static class.
 @internal
 Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
+  if (request.client?.ref.isDisposed ?? false) {
+    throw RhttpClientDisposedException(request);
+  }
+
   final interceptors = request.interceptor;
 
   if (interceptors != null) {
@@ -132,7 +136,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
       final cancelRefCompleter = Completer<int>();
       final responseCompleter = Completer<rust.HttpResponse>();
       Stream<Uint8List> stream = rust.makeHttpRequestReceiveStream(
-        clientAddress: request.client?.ref,
+        client: request.client?.ref,
         settings: request.settings?.toRustType(),
         method: request.method._toRustType(),
         url: url,
@@ -209,7 +213,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     } else {
       final cancelRefCompleter = Completer<int>();
       final responseFuture = rust.makeHttpRequest(
-        clientAddress: request.client?.ref,
+        client: request.client?.ref,
         settings: request.settings?.toRustType(),
         method: request.method._toRustType(),
         url: url,

@@ -29,8 +29,6 @@ sealed class RhttpError with _$RhttpError implements FrbException {
   const factory RhttpError.rhttpConnectionError(
     String field0,
   ) = RhttpError_RhttpConnectionError;
-  const factory RhttpError.rhttpInvalidClientError() =
-      RhttpError_RhttpInvalidClientError;
   const factory RhttpError.rhttpUnknownError(
     String field0,
   ) = RhttpError_RhttpUnknownError;
