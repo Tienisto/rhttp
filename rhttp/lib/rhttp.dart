@@ -19,6 +19,7 @@ export 'src/model/exception.dart'
         RhttpException,
         RhttpCancelException,
         RhttpTimeoutException,
+        RhttpRedirectException,
         RhttpStatusCodeException,
         RhttpInvalidClientException,
         RhttpInterceptorException,
@@ -48,7 +49,12 @@ export 'src/model/request.dart'
         MultiPartBytes,
         MultiPartFile;
 export 'src/model/settings.dart'
-    show ClientSettings, ProxySettings, TlsSettings, ClientCertificate;
+    show
+        ClientSettings,
+        ProxySettings,
+        RedirectSettings,
+        TlsSettings,
+        ClientCertificate;
 export 'src/model/response.dart'
     show
         HttpResponse,

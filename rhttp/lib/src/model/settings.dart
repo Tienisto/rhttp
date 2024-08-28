@@ -10,6 +10,7 @@ export 'package:rhttp/src/rust/api/client.dart' show TlsVersion;
 const _keepBaseUrl = '__rhttp_keep__';
 const _keepDuration = Duration(microseconds: -9999);
 const _keepProxySettings = ProxySettings.noProxy();
+const _keepRedirectSettings = RedirectSettings.limited(-9999);
 const _keepTlsSettings = TlsSettings();
 
 class ClientSettings {
@@ -32,6 +33,11 @@ class ClientSettings {
   /// Proxy settings.
   final ProxySettings? proxySettings;
 
+  /// Redirect settings.
+  /// By default, the client will follow maximum 10 redirects.
+  /// See: https://docs.rs/reqwest/latest/reqwest/redirect/struct.Policy.html
+  final RedirectSettings? redirectSettings;
+
   /// TLS settings.
   final TlsSettings? tlsSettings;
 
@@ -42,6 +48,7 @@ class ClientSettings {
     this.connectTimeout,
     this.throwOnStatusCode = true,
     this.proxySettings,
+    this.redirectSettings,
     this.tlsSettings,
   });
 
@@ -52,6 +59,7 @@ class ClientSettings {
     Duration? connectTimeout = _keepDuration,
     bool? throwOnStatusCode,
     ProxySettings? proxySettings = _keepProxySettings,
+    RedirectSettings? redirectSettings = _keepRedirectSettings,
     TlsSettings? tlsSettings = _keepTlsSettings,
   }) {
     return ClientSettings(
@@ -65,6 +73,9 @@ class ClientSettings {
       proxySettings: identical(proxySettings, _keepProxySettings)
           ? this.proxySettings
           : proxySettings,
+      redirectSettings: identical(redirectSettings, _keepRedirectSettings)
+          ? this.redirectSettings
+          : redirectSettings,
       tlsSettings: identical(tlsSettings, _keepTlsSettings)
           ? this.tlsSettings
           : tlsSettings,
@@ -76,11 +87,33 @@ sealed class ProxySettings {
   const ProxySettings();
 
   /// Disables any proxy settings including system settings.
-  const factory ProxySettings.noProxy() = NoProxy;
+  const factory ProxySettings.noProxy() = NoProxy._;
 }
 
 class NoProxy extends ProxySettings {
-  const NoProxy();
+  const NoProxy._();
+}
+
+sealed class RedirectSettings {
+  const RedirectSettings();
+
+  /// Disables any redirects and exceptions related to redirects.
+  const factory RedirectSettings.none() = NoRedirectSetting._;
+
+  /// Limits the number of redirects.
+  const factory RedirectSettings.limited(int maxRedirects) = LimitedRedirects._;
+}
+
+/// Disables any redirects.
+class NoRedirectSetting extends RedirectSettings {
+  const NoRedirectSetting._();
+}
+
+/// Limits the number of redirects.
+class LimitedRedirects extends RedirectSettings {
+  final int maxRedirects;
+
+  const LimitedRedirects._(this.maxRedirects);
 }
 
 /// TLS settings for the client.
@@ -144,6 +177,7 @@ extension ClientSettingsExt on ClientSettings {
       connectTimeout: connectTimeout,
       throwOnStatusCode: throwOnStatusCode,
       proxySettings: proxySettings?._toRustType(),
+      redirectSettings: redirectSettings?._toRustType(),
       tlsSettings: tlsSettings?._toRustType(),
     );
   }
@@ -153,6 +187,16 @@ extension on ProxySettings {
   rust_client.ProxySettings _toRustType() {
     return switch (this) {
       NoProxy() => rust_client.ProxySettings.noProxy,
+    };
+  }
+}
+
+extension on RedirectSettings {
+  rust_client.RedirectSettings _toRustType() {
+    return switch (this) {
+      NoRedirectSetting() => const rust_client.RedirectSettings.noRedirect(),
+      LimitedRedirects r =>
+        rust_client.RedirectSettings.limitedRedirects(r.maxRedirects),
     };
   }
 }

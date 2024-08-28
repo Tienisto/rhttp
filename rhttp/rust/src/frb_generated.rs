@@ -767,6 +767,8 @@ impl SseDecode for crate::api::client::ClientSettings {
         let mut var_throwOnStatusCode = <bool>::sse_decode(deserializer);
         let mut var_proxySettings =
             <Option<crate::api::client::ProxySettings>>::sse_decode(deserializer);
+        let mut var_redirectSettings =
+            <Option<crate::api::client::RedirectSettings>>::sse_decode(deserializer);
         let mut var_tlsSettings =
             <Option<crate::api::client::TlsSettings>>::sse_decode(deserializer);
         return crate::api::client::ClientSettings {
@@ -775,6 +777,7 @@ impl SseDecode for crate::api::client::ClientSettings {
             connect_timeout: var_connectTimeout,
             throw_on_status_code: var_throwOnStatusCode,
             proxy_settings: var_proxySettings,
+            redirect_settings: var_redirectSettings,
             tls_settings: var_tlsSettings,
         };
     }
@@ -1150,6 +1153,19 @@ impl SseDecode for Option<crate::api::client::ProxySettings> {
     }
 }
 
+impl SseDecode for Option<crate::api::client::RedirectSettings> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::client::RedirectSettings>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<crate::api::client::TlsSettings> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1221,6 +1237,25 @@ impl SseDecode for (String, String) {
     }
 }
 
+impl SseDecode for crate::api::client::RedirectSettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                return crate::api::client::RedirectSettings::NoRedirect;
+            }
+            1 => {
+                let mut var_field0 = <i32>::sse_decode(deserializer);
+                return crate::api::client::RedirectSettings::LimitedRedirects(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for crate::api::error::RhttpError {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1233,6 +1268,9 @@ impl SseDecode for crate::api::error::RhttpError {
                 return crate::api::error::RhttpError::RhttpTimeoutError;
             }
             2 => {
+                return crate::api::error::RhttpError::RhttpRedirectError;
+            }
+            3 => {
                 let mut var_field0 = <u16>::sse_decode(deserializer);
                 let mut var_field1 = <Vec<(String, String)>>::sse_decode(deserializer);
                 let mut var_field2 = <crate::api::http::HttpResponseBody>::sse_decode(deserializer);
@@ -1240,18 +1278,18 @@ impl SseDecode for crate::api::error::RhttpError {
                     var_field0, var_field1, var_field2,
                 );
             }
-            3 => {
+            4 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::error::RhttpError::RhttpInvalidCertificateError(var_field0);
             }
-            4 => {
+            5 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::error::RhttpError::RhttpConnectionError(var_field0);
             }
-            5 => {
+            6 => {
                 return crate::api::error::RhttpError::RhttpInvalidClientError;
             }
-            6 => {
+            7 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::error::RhttpError::RhttpUnknownError(var_field0);
             }
@@ -1449,6 +1487,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::client::ClientSettings {
             self.connect_timeout.into_into_dart().into_dart(),
             self.throw_on_status_code.into_into_dart().into_dart(),
             self.proxy_settings.into_into_dart().into_dart(),
+            self.redirect_settings.into_into_dart().into_dart(),
             self.tls_settings.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -1751,27 +1790,53 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::client::ProxySettings>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::client::RedirectSettings {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::client::RedirectSettings::NoRedirect => [0.into_dart()].into_dart(),
+            crate::api::client::RedirectSettings::LimitedRedirects(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::client::RedirectSettings
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::client::RedirectSettings>
+    for crate::api::client::RedirectSettings
+{
+    fn into_into_dart(self) -> crate::api::client::RedirectSettings {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::error::RhttpError {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
             crate::api::error::RhttpError::RhttpCancelError => [0.into_dart()].into_dart(),
             crate::api::error::RhttpError::RhttpTimeoutError => [1.into_dart()].into_dart(),
+            crate::api::error::RhttpError::RhttpRedirectError => [2.into_dart()].into_dart(),
             crate::api::error::RhttpError::RhttpStatusCodeError(field0, field1, field2) => [
-                2.into_dart(),
+                3.into_dart(),
                 field0.into_into_dart().into_dart(),
                 field1.into_into_dart().into_dart(),
                 field2.into_into_dart().into_dart(),
             ]
             .into_dart(),
             crate::api::error::RhttpError::RhttpInvalidCertificateError(field0) => {
-                [3.into_dart(), field0.into_into_dart().into_dart()].into_dart()
-            }
-            crate::api::error::RhttpError::RhttpConnectionError(field0) => {
                 [4.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
-            crate::api::error::RhttpError::RhttpInvalidClientError => [5.into_dart()].into_dart(),
+            crate::api::error::RhttpError::RhttpConnectionError(field0) => {
+                [5.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::error::RhttpError::RhttpInvalidClientError => [6.into_dart()].into_dart(),
             crate::api::error::RhttpError::RhttpUnknownError(field0) => {
-                [6.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+                [7.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -1946,6 +2011,10 @@ impl SseEncode for crate::api::client::ClientSettings {
         <Option<chrono::Duration>>::sse_encode(self.connect_timeout, serializer);
         <bool>::sse_encode(self.throw_on_status_code, serializer);
         <Option<crate::api::client::ProxySettings>>::sse_encode(self.proxy_settings, serializer);
+        <Option<crate::api::client::RedirectSettings>>::sse_encode(
+            self.redirect_settings,
+            serializer,
+        );
         <Option<crate::api::client::TlsSettings>>::sse_encode(self.tls_settings, serializer);
     }
 }
@@ -2292,6 +2361,16 @@ impl SseEncode for Option<crate::api::client::ProxySettings> {
     }
 }
 
+impl SseEncode for Option<crate::api::client::RedirectSettings> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::client::RedirectSettings>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<crate::api::client::TlsSettings> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2361,6 +2440,24 @@ impl SseEncode for (String, String) {
     }
 }
 
+impl SseEncode for crate::api::client::RedirectSettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::client::RedirectSettings::NoRedirect => {
+                <i32>::sse_encode(0, serializer);
+            }
+            crate::api::client::RedirectSettings::LimitedRedirects(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <i32>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseEncode for crate::api::error::RhttpError {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2371,25 +2468,28 @@ impl SseEncode for crate::api::error::RhttpError {
             crate::api::error::RhttpError::RhttpTimeoutError => {
                 <i32>::sse_encode(1, serializer);
             }
-            crate::api::error::RhttpError::RhttpStatusCodeError(field0, field1, field2) => {
+            crate::api::error::RhttpError::RhttpRedirectError => {
                 <i32>::sse_encode(2, serializer);
+            }
+            crate::api::error::RhttpError::RhttpStatusCodeError(field0, field1, field2) => {
+                <i32>::sse_encode(3, serializer);
                 <u16>::sse_encode(field0, serializer);
                 <Vec<(String, String)>>::sse_encode(field1, serializer);
                 <crate::api::http::HttpResponseBody>::sse_encode(field2, serializer);
             }
             crate::api::error::RhttpError::RhttpInvalidCertificateError(field0) => {
-                <i32>::sse_encode(3, serializer);
-                <String>::sse_encode(field0, serializer);
-            }
-            crate::api::error::RhttpError::RhttpConnectionError(field0) => {
                 <i32>::sse_encode(4, serializer);
                 <String>::sse_encode(field0, serializer);
             }
-            crate::api::error::RhttpError::RhttpInvalidClientError => {
+            crate::api::error::RhttpError::RhttpConnectionError(field0) => {
                 <i32>::sse_encode(5, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::error::RhttpError::RhttpInvalidClientError => {
+                <i32>::sse_encode(6, serializer);
             }
             crate::api::error::RhttpError::RhttpUnknownError(field0) => {
-                <i32>::sse_encode(6, serializer);
+                <i32>::sse_encode(7, serializer);
                 <String>::sse_encode(field0, serializer);
             }
             _ => {

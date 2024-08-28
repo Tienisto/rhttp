@@ -5,6 +5,7 @@ use std::fmt::Display;
 pub enum RhttpError {
     RhttpCancelError,
     RhttpTimeoutError,
+    RhttpRedirectError,
     RhttpStatusCodeError(u16, Vec<(String, String)>, HttpResponseBody),
     RhttpInvalidCertificateError(String),
     RhttpConnectionError(String),
@@ -17,6 +18,7 @@ impl Display for RhttpError {
         match self {
             RhttpError::RhttpCancelError => write!(f, "RhttpCancelError"),
             RhttpError::RhttpTimeoutError => write!(f, "RhttpTimeoutError"),
+            RhttpError::RhttpRedirectError => write!(f, "RhttpRedirectError"),
             RhttpError::RhttpStatusCodeError(i, _, _) => {
                 write!(f, "RhttpStatusCodeError: {i}")
             }

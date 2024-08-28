@@ -17,6 +17,7 @@ sealed class RhttpError with _$RhttpError implements FrbException {
 
   const factory RhttpError.rhttpCancelError() = RhttpError_RhttpCancelError;
   const factory RhttpError.rhttpTimeoutError() = RhttpError_RhttpTimeoutError;
+  const factory RhttpError.rhttpRedirectError() = RhttpError_RhttpRedirectError;
   const factory RhttpError.rhttpStatusCodeError(
     int field0,
     List<(String, String)> field1,

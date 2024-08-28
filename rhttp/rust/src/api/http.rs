@@ -490,7 +490,9 @@ async fn make_http_request_helper(
     };
 
     let response = client.client.execute(request).await.map_err(|e| {
-        if e.is_timeout() {
+        if e.is_redirect() {
+            RhttpError::RhttpRedirectError
+        } else if e.is_timeout() {
             RhttpError::RhttpTimeoutError
         } else {
             // We use the debug string because it contains more information

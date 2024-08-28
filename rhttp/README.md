@@ -318,6 +318,7 @@ The following exceptions can be thrown:
 |------------------------------------|-------------------------------------------------------|
 | `RhttpCancelException`             | Request was canceled.                                 |
 | `RhttpTimeoutException`            | Request timed out.                                    |
+| `RhttpRedirectException`           | Too many redirects.                                   |
 | `RhttpStatusCodeException`         | Response has 4xx or 5xx status code.                  |
 | `RhttpInvalidCertificateException` | Server certificate is invalid.                        |
 | `RhttpConnectionException`         | Connection error. (no internet, server not reachable) |
@@ -572,6 +573,23 @@ await Rhttp.get(
   'https://example.com',
   settings: const ClientSettings(
     proxySettings: ProxySettings.noProxy(),
+  ),
+);
+```
+
+### ➤ Redirects
+
+By default, up to 10 redirects (e.g. HTTP 302) are followed.
+
+Exceeding the maximum number of redirects will throw a `RhttpRedirectException`.
+
+You can change the maximum number of redirects and whether to follow redirects:
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    redirectSettings: RedirectSettings.limited(5), // or RedirectSettings.none()
   ),
 );
 ```

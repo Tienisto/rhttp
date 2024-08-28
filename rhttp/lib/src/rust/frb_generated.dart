@@ -830,6 +830,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RedirectSettings dco_decode_box_autoadd_redirect_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_redirect_settings(raw);
+  }
+
+  @protected
   TlsSettings dco_decode_box_autoadd_tls_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_tls_settings(raw);
@@ -857,15 +863,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ClientSettings dco_decode_client_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 7)
+      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
     return ClientSettings(
       httpVersionPref: dco_decode_http_version_pref(arr[0]),
       timeout: dco_decode_opt_box_autoadd_Chrono_Duration(arr[1]),
       connectTimeout: dco_decode_opt_box_autoadd_Chrono_Duration(arr[2]),
       throwOnStatusCode: dco_decode_bool(arr[3]),
       proxySettings: dco_decode_opt_box_autoadd_proxy_settings(arr[4]),
-      tlsSettings: dco_decode_opt_box_autoadd_tls_settings(arr[5]),
+      redirectSettings: dco_decode_opt_box_autoadd_redirect_settings(arr[5]),
+      tlsSettings: dco_decode_opt_box_autoadd_tls_settings(arr[6]),
     );
   }
 
@@ -1121,6 +1128,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RedirectSettings? dco_decode_opt_box_autoadd_redirect_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_redirect_settings(raw);
+  }
+
+  @protected
   TlsSettings? dco_decode_opt_box_autoadd_tls_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_tls_settings(raw);
@@ -1191,6 +1204,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RedirectSettings dco_decode_redirect_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return RedirectSettings_NoRedirect();
+      case 1:
+        return RedirectSettings_LimitedRedirects(
+          dco_decode_i_32(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
   RhttpError dco_decode_rhttp_error(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
@@ -1199,22 +1227,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 1:
         return RhttpError_RhttpTimeoutError();
       case 2:
+        return RhttpError_RhttpRedirectError();
+      case 3:
         return RhttpError_RhttpStatusCodeError(
           dco_decode_u_16(raw[1]),
           dco_decode_list_record_string_string(raw[2]),
           dco_decode_box_autoadd_http_response_body(raw[3]),
         );
-      case 3:
+      case 4:
         return RhttpError_RhttpInvalidCertificateError(
           dco_decode_String(raw[1]),
         );
-      case 4:
+      case 5:
         return RhttpError_RhttpConnectionError(
           dco_decode_String(raw[1]),
         );
-      case 5:
-        return RhttpError_RhttpInvalidClientError();
       case 6:
+        return RhttpError_RhttpInvalidClientError();
+      case 7:
         return RhttpError_RhttpUnknownError(
           dco_decode_String(raw[1]),
         );
@@ -1434,6 +1464,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RedirectSettings sse_decode_box_autoadd_redirect_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_redirect_settings(deserializer));
+  }
+
+  @protected
   TlsSettings sse_decode_box_autoadd_tls_settings(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1466,6 +1503,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_throwOnStatusCode = sse_decode_bool(deserializer);
     var var_proxySettings =
         sse_decode_opt_box_autoadd_proxy_settings(deserializer);
+    var var_redirectSettings =
+        sse_decode_opt_box_autoadd_redirect_settings(deserializer);
     var var_tlsSettings = sse_decode_opt_box_autoadd_tls_settings(deserializer);
     return ClientSettings(
         httpVersionPref: var_httpVersionPref,
@@ -1473,6 +1512,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         connectTimeout: var_connectTimeout,
         throwOnStatusCode: var_throwOnStatusCode,
         proxySettings: var_proxySettings,
+        redirectSettings: var_redirectSettings,
         tlsSettings: var_tlsSettings);
   }
 
@@ -1789,6 +1829,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RedirectSettings? sse_decode_opt_box_autoadd_redirect_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_redirect_settings(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   TlsSettings? sse_decode_opt_box_autoadd_tls_settings(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1866,6 +1918,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RedirectSettings sse_decode_redirect_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        return RedirectSettings_NoRedirect();
+      case 1:
+        var var_field0 = sse_decode_i_32(deserializer);
+        return RedirectSettings_LimitedRedirects(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
   RhttpError sse_decode_rhttp_error(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -1876,21 +1944,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 1:
         return RhttpError_RhttpTimeoutError();
       case 2:
+        return RhttpError_RhttpRedirectError();
+      case 3:
         var var_field0 = sse_decode_u_16(deserializer);
         var var_field1 = sse_decode_list_record_string_string(deserializer);
         var var_field2 =
             sse_decode_box_autoadd_http_response_body(deserializer);
         return RhttpError_RhttpStatusCodeError(
             var_field0, var_field1, var_field2);
-      case 3:
-        var var_field0 = sse_decode_String(deserializer);
-        return RhttpError_RhttpInvalidCertificateError(var_field0);
       case 4:
         var var_field0 = sse_decode_String(deserializer);
-        return RhttpError_RhttpConnectionError(var_field0);
+        return RhttpError_RhttpInvalidCertificateError(var_field0);
       case 5:
-        return RhttpError_RhttpInvalidClientError();
+        var var_field0 = sse_decode_String(deserializer);
+        return RhttpError_RhttpConnectionError(var_field0);
       case 6:
+        return RhttpError_RhttpInvalidClientError();
+      case 7:
         var var_field0 = sse_decode_String(deserializer);
         return RhttpError_RhttpUnknownError(var_field0);
       default:
@@ -2156,6 +2226,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_redirect_settings(
+      RedirectSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_redirect_settings(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_tls_settings(
       TlsSettings self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2186,6 +2263,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_box_autoadd_Chrono_Duration(self.connectTimeout, serializer);
     sse_encode_bool(self.throwOnStatusCode, serializer);
     sse_encode_opt_box_autoadd_proxy_settings(self.proxySettings, serializer);
+    sse_encode_opt_box_autoadd_redirect_settings(
+        self.redirectSettings, serializer);
     sse_encode_opt_box_autoadd_tls_settings(self.tlsSettings, serializer);
   }
 
@@ -2474,6 +2553,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_redirect_settings(
+      RedirectSettings? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_redirect_settings(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_tls_settings(
       TlsSettings? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2541,6 +2631,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_redirect_settings(
+      RedirectSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case RedirectSettings_NoRedirect():
+        sse_encode_i_32(0, serializer);
+      case RedirectSettings_LimitedRedirects(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_i_32(field0, serializer);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
   void sse_encode_rhttp_error(RhttpError self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
@@ -2548,25 +2653,27 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(0, serializer);
       case RhttpError_RhttpTimeoutError():
         sse_encode_i_32(1, serializer);
+      case RhttpError_RhttpRedirectError():
+        sse_encode_i_32(2, serializer);
       case RhttpError_RhttpStatusCodeError(
           field0: final field0,
           field1: final field1,
           field2: final field2
         ):
-        sse_encode_i_32(2, serializer);
+        sse_encode_i_32(3, serializer);
         sse_encode_u_16(field0, serializer);
         sse_encode_list_record_string_string(field1, serializer);
         sse_encode_box_autoadd_http_response_body(field2, serializer);
       case RhttpError_RhttpInvalidCertificateError(field0: final field0):
-        sse_encode_i_32(3, serializer);
-        sse_encode_String(field0, serializer);
-      case RhttpError_RhttpConnectionError(field0: final field0):
         sse_encode_i_32(4, serializer);
         sse_encode_String(field0, serializer);
-      case RhttpError_RhttpInvalidClientError():
+      case RhttpError_RhttpConnectionError(field0: final field0):
         sse_encode_i_32(5, serializer);
-      case RhttpError_RhttpUnknownError(field0: final field0):
+        sse_encode_String(field0, serializer);
+      case RhttpError_RhttpInvalidClientError():
         sse_encode_i_32(6, serializer);
+      case RhttpError_RhttpUnknownError(field0: final field0):
+        sse_encode_i_32(7, serializer);
         sse_encode_String(field0, serializer);
       default:
         throw UnimplementedError('');

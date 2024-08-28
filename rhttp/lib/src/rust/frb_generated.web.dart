@@ -125,6 +125,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ProxySettings dco_decode_box_autoadd_proxy_settings(dynamic raw);
 
   @protected
+  RedirectSettings dco_decode_box_autoadd_redirect_settings(dynamic raw);
+
+  @protected
   TlsSettings dco_decode_box_autoadd_tls_settings(dynamic raw);
 
   @protected
@@ -221,6 +224,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ProxySettings? dco_decode_opt_box_autoadd_proxy_settings(dynamic raw);
 
   @protected
+  RedirectSettings? dco_decode_opt_box_autoadd_redirect_settings(dynamic raw);
+
+  @protected
   TlsSettings? dco_decode_opt_box_autoadd_tls_settings(dynamic raw);
 
   @protected
@@ -244,6 +250,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   (String, String) dco_decode_record_string_string(dynamic raw);
+
+  @protected
+  RedirectSettings dco_decode_redirect_settings(dynamic raw);
 
   @protected
   RhttpError dco_decode_rhttp_error(dynamic raw);
@@ -352,6 +361,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  RedirectSettings sse_decode_box_autoadd_redirect_settings(
+      SseDeserializer deserializer);
+
+  @protected
   TlsSettings sse_decode_box_autoadd_tls_settings(SseDeserializer deserializer);
 
   @protected
@@ -455,6 +468,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  RedirectSettings? sse_decode_opt_box_autoadd_redirect_settings(
+      SseDeserializer deserializer);
+
+  @protected
   TlsSettings? sse_decode_opt_box_autoadd_tls_settings(
       SseDeserializer deserializer);
 
@@ -483,6 +500,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   (String, String) sse_decode_record_string_string(
       SseDeserializer deserializer);
+
+  @protected
+  RedirectSettings sse_decode_redirect_settings(SseDeserializer deserializer);
 
   @protected
   RhttpError sse_decode_rhttp_error(SseDeserializer deserializer);
@@ -608,6 +628,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       ProxySettings self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_redirect_settings(
+      RedirectSettings self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_tls_settings(
       TlsSettings self, SseSerializer serializer);
 
@@ -723,6 +747,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       ProxySettings? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_redirect_settings(
+      RedirectSettings? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_opt_box_autoadd_tls_settings(
       TlsSettings? self, SseSerializer serializer);
 
@@ -750,6 +778,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_record_string_string(
       (String, String) self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_redirect_settings(
+      RedirectSettings self, SseSerializer serializer);
 
   @protected
   void sse_encode_rhttp_error(RhttpError self, SseSerializer serializer);

@@ -10,11 +10,17 @@ pub struct ClientSettings {
     pub connect_timeout: Option<Duration>,
     pub throw_on_status_code: bool,
     pub proxy_settings: Option<ProxySettings>,
+    pub redirect_settings: Option<RedirectSettings>,
     pub tls_settings: Option<TlsSettings>,
 }
 
 pub enum ProxySettings {
     NoProxy,
+}
+
+pub enum RedirectSettings {
+    NoRedirect,
+    LimitedRedirects(i32),
 }
 
 pub struct TlsSettings {
@@ -44,6 +50,7 @@ impl Default for ClientSettings {
             connect_timeout: None,
             throw_on_status_code: true,
             proxy_settings: None,
+            redirect_settings: None,
             tls_settings: None,
         }
     }
@@ -76,6 +83,15 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
             match proxy_settings {
                 ProxySettings::NoProxy => client = client.no_proxy(),
             }
+        }
+
+        if let Some(redirect_settings) = settings.redirect_settings {
+            client = match redirect_settings {
+                RedirectSettings::NoRedirect => client.redirect(reqwest::redirect::Policy::none()),
+                RedirectSettings::LimitedRedirects(max_redirects) => {
+                    client.redirect(reqwest::redirect::Policy::limited(max_redirects as usize))
+                }
+            };
         }
 
         if let Some(timeout) = settings.timeout {

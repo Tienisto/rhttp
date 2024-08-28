@@ -6,6 +6,8 @@
 import '../frb_generated.dart';
 import 'http.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+part 'client.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `create_client`, `new_default`, `new`
 // These types are ignored because they are not used by any `pub` functions: `RequestClient`
@@ -38,6 +40,7 @@ class ClientSettings {
   final Duration? connectTimeout;
   final bool throwOnStatusCode;
   final ProxySettings? proxySettings;
+  final RedirectSettings? redirectSettings;
   final TlsSettings? tlsSettings;
 
   const ClientSettings({
@@ -46,6 +49,7 @@ class ClientSettings {
     this.connectTimeout,
     required this.throwOnStatusCode,
     this.proxySettings,
+    this.redirectSettings,
     this.tlsSettings,
   });
 
@@ -59,6 +63,7 @@ class ClientSettings {
       connectTimeout.hashCode ^
       throwOnStatusCode.hashCode ^
       proxySettings.hashCode ^
+      redirectSettings.hashCode ^
       tlsSettings.hashCode;
 
   @override
@@ -71,12 +76,23 @@ class ClientSettings {
           connectTimeout == other.connectTimeout &&
           throwOnStatusCode == other.throwOnStatusCode &&
           proxySettings == other.proxySettings &&
+          redirectSettings == other.redirectSettings &&
           tlsSettings == other.tlsSettings;
 }
 
 enum ProxySettings {
   noProxy,
   ;
+}
+
+@freezed
+sealed class RedirectSettings with _$RedirectSettings {
+  const RedirectSettings._();
+
+  const factory RedirectSettings.noRedirect() = RedirectSettings_NoRedirect;
+  const factory RedirectSettings.limitedRedirects(
+    int field0,
+  ) = RedirectSettings_LimitedRedirects;
 }
 
 class TlsSettings {

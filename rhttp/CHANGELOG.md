@@ -1,6 +1,8 @@
 ## 0.6.2
 
 - feat: add `baseUrl` setting to `ClientSettings`
+- feat: add `redirectSettings` to `ClientSettings`
+- feat: add `RhttpRedirectException`
 
 ## 0.6.1
 

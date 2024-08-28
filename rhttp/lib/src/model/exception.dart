@@ -33,6 +33,14 @@ class RhttpTimeoutException extends RhttpException {
   String toString() => '[$runtimeType] Request timed out. URL: ${request.url}';
 }
 
+/// An exception thrown when there are issues related to redirects.
+class RhttpRedirectException extends RhttpException {
+  const RhttpRedirectException(super.request);
+
+  @override
+  String toString() => '[$runtimeType] Redirect error. URL: ${request.url}';
+}
+
 /// An exception thrown on a 4xx or 5xx status code.
 class RhttpStatusCodeException extends RhttpException {
   /// The status code of the response.
@@ -125,6 +133,7 @@ RhttpException parseError(HttpRequest request, rust.RhttpError error) {
   return error.when(
     rhttpCancelError: () => RhttpCancelException(request),
     rhttpTimeoutError: () => RhttpTimeoutException(request),
+    rhttpRedirectError: () => RhttpRedirectException(request),
     rhttpStatusCodeError: (code, headers, body) => RhttpStatusCodeException(
       request: request,
       statusCode: code,
