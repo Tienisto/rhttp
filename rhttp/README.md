@@ -620,7 +620,7 @@ void main() async {
 }
 ```
 
-Since this client is compatible with [http](https://pub.dev/packages/http),
+Because this client is compatible with [http](https://pub.dev/packages/http),
 you can use [dio_compatibility_layer](https://pub.dev/packages/dio_compatibility_layer)
 to use rhttp with the [dio](https://pub.dev/packages/dio) package.
 

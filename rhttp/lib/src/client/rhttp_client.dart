@@ -74,7 +74,7 @@ class RhttpClient {
   /// After calling this method, the client should not be used anymore.
   ///
   /// Note:
-  /// This might improve performance but it is not necessary since the client
+  /// This might improve performance but it is not necessary because the client
   /// is automatically disposed when the Dart object is garbage collected.
   void dispose({bool cancelRunningRequests = false}) async {
     if (cancelRunningRequests) {
