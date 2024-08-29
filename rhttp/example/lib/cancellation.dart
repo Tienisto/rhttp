@@ -16,6 +16,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  RhttpClient? client;
   HttpResponse? response;
 
   @override
@@ -33,17 +34,20 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   try {
                     final cancelToken = CancelToken();
-                    final resFuture = Rhttp.requestBytes(
+                    client ??= await RhttpClient.create(
+                      settings: const ClientSettings(
+                        timeout: Duration(seconds: 10),
+                      ),
+                    );
+                    final resFuture = client!.requestBytes(
                       method: HttpMethod.get,
                       url: 'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
                       cancelToken: cancelToken,
-                      settings: const ClientSettings(
-                        timeout: Duration(milliseconds: 1),
-                      ),
                     );
 
                     Future.delayed(const Duration(seconds: 1), () async {
                       await cancelToken.cancel();
+                      //client!.dispose(cancelRunningRequests: true);
                     });
 
                     final res = await resFuture;

@@ -1,12 +1,6 @@
 use crate::api::error::RhttpError;
-use crate::api::http::{
-    make_http_request, make_http_request_receive_stream, HttpBody, HttpExpectBody, HttpHeaders,
-    HttpMethod, HttpResponse, HttpVersionPref,
-};
-use crate::api::stream;
-use crate::frb_generated::StreamSink;
+use crate::api::http::HttpVersionPref;
 use chrono::Duration;
-use flutter_rust_bridge::DartFnFuture;
 use reqwest::{tls, Certificate};
 pub use tokio_util::sync::CancellationToken;
 
@@ -79,70 +73,6 @@ impl RequestClient {
 
     pub(crate) fn new(settings: ClientSettings) -> Result<RequestClient, RhttpError> {
         create_client(settings)
-    }
-
-    // TODO: https://github.com/fzyzcjy/flutter_rust_bridge/issues/2262
-    pub async fn make_http_request_client(
-        &self,
-        settings: Option<ClientSettings>,
-        method: HttpMethod,
-        url: String,
-        query: Option<Vec<(String, String)>>,
-        headers: Option<HttpHeaders>,
-        body: Option<HttpBody>,
-        body_stream: Option<stream::Dart2RustStreamReceiver>,
-        expect_body: HttpExpectBody,
-        on_cancel_token: impl Fn(CancellationToken) -> DartFnFuture<()>,
-        cancelable: bool,
-    ) -> Result<HttpResponse, RhttpError> {
-        make_http_request(
-            Some(self.clone()),
-            settings,
-            method,
-            url,
-            query,
-            headers,
-            body,
-            body_stream,
-            expect_body,
-            on_cancel_token,
-            cancelable,
-        )
-        .await
-    }
-
-    // TODO: https://github.com/fzyzcjy/flutter_rust_bridge/issues/2262
-    pub async fn make_http_request_receive_stream_client(
-        &self,
-        settings: Option<ClientSettings>,
-        method: HttpMethod,
-        url: String,
-        query: Option<Vec<(String, String)>>,
-        headers: Option<HttpHeaders>,
-        body: Option<HttpBody>,
-        body_stream: Option<stream::Dart2RustStreamReceiver>,
-        stream_sink: StreamSink<Vec<u8>>,
-        on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
-        on_error: impl Fn(RhttpError) -> DartFnFuture<()>,
-        on_cancel_token: impl Fn(CancellationToken) -> DartFnFuture<()>,
-        cancelable: bool,
-    ) -> Result<(), RhttpError> {
-        make_http_request_receive_stream(
-            Some(self.clone()),
-            settings,
-            method,
-            url,
-            query,
-            headers,
-            body,
-            body_stream,
-            stream_sink,
-            on_response,
-            on_error,
-            on_cancel_token,
-            cancelable,
-        )
-        .await
     }
 }
 

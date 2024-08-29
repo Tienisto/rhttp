@@ -7,9 +7,6 @@ import '../mocks.dart';
 void main() {
   late MockRustLibApi mockApi;
 
-  // TODO: https://github.com/fzyzcjy/flutter_rust_bridge/issues/2262
-  const skip = true;
-
   setUpAll(() async {
     mockApi = MockRustLibApi.createAndRegister();
 
@@ -35,7 +32,7 @@ void main() {
     await client.get('/def');
 
     expect(observedUrl, 'https://mydomain.com/abc/def');
-  }, skip: skip);
+  });
 
   test('Should add base url on ad-hoc request', () async {
     mockApi.mockCreateClient();
@@ -55,5 +52,5 @@ void main() {
     );
 
     expect(observedUrl, 'https://mydomain.com/123/456');
-  }, skip: skip);
+  });
 }

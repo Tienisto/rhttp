@@ -40,7 +40,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.3.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1785893924;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 12034812;
 
 // Section: executor
 
@@ -48,76 +48,6 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
-fn wire__crate__api__client__RequestClient_make_http_request_client_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec,_,_,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "RequestClient_make_http_request_client", port: Some(port_), mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal }, move || { 
-            let message = unsafe { flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_) };
-            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_that = <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>>>::sse_decode(&mut deserializer);
-let api_settings = <Option<crate::api::client::ClientSettings>>::sse_decode(&mut deserializer);
-let api_method = <crate::api::http::HttpMethod>::sse_decode(&mut deserializer);
-let api_url = <String>::sse_decode(&mut deserializer);
-let api_query = <Option<Vec<(String,String,)>>>::sse_decode(&mut deserializer);
-let api_headers = <Option<crate::api::http::HttpHeaders>>::sse_decode(&mut deserializer);
-let api_body = <Option<crate::api::http::HttpBody>>::sse_decode(&mut deserializer);
-let api_body_stream = <Option< Dart2RustStreamReceiver>>::sse_decode(&mut deserializer);
-let api_expect_body = <crate::api::http::HttpExpectBody>::sse_decode(&mut deserializer);
-let api_on_cancel_token = decode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(<flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer));
-let api_cancelable = <bool>::sse_decode(&mut deserializer);deserializer.end(); move |context| async move {
-                    transform_result_sse::<_, crate::api::error::RhttpError>((move || async move {
-                        let mut api_that_guard = None;
-let decode_indices_ = flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(&api_that, 0, false)]);
-        for i in decode_indices_ {
-            match i {
-                0 => api_that_guard = Some(api_that.lockable_decode_async_ref().await),
-                _ => unreachable!(),
-            }
-        }
-        let api_that_guard = api_that_guard.unwrap();
- let output_ok = crate::api::client::RequestClient::make_http_request_client(&*api_that_guard, api_settings, api_method, api_url, api_query, api_headers, api_body, api_body_stream, api_expect_body, api_on_cancel_token, api_cancelable).await?;   Ok(output_ok)
-                    })().await)
-                } })
-}
-fn wire__crate__api__client__RequestClient_make_http_request_receive_stream_client_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec,_,_,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "RequestClient_make_http_request_receive_stream_client", port: Some(port_), mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal }, move || { 
-            let message = unsafe { flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_) };
-            let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_that = <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>>>::sse_decode(&mut deserializer);
-let api_settings = <Option<crate::api::client::ClientSettings>>::sse_decode(&mut deserializer);
-let api_method = <crate::api::http::HttpMethod>::sse_decode(&mut deserializer);
-let api_url = <String>::sse_decode(&mut deserializer);
-let api_query = <Option<Vec<(String,String,)>>>::sse_decode(&mut deserializer);
-let api_headers = <Option<crate::api::http::HttpHeaders>>::sse_decode(&mut deserializer);
-let api_body = <Option<crate::api::http::HttpBody>>::sse_decode(&mut deserializer);
-let api_body_stream = <Option< Dart2RustStreamReceiver>>::sse_decode(&mut deserializer);
-let api_stream_sink = <StreamSink<Vec<u8>,flutter_rust_bridge::for_generated::SseCodec>>::sse_decode(&mut deserializer);
-let api_on_response = decode_DartFn_Inputs_http_response_Output_unit_AnyhowException(<flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer));
-let api_on_error = decode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(<flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer));
-let api_on_cancel_token = decode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(<flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer));
-let api_cancelable = <bool>::sse_decode(&mut deserializer);deserializer.end(); move |context| async move {
-                    transform_result_sse::<_, crate::api::error::RhttpError>((move || async move {
-                        let mut api_that_guard = None;
-let decode_indices_ = flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(&api_that, 0, false)]);
-        for i in decode_indices_ {
-            match i {
-                0 => api_that_guard = Some(api_that.lockable_decode_async_ref().await),
-                _ => unreachable!(),
-            }
-        }
-        let api_that_guard = api_that_guard.unwrap();
- let output_ok = crate::api::client::RequestClient::make_http_request_receive_stream_client(&*api_that_guard, api_settings, api_method, api_url, api_query, api_headers, api_body, api_body_stream, api_stream_sink, api_on_response, api_on_error, api_on_cancel_token, api_cancelable).await?;   Ok(output_ok)
-                    })().await)
-                } })
-}
 fn wire__crate__api__client__client_settings_default_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -264,7 +194,7 @@ fn wire__crate__api__http__make_http_request_impl(
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec,_,_,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "make_http_request", port: Some(port_), mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal }, move || { 
             let message = unsafe { flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_) };
             let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_client = <Option<RequestClient>>::sse_decode(&mut deserializer);
+            let api_client = <Option<RustAutoOpaqueMoi<RequestClient>>>::sse_decode(&mut deserializer);
 let api_settings = <Option<crate::api::client::ClientSettings>>::sse_decode(&mut deserializer);
 let api_method = <crate::api::http::HttpMethod>::sse_decode(&mut deserializer);
 let api_url = <String>::sse_decode(&mut deserializer);
@@ -289,7 +219,7 @@ fn wire__crate__api__http__make_http_request_receive_stream_impl(
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec,_,_,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "make_http_request_receive_stream", port: Some(port_), mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal }, move || { 
             let message = unsafe { flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(ptr_, rust_vec_len_, data_len_) };
             let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_client = <Option<RequestClient>>::sse_decode(&mut deserializer);
+            let api_client = <Option<RustAutoOpaqueMoi<RequestClient>>>::sse_decode(&mut deserializer);
 let api_settings = <Option<crate::api::client::ClientSettings>>::sse_decode(&mut deserializer);
 let api_method = <crate::api::http::HttpMethod>::sse_decode(&mut deserializer);
 let api_url = <String>::sse_decode(&mut deserializer);
@@ -681,6 +611,16 @@ impl SseDecode for flutter_rust_bridge::for_generated::anyhow::Error {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <String>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::anyhow::anyhow!("{}", inner);
+    }
+}
+
+impl SseDecode for RustAutoOpaqueMoi<RequestClient> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <RustOpaqueMoi<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>,
+        >>::sse_decode(deserializer);
+        return flutter_rust_bridge::for_generated::rust_auto_opaque_explicit_decode(inner);
     }
 }
 
@@ -1115,6 +1055,17 @@ impl SseDecode for crate::api::http::MultipartValue {
     }
 }
 
+impl SseDecode for Option<RustAutoOpaqueMoi<RequestClient>> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<RustAutoOpaqueMoi<RequestClient>>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<String> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1131,17 +1082,6 @@ impl SseDecode for Option<Dart2RustStreamReceiver> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<Dart2RustStreamReceiver>::sse_decode(deserializer));
-        } else {
-            return None;
-        }
-    }
-}
-
-impl SseDecode for Option<RequestClient> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        if (<bool>::sse_decode(deserializer)) {
-            return Some(<RequestClient>::sse_decode(deserializer));
         } else {
             return None;
         }
@@ -1434,50 +1374,38 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        1 => wire__crate__api__client__RequestClient_make_http_request_client_impl(
+        1 => wire__crate__api__client__client_settings_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        2 => wire__crate__api__client__RequestClient_make_http_request_receive_stream_client_impl(
-            port,
-            ptr,
-            rust_vec_len,
-            data_len,
-        ),
-        3 => wire__crate__api__client__client_settings_default_impl(
-            port,
-            ptr,
-            rust_vec_len,
-            data_len,
-        ),
-        4 => wire__crate__api__http__cancel_request_impl(port, ptr, rust_vec_len, data_len),
-        5 => {
+        2 => wire__crate__api__http__cancel_request_impl(port, ptr, rust_vec_len, data_len),
+        3 => {
             wire__crate__api__http__cancel_running_requests_impl(port, ptr, rust_vec_len, data_len)
         }
-        6 => wire__crate__api__http__make_http_request_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__crate__api__http__make_http_request_receive_stream_impl(
+        4 => wire__crate__api__http__make_http_request_impl(port, ptr, rust_vec_len, data_len),
+        5 => wire__crate__api__http__make_http_request_receive_stream_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        8 => wire__crate__api__http__register_client_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__init__init_app_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__stream__Dart2RustStreamSink_add_impl(
+        6 => wire__crate__api__http__register_client_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__init__init_app_impl(port, ptr, rust_vec_len, data_len),
+        9 => wire__crate__api__stream__Dart2RustStreamSink_add_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        12 => wire__crate__api__stream__Dart2RustStreamSink_close_impl(
+        10 => wire__crate__api__stream__Dart2RustStreamSink_close_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        13 => wire__crate__api__stream__create_stream_impl(port, ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__stream__create_stream_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -1490,7 +1418,7 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        9 => wire__crate__api__http__register_client_sync_impl(ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__http__register_client_sync_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -2013,6 +1941,13 @@ impl SseEncode for flutter_rust_bridge::for_generated::anyhow::Error {
     }
 }
 
+impl SseEncode for RustAutoOpaqueMoi<RequestClient> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_explicit_encode(self), serializer);
+    }
+}
+
 impl SseEncode for CancellationToken {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2414,6 +2349,16 @@ impl SseEncode for crate::api::http::MultipartValue {
     }
 }
 
+impl SseEncode for Option<RustAutoOpaqueMoi<RequestClient>> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <RustAutoOpaqueMoi<RequestClient>>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<String> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2430,16 +2375,6 @@ impl SseEncode for Option<Dart2RustStreamReceiver> {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <Dart2RustStreamReceiver>::sse_encode(value, serializer);
-        }
-    }
-}
-
-impl SseEncode for Option<RequestClient> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.is_some(), serializer);
-        if let Some(value) = self {
-            <RequestClient>::sse_encode(value, serializer);
         }
     }
 }

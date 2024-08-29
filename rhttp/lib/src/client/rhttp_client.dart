@@ -77,6 +77,10 @@ class RhttpClient {
   /// This might improve performance but it is not necessary because the client
   /// is automatically disposed when the Dart object is garbage collected.
   void dispose({bool cancelRunningRequests = false}) async {
+    if (ref.isDisposed) {
+      return;
+    }
+
     if (cancelRunningRequests) {
       await rust.cancelRunningRequests(client: ref);
     }
