@@ -21,6 +21,8 @@ export 'src/model/exception.dart'
         RhttpTimeoutException,
         RhttpRedirectException,
         RhttpStatusCodeException,
+        RhttpInvalidCertificateException,
+        RhttpConnectionException,
         RhttpClientDisposedException,
         RhttpInterceptorException,
         RhttpUnknownException;
