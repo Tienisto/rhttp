@@ -1,6 +1,7 @@
 ## 0.7.1
 
 - fix: export `RhttpInvalidCertificateException`, `RhttpConnectionException`
+- deps: remove `plugin_platform_interface` dependency
 
 ## 0.7.0
 
