@@ -2,6 +2,7 @@
 
 - fix: export `RhttpInvalidCertificateException`, `RhttpConnectionException`
 - deps: remove `plugin_platform_interface` dependency
+- deps: bump `flutter_rust_bridge` to `2.4.0`
 
 ## 0.7.0
 
