@@ -276,7 +276,7 @@ is reused for multiple requests that are done on the same time, but the socket
 is closed immediately after the last request is finished.
 
 Setting `keepAliveTimeout` to a value greater than `0` will keep the socket 
-open when idle for the specified duration, both in HTTP1.1 and HTTP2.
+open when idle for the specified duration, both in HTTP/1.1 and HTTP/2.
 
 ```dart
 final client = await RhttpClient.create(
