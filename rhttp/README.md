@@ -273,7 +273,7 @@ final client = RhttpClient.createSync();
 
 By default, connections are not kept alive. On HTTP2, the same connection
 is reused for multiple requests that are done on the same time, but the socket
-is closed inmediately after the last request is finished.
+is closed immediately after the last request is finished.
 
 Setting `keepAliveTimeout` to a value greater than `0` will keep the socket 
 open when idle for the specified duration, both in HTTP1.1 and HTTP2.
