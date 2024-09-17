@@ -271,7 +271,7 @@ final client = RhttpClient.createSync();
 
 ### ➤ Keep-Alive
 
-By default, connections are not kept alive. On HTTP2, the same connection
+By default, connections are not kept alive. On HTTP/2, the same connection
 is reused for multiple requests that are done on the same time, but the socket
 is closed immediately after the last request is finished.
 

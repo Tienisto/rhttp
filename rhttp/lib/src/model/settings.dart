@@ -200,7 +200,8 @@ class TimeoutSettings {
   /// Keep alive idle timeout. If not set, keep alive is disabled.
   final Duration? keepAliveTimeout;
 
-  /// Keep alive ping interval, only valid if keepAliveTimeout is set and http2.
+  /// Keep alive ping interval.
+  /// Only valid if keepAliveTimeout is set and HTTP/2 is used.
   final Duration keepAlivePing;
 
   const TimeoutSettings({
