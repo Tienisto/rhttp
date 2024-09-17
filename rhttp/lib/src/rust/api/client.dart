@@ -38,8 +38,7 @@ class ClientCertificate {
 
 class ClientSettings {
   final HttpVersionPref httpVersionPref;
-  final Duration? timeout;
-  final Duration? connectTimeout;
+  final TimeoutSettings? timeoutSettings;
   final bool throwOnStatusCode;
   final ProxySettings? proxySettings;
   final RedirectSettings? redirectSettings;
@@ -47,8 +46,7 @@ class ClientSettings {
 
   const ClientSettings({
     required this.httpVersionPref,
-    this.timeout,
-    this.connectTimeout,
+    this.timeoutSettings,
     required this.throwOnStatusCode,
     this.proxySettings,
     this.redirectSettings,
@@ -61,8 +59,7 @@ class ClientSettings {
   @override
   int get hashCode =>
       httpVersionPref.hashCode ^
-      timeout.hashCode ^
-      connectTimeout.hashCode ^
+      timeoutSettings.hashCode ^
       throwOnStatusCode.hashCode ^
       proxySettings.hashCode ^
       redirectSettings.hashCode ^
@@ -74,8 +71,7 @@ class ClientSettings {
       other is ClientSettings &&
           runtimeType == other.runtimeType &&
           httpVersionPref == other.httpVersionPref &&
-          timeout == other.timeout &&
-          connectTimeout == other.connectTimeout &&
+          timeoutSettings == other.timeoutSettings &&
           throwOnStatusCode == other.throwOnStatusCode &&
           proxySettings == other.proxySettings &&
           redirectSettings == other.redirectSettings &&
@@ -95,6 +91,37 @@ sealed class RedirectSettings with _$RedirectSettings {
   const factory RedirectSettings.limitedRedirects(
     int field0,
   ) = RedirectSettings_LimitedRedirects;
+}
+
+class TimeoutSettings {
+  final Duration? timeout;
+  final Duration? connectTimeout;
+  final Duration? keepAliveTimeout;
+  final Duration? keepAlivePing;
+
+  const TimeoutSettings({
+    this.timeout,
+    this.connectTimeout,
+    this.keepAliveTimeout,
+    this.keepAlivePing,
+  });
+
+  @override
+  int get hashCode =>
+      timeout.hashCode ^
+      connectTimeout.hashCode ^
+      keepAliveTimeout.hashCode ^
+      keepAlivePing.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TimeoutSettings &&
+          runtimeType == other.runtimeType &&
+          timeout == other.timeout &&
+          connectTimeout == other.connectTimeout &&
+          keepAliveTimeout == other.keepAliveTimeout &&
+          keepAlivePing == other.keepAlivePing;
 }
 
 class TlsSettings {

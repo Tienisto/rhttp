@@ -769,8 +769,8 @@ impl SseDecode for crate::api::client::ClientSettings {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_httpVersionPref = <crate::api::http::HttpVersionPref>::sse_decode(deserializer);
-        let mut var_timeout = <Option<chrono::Duration>>::sse_decode(deserializer);
-        let mut var_connectTimeout = <Option<chrono::Duration>>::sse_decode(deserializer);
+        let mut var_timeoutSettings =
+            <Option<crate::api::client::TimeoutSettings>>::sse_decode(deserializer);
         let mut var_throwOnStatusCode = <bool>::sse_decode(deserializer);
         let mut var_proxySettings =
             <Option<crate::api::client::ProxySettings>>::sse_decode(deserializer);
@@ -780,8 +780,7 @@ impl SseDecode for crate::api::client::ClientSettings {
             <Option<crate::api::client::TlsSettings>>::sse_decode(deserializer);
         return crate::api::client::ClientSettings {
             http_version_pref: var_httpVersionPref,
-            timeout: var_timeout,
-            connect_timeout: var_connectTimeout,
+            timeout_settings: var_timeoutSettings,
             throw_on_status_code: var_throwOnStatusCode,
             proxy_settings: var_proxySettings,
             redirect_settings: var_redirectSettings,
@@ -1180,6 +1179,19 @@ impl SseDecode for Option<crate::api::client::RedirectSettings> {
     }
 }
 
+impl SseDecode for Option<crate::api::client::TimeoutSettings> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::client::TimeoutSettings>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<crate::api::client::TlsSettings> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1308,6 +1320,22 @@ impl SseDecode for crate::api::error::RhttpError {
                 unimplemented!("");
             }
         }
+    }
+}
+
+impl SseDecode for crate::api::client::TimeoutSettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_timeout = <Option<chrono::Duration>>::sse_decode(deserializer);
+        let mut var_connectTimeout = <Option<chrono::Duration>>::sse_decode(deserializer);
+        let mut var_keepAliveTimeout = <Option<chrono::Duration>>::sse_decode(deserializer);
+        let mut var_keepAlivePing = <Option<chrono::Duration>>::sse_decode(deserializer);
+        return crate::api::client::TimeoutSettings {
+            timeout: var_timeout,
+            connect_timeout: var_connectTimeout,
+            keep_alive_timeout: var_keepAliveTimeout,
+            keep_alive_ping: var_keepAlivePing,
+        };
     }
 }
 
@@ -1526,8 +1554,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::client::ClientSettings {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.http_version_pref.into_into_dart().into_dart(),
-            self.timeout.into_into_dart().into_dart(),
-            self.connect_timeout.into_into_dart().into_dart(),
+            self.timeout_settings.into_into_dart().into_dart(),
             self.throw_on_status_code.into_into_dart().into_dart(),
             self.proxy_settings.into_into_dart().into_dart(),
             self.redirect_settings.into_into_dart().into_dart(),
@@ -1895,6 +1922,29 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::error::RhttpError>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::client::TimeoutSettings {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.timeout.into_into_dart().into_dart(),
+            self.connect_timeout.into_into_dart().into_dart(),
+            self.keep_alive_timeout.into_into_dart().into_dart(),
+            self.keep_alive_ping.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::client::TimeoutSettings
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::client::TimeoutSettings>
+    for crate::api::client::TimeoutSettings
+{
+    fn into_into_dart(self) -> crate::api::client::TimeoutSettings {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::client::TlsSettings {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -2092,8 +2142,10 @@ impl SseEncode for crate::api::client::ClientSettings {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <crate::api::http::HttpVersionPref>::sse_encode(self.http_version_pref, serializer);
-        <Option<chrono::Duration>>::sse_encode(self.timeout, serializer);
-        <Option<chrono::Duration>>::sse_encode(self.connect_timeout, serializer);
+        <Option<crate::api::client::TimeoutSettings>>::sse_encode(
+            self.timeout_settings,
+            serializer,
+        );
         <bool>::sse_encode(self.throw_on_status_code, serializer);
         <Option<crate::api::client::ProxySettings>>::sse_encode(self.proxy_settings, serializer);
         <Option<crate::api::client::RedirectSettings>>::sse_encode(
@@ -2466,6 +2518,16 @@ impl SseEncode for Option<crate::api::client::RedirectSettings> {
     }
 }
 
+impl SseEncode for Option<crate::api::client::TimeoutSettings> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::client::TimeoutSettings>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<crate::api::client::TlsSettings> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2588,6 +2650,16 @@ impl SseEncode for crate::api::error::RhttpError {
                 unimplemented!("");
             }
         }
+    }
+}
+
+impl SseEncode for crate::api::client::TimeoutSettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<chrono::Duration>>::sse_encode(self.timeout, serializer);
+        <Option<chrono::Duration>>::sse_encode(self.connect_timeout, serializer);
+        <Option<chrono::Duration>>::sse_encode(self.keep_alive_timeout, serializer);
+        <Option<chrono::Duration>>::sse_encode(self.keep_alive_ping, serializer);
     }
 }
 

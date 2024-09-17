@@ -6,8 +6,7 @@ pub use tokio_util::sync::CancellationToken;
 
 pub struct ClientSettings {
     pub http_version_pref: HttpVersionPref,
-    pub timeout: Option<Duration>,
-    pub connect_timeout: Option<Duration>,
+    pub timeout_settings: Option<TimeoutSettings>,
     pub throw_on_status_code: bool,
     pub proxy_settings: Option<ProxySettings>,
     pub redirect_settings: Option<RedirectSettings>,
@@ -21,6 +20,13 @@ pub enum ProxySettings {
 pub enum RedirectSettings {
     NoRedirect,
     LimitedRedirects(i32),
+}
+
+pub struct TimeoutSettings {
+    pub timeout: Option<Duration>,
+    pub connect_timeout: Option<Duration>,
+    pub keep_alive_timeout: Option<Duration>,
+    pub keep_alive_ping: Option<Duration>,
 }
 
 pub struct TlsSettings {
@@ -46,8 +52,7 @@ impl Default for ClientSettings {
     fn default() -> Self {
         ClientSettings {
             http_version_pref: HttpVersionPref::All,
-            timeout: None,
-            connect_timeout: None,
+            timeout_settings: None,
             throw_on_status_code: true,
             proxy_settings: None,
             redirect_settings: None,
@@ -94,19 +99,38 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
             };
         }
 
-        if let Some(timeout) = settings.timeout {
-            client = client.timeout(
-                timeout
-                    .to_std()
-                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
-            );
-        }
-        if let Some(timeout) = settings.connect_timeout {
-            client = client.connect_timeout(
-                timeout
-                    .to_std()
-                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
-            );
+        if let Some(timeout_settings) = settings.timeout_settings {
+            if let Some(timeout) = timeout_settings.timeout {
+                client = client.timeout(
+                    timeout
+                        .to_std()
+                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
+                );
+            }
+            if let Some(timeout) = timeout_settings.connect_timeout {
+                client = client.connect_timeout(
+                    timeout
+                        .to_std()
+                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
+                );
+            }
+
+            if let Some(keep_alive_timeout) = timeout_settings.keep_alive_timeout {
+                let timeout = keep_alive_timeout.to_std().map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
+                if timeout.as_millis() > 0 {
+                    client = client.tcp_keepalive(timeout);
+                    client = client.http2_keep_alive_while_idle(true);
+                    client = client.http2_keep_alive_timeout(timeout);
+                }
+            }
+
+            if let Some(keep_alive_ping) = timeout_settings.keep_alive_ping {
+                client = client.http2_keep_alive_interval(
+                    keep_alive_ping
+                        .to_std()
+                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
+                );
+            }
         }
 
         if let Some(tls_settings) = settings.tls_settings {
