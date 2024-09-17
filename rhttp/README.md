@@ -269,7 +269,7 @@ This should only be called during app start to avoid blocking the UI thread.
 final client = RhttpClient.createSync();
 ```
 
-#### ➤ Keep-Alive
+### ➤ Keep-Alive
 
 By default, connections are not kept alive. On HTTP2, the same connection
 is reused for multiple requests that are done on the same time, but the socket

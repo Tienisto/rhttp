@@ -1,3 +1,8 @@
+## 0.7.2
+
+- feat: add `keepAliveTimeout`, `keepAlivePing` to new `TimeoutSettings` (@nicobritos)
+- **DEPRECATED**: `timeout` and `connectTimeout` moved to `TimeoutSettings`
+
 ## 0.7.1
 
 - fix: export `RhttpInvalidCertificateException`, `RhttpConnectionException`
