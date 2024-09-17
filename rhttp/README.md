@@ -269,6 +269,27 @@ This should only be called during app start to avoid blocking the UI thread.
 final client = RhttpClient.createSync();
 ```
 
+#### ➤ Keep-Alive
+
+By default, connections are not kept alive. On HTTP2, the same connection
+is reused for multiple requests that are done on the same time, but the socket
+is closed immediately after the last request is finished.
+
+Setting `keepAliveTimeout` to a value greater than `0` will keep the socket 
+open when idle for the specified duration, both in HTTP/1.1 and HTTP/2.
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    timeoutSettings: TimeoutSettings(
+      keepAliveTimeout: Duration(seconds: 60),
+      keepAlivePing: Duration(seconds: 30),
+    ),
+  ),
+);
+```
+
+
 ### ➤ Cancel Requests
 
 You can cancel a request by providing a `CancelToken`:
@@ -334,8 +355,10 @@ You can specify the timeout for the request:
 await Rhttp.get(
   'https://example.com',
   settings: const ClientSettings(
-    timeout: Duration(seconds: 10),
-    connectTimeout: Duration(seconds: 5),
+    timeoutSettings: TimeoutSettings(
+      timeout: Duration(seconds: 10),
+      connectTimeout: Duration(seconds: 5),
+    ),
   ),
 );
 ```

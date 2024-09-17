@@ -12,6 +12,7 @@ const _keepDuration = Duration(microseconds: -9999);
 const _keepProxySettings = ProxySettings.noProxy();
 const _keepRedirectSettings = RedirectSettings.limited(-9999);
 const _keepTlsSettings = TlsSettings();
+const _keepTimeoutSettings = TimeoutSettings();
 
 class ClientSettings {
   /// Base URL to be prefixed to all requests.
@@ -21,11 +22,16 @@ class ClientSettings {
   final HttpVersionPref httpVersionPref;
 
   /// The timeout for the request including time to establish a connection.
+  @Deprecated('Use timeoutSettings')
   final Duration? timeout;
 
   /// The timeout for establishing a connection.
   /// See [timeout] for the total timeout.
+  @Deprecated('Use timeoutSettings')
   final Duration? connectTimeout;
+
+  /// Timeout and keep alive settings.
+  final TimeoutSettings? timeoutSettings;
 
   /// Throws an exception if the status code is 4xx or 5xx.
   final bool throwOnStatusCode;
@@ -44,19 +50,31 @@ class ClientSettings {
   const ClientSettings({
     this.baseUrl,
     this.httpVersionPref = HttpVersionPref.all,
-    this.timeout,
-    this.connectTimeout,
+    @Deprecated('Use timeoutSettings') this.timeout,
+    @Deprecated('Use timeoutSettings') this.connectTimeout,
+    this.timeoutSettings,
     this.throwOnStatusCode = true,
     this.proxySettings,
     this.redirectSettings,
     this.tlsSettings,
   });
 
+  TimeoutSettings? get _timeoutSettings {
+    if (timeoutSettings != null) {
+      return timeoutSettings;
+    }
+    if (timeout != null || connectTimeout != null) {
+      return TimeoutSettings(timeout: timeout, connectTimeout: connectTimeout);
+    }
+    return null;
+  }
+
   ClientSettings copyWith({
     String? baseUrl = _keepBaseUrl,
     HttpVersionPref? httpVersionPref,
-    Duration? timeout = _keepDuration,
-    Duration? connectTimeout = _keepDuration,
+    @Deprecated('Use timeoutSettings') Duration? timeout = _keepDuration,
+    @Deprecated('Use timeoutSettings') Duration? connectTimeout = _keepDuration,
+    TimeoutSettings? timeoutSettings = _keepTimeoutSettings,
     bool? throwOnStatusCode,
     ProxySettings? proxySettings = _keepProxySettings,
     RedirectSettings? redirectSettings = _keepRedirectSettings,
@@ -69,6 +87,9 @@ class ClientSettings {
       connectTimeout: identical(connectTimeout, _keepDuration)
           ? this.connectTimeout
           : connectTimeout,
+      timeoutSettings: identical(timeoutSettings, _keepTimeoutSettings)
+          ? this.timeoutSettings
+          : timeoutSettings,
       throwOnStatusCode: throwOnStatusCode ?? this.throwOnStatusCode,
       proxySettings: identical(proxySettings, _keepProxySettings)
           ? this.proxySettings
@@ -168,13 +189,34 @@ class ClientCertificate {
   });
 }
 
+class TimeoutSettings {
+  /// The timeout for the request including time to establish a connection.
+  final Duration? timeout;
+
+  /// The timeout for establishing a connection.
+  /// See [timeout] for the total timeout.
+  final Duration? connectTimeout;
+
+  /// Keep alive idle timeout. If not set, keep alive is disabled.
+  final Duration? keepAliveTimeout;
+
+  /// Keep alive ping interval, only valid if keepAliveTimeout is set and http2.
+  final Duration keepAlivePing;
+
+  const TimeoutSettings({
+    this.timeout,
+    this.connectTimeout,
+    this.keepAliveTimeout,
+    this.keepAlivePing = const Duration(seconds: 30),
+  });
+}
+
 @internal
 extension ClientSettingsExt on ClientSettings {
   rust_client.ClientSettings toRustType() {
     return rust_client.ClientSettings(
       httpVersionPref: httpVersionPref._toRustType(),
-      timeout: timeout,
-      connectTimeout: connectTimeout,
+      timeoutSettings: _timeoutSettings?._toRustType(),
       throwOnStatusCode: throwOnStatusCode,
       proxySettings: proxySettings?._toRustType(),
       redirectSettings: redirectSettings?._toRustType(),
@@ -198,6 +240,17 @@ extension on RedirectSettings {
       LimitedRedirects r =>
         rust_client.RedirectSettings.limitedRedirects(r.maxRedirects),
     };
+  }
+}
+
+extension on TimeoutSettings {
+  rust_client.TimeoutSettings _toRustType() {
+    return rust_client.TimeoutSettings(
+      timeout: timeout,
+      connectTimeout: connectTimeout,
+      keepAliveTimeout: keepAliveTimeout,
+      keepAlivePing: keepAlivePing,
+    );
   }
 }
 

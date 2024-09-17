@@ -36,12 +36,15 @@ class _MyAppState extends State<MyApp> {
                     final cancelToken = CancelToken();
                     client ??= await RhttpClient.create(
                       settings: const ClientSettings(
-                        timeout: Duration(seconds: 10),
+                        timeoutSettings: TimeoutSettings(
+                          timeout: Duration(seconds: 10),
+                        ),
                       ),
                     );
                     final resFuture = client!.requestBytes(
                       method: HttpMethod.get,
-                      url: 'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
+                      url:
+                          'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
                       cancelToken: cancelToken,
                     );
 

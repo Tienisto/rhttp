@@ -168,6 +168,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RedirectSettings dco_decode_box_autoadd_redirect_settings(dynamic raw);
 
   @protected
+  TimeoutSettings dco_decode_box_autoadd_timeout_settings(dynamic raw);
+
+  @protected
   TlsSettings dco_decode_box_autoadd_tls_settings(dynamic raw);
 
   @protected
@@ -272,6 +275,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RedirectSettings? dco_decode_opt_box_autoadd_redirect_settings(dynamic raw);
 
   @protected
+  TimeoutSettings? dco_decode_opt_box_autoadd_timeout_settings(dynamic raw);
+
+  @protected
   TlsSettings? dco_decode_opt_box_autoadd_tls_settings(dynamic raw);
 
   @protected
@@ -301,6 +307,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RhttpError dco_decode_rhttp_error(dynamic raw);
+
+  @protected
+  TimeoutSettings dco_decode_timeout_settings(dynamic raw);
 
   @protected
   TlsSettings dco_decode_tls_settings(dynamic raw);
@@ -442,6 +451,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  TimeoutSettings sse_decode_box_autoadd_timeout_settings(
+      SseDeserializer deserializer);
+
+  @protected
   TlsSettings sse_decode_box_autoadd_tls_settings(SseDeserializer deserializer);
 
   @protected
@@ -554,6 +567,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  TimeoutSettings? sse_decode_opt_box_autoadd_timeout_settings(
+      SseDeserializer deserializer);
+
+  @protected
   TlsSettings? sse_decode_opt_box_autoadd_tls_settings(
       SseDeserializer deserializer);
 
@@ -588,6 +605,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   RhttpError sse_decode_rhttp_error(SseDeserializer deserializer);
+
+  @protected
+  TimeoutSettings sse_decode_timeout_settings(SseDeserializer deserializer);
 
   @protected
   TlsSettings sse_decode_tls_settings(SseDeserializer deserializer);
@@ -747,6 +767,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       RedirectSettings self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_timeout_settings(
+      TimeoutSettings self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_tls_settings(
       TlsSettings self, SseSerializer serializer);
 
@@ -870,6 +894,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       RedirectSettings? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_timeout_settings(
+      TimeoutSettings? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_opt_box_autoadd_tls_settings(
       TlsSettings? self, SseSerializer serializer);
 
@@ -904,6 +932,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_rhttp_error(RhttpError self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_timeout_settings(
+      TimeoutSettings self, SseSerializer serializer);
 
   @protected
   void sse_encode_tls_settings(TlsSettings self, SseSerializer serializer);
