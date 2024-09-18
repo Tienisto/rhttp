@@ -4,8 +4,6 @@ include: package:flutter_lints/flutter.yaml
 # https://dart.dev/guides/language/analysis-options
 
 analyzer:
-  errors:
-    deprecated_member_use_from_same_package: ignore
   exclude:
     - 'benchmark/**'
     - 'cargokit/**'

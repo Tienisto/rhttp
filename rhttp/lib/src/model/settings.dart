@@ -63,7 +63,9 @@ class ClientSettings {
     if (timeoutSettings != null) {
       return timeoutSettings;
     }
+    // ignore: deprecated_member_use_from_same_package
     if (timeout != null || connectTimeout != null) {
+      // ignore: deprecated_member_use_from_same_package
       return TimeoutSettings(timeout: timeout, connectTimeout: connectTimeout);
     }
     return null;
@@ -83,8 +85,11 @@ class ClientSettings {
     return ClientSettings(
       baseUrl: identical(baseUrl, _keepBaseUrl) ? this.baseUrl : baseUrl,
       httpVersionPref: httpVersionPref ?? this.httpVersionPref,
+      // ignore: deprecated_member_use_from_same_package
       timeout: identical(timeout, _keepDuration) ? this.timeout : timeout,
+      // ignore: deprecated_member_use_from_same_package
       connectTimeout: identical(connectTimeout, _keepDuration)
+          // ignore: deprecated_member_use_from_same_package
           ? this.connectTimeout
           : connectTimeout,
       timeoutSettings: identical(timeoutSettings, _keepTimeoutSettings)
