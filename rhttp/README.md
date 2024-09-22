@@ -480,7 +480,7 @@ class RefreshTokenInterceptor extends RetryInterceptor {
 }
 ```
 
-Checkout this [example](https://github.com/Tienisto/rhttp/blob/main/example/lib/interceptor_riverpod.dart)
+Checkout this [example](https://github.com/Tienisto/rhttp/blob/main/rhttp/example/lib/interceptor_riverpod.dart)
 to see how access tokens can be refreshed using Riverpod.
 
 ### ➤ HTTP version
