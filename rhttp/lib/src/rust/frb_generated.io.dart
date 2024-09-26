@@ -106,6 +106,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Map<String, String> dco_decode_Map_String_String(dynamic raw);
 
   @protected
+  Map<String, List<String>> dco_decode_Map_String_list_String(dynamic raw);
+
+  @protected
   CancellationToken
       dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
           dynamic raw);
@@ -150,6 +153,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClientSettings dco_decode_box_autoadd_client_settings(dynamic raw);
 
   @protected
+  DnsSettings dco_decode_box_autoadd_dns_settings(dynamic raw);
+
+  @protected
   HttpBody dco_decode_box_autoadd_http_body(dynamic raw);
 
   @protected
@@ -181,6 +187,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ClientSettings dco_decode_client_settings(dynamic raw);
+
+  @protected
+  DnsSettings dco_decode_dns_settings(dynamic raw);
 
   @protected
   HttpBody dco_decode_http_body(dynamic raw);
@@ -216,6 +225,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64 dco_decode_isize(dynamic raw);
 
   @protected
+  List<String> dco_decode_list_String(dynamic raw);
+
+  @protected
   List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw);
 
   @protected
@@ -223,6 +235,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+
+  @protected
+  List<(String, List<String>)> dco_decode_list_record_string_list_string(
+      dynamic raw);
 
   @protected
   List<(String, MultipartItem)> dco_decode_list_record_string_multipart_item(
@@ -263,6 +279,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClientSettings? dco_decode_opt_box_autoadd_client_settings(dynamic raw);
 
   @protected
+  DnsSettings? dco_decode_opt_box_autoadd_dns_settings(dynamic raw);
+
+  @protected
   HttpBody? dco_decode_opt_box_autoadd_http_body(dynamic raw);
 
   @protected
@@ -295,6 +314,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     Dart2RustStreamReceiver
   ) dco_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_sink_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_receiver(
       dynamic raw);
+
+  @protected
+  (String, List<String>) dco_decode_record_string_list_string(dynamic raw);
 
   @protected
   (String, MultipartItem) dco_decode_record_string_multipart_item(dynamic raw);
@@ -383,6 +405,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  Map<String, List<String>> sse_decode_Map_String_list_String(
+      SseDeserializer deserializer);
+
+  @protected
   CancellationToken
       sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
           SseDeserializer deserializer);
@@ -429,6 +455,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  DnsSettings sse_decode_box_autoadd_dns_settings(SseDeserializer deserializer);
+
+  @protected
   HttpBody sse_decode_box_autoadd_http_body(SseDeserializer deserializer);
 
   @protected
@@ -467,6 +496,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClientSettings sse_decode_client_settings(SseDeserializer deserializer);
 
   @protected
+  DnsSettings sse_decode_dns_settings(SseDeserializer deserializer);
+
+  @protected
   HttpBody sse_decode_http_body(SseDeserializer deserializer);
 
   @protected
@@ -500,6 +532,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64 sse_decode_isize(SseDeserializer deserializer);
 
   @protected
+  List<String> sse_decode_list_String(SseDeserializer deserializer);
+
+  @protected
   List<Uint8List> sse_decode_list_list_prim_u_8_strict(
       SseDeserializer deserializer);
 
@@ -508,6 +543,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
+  List<(String, List<String>)> sse_decode_list_record_string_list_string(
+      SseDeserializer deserializer);
 
   @protected
   List<(String, MultipartItem)> sse_decode_list_record_string_multipart_item(
@@ -552,6 +591,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  DnsSettings? sse_decode_opt_box_autoadd_dns_settings(
+      SseDeserializer deserializer);
+
+  @protected
   HttpBody? sse_decode_opt_box_autoadd_http_body(SseDeserializer deserializer);
 
   @protected
@@ -590,6 +633,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     Dart2RustStreamSink,
     Dart2RustStreamReceiver
   ) sse_decode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_sink_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_receiver(
+      SseDeserializer deserializer);
+
+  @protected
+  (String, List<String>) sse_decode_record_string_list_string(
       SseDeserializer deserializer);
 
   @protected
@@ -696,6 +743,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       Map<String, String> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_Map_String_list_String(
+      Map<String, List<String>> self, SseSerializer serializer);
+
+  @protected
   void
       sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
           CancellationToken self, SseSerializer serializer);
@@ -743,6 +794,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       ClientSettings self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_dns_settings(
+      DnsSettings self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_http_body(
       HttpBody self, SseSerializer serializer);
 
@@ -787,6 +842,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       ClientSettings self, SseSerializer serializer);
 
   @protected
+  void sse_encode_dns_settings(DnsSettings self, SseSerializer serializer);
+
+  @protected
   void sse_encode_http_body(HttpBody self, SseSerializer serializer);
 
   @protected
@@ -823,6 +881,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_isize(PlatformInt64 self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_String(List<String> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_list_prim_u_8_strict(
       List<Uint8List> self, SseSerializer serializer);
 
@@ -832,6 +893,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_record_string_list_string(
+      List<(String, List<String>)> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_record_string_multipart_item(
@@ -878,6 +943,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       ClientSettings? self, SseSerializer serializer);
 
   @protected
+  void sse_encode_opt_box_autoadd_dns_settings(
+      DnsSettings? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_opt_box_autoadd_http_body(
       HttpBody? self, SseSerializer serializer);
 
@@ -917,6 +986,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       sse_encode_record_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_sink_auto_owned_rust_opaque_flutter_rust_bridgefor_generated_rust_auto_opaque_inner_dart_2_rust_stream_receiver(
           (Dart2RustStreamSink, Dart2RustStreamReceiver) self,
           SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_string_list_string(
+      (String, List<String>) self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_multipart_item(

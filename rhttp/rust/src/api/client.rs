@@ -1,7 +1,12 @@
 use crate::api::error::RhttpError;
 use crate::api::http::HttpVersionPref;
 use chrono::Duration;
+use reqwest::dns::{Addrs, Name, Resolve, Resolving};
 use reqwest::{tls, Certificate};
+use std::collections::HashMap;
+use std::net::SocketAddr;
+use std::str::FromStr;
+use std::sync::Arc;
 pub use tokio_util::sync::CancellationToken;
 
 pub struct ClientSettings {
@@ -11,6 +16,7 @@ pub struct ClientSettings {
     pub proxy_settings: Option<ProxySettings>,
     pub redirect_settings: Option<RedirectSettings>,
     pub tls_settings: Option<TlsSettings>,
+    pub dns_settings: Option<DnsSettings>,
 }
 
 pub enum ProxySettings {
@@ -38,6 +44,11 @@ pub struct TlsSettings {
     pub max_tls_version: Option<TlsVersion>,
 }
 
+pub struct DnsSettings {
+    pub overrides: HashMap<String, Vec<String>>,
+    pub fallback: Option<String>,
+}
+
 pub struct ClientCertificate {
     pub certificate: Vec<u8>,
     pub private_key: Vec<u8>,
@@ -57,6 +68,7 @@ impl Default for ClientSettings {
             proxy_settings: None,
             redirect_settings: None,
             tls_settings: None,
+            dns_settings: None,
         }
     }
 }
@@ -116,7 +128,9 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
             }
 
             if let Some(keep_alive_timeout) = timeout_settings.keep_alive_timeout {
-                let timeout = keep_alive_timeout.to_std().map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
+                let timeout = keep_alive_timeout
+                    .to_std()
+                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
                 if timeout.as_millis() > 0 {
                     client = client.tcp_keepalive(timeout);
                     client = client.http2_keep_alive_while_idle(true);
@@ -187,6 +201,45 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
             HttpVersionPref::All => client,
         };
 
+        if let Some(dns_settings) = settings.dns_settings {
+            // The port is ignored in DNS resolution.
+            // We need to add it regardless so it can be parsed as a SocketAddr.
+            let dummy_port = "1111";
+
+            if let Some(fallback) = dns_settings.fallback {
+                client = client.dns_resolver(Arc::new(StaticResolver {
+                    address: SocketAddr::from_str(format!("{fallback}:{dummy_port}").as_str())
+                        .map_err(|e| RhttpError::RhttpUnknownError(format!("{e:?}")))?,
+                }));
+            }
+
+            for dns_override in dns_settings.overrides {
+                let (hostname, ip) = dns_override;
+                let hostname = hostname.as_str();
+                let mut error: Option<String> = None;
+                let ip = ip
+                    .into_iter()
+                    .map(|ip| {
+                        SocketAddr::from_str(format!("{ip}:{dummy_port}").as_str()).map_err(|e| {
+                            error = Some(format!(
+                                "Invalid IP address: {}. {}",
+                                ip.to_string(),
+                                e.to_string()
+                            ));
+                            RhttpError::RhttpUnknownError(e.to_string())
+                        })
+                    })
+                    .filter_map(Result::ok)
+                    .collect::<Vec<SocketAddr>>();
+
+                if let Some(error) = error {
+                    return Err(RhttpError::RhttpUnknownError(error));
+                }
+
+                client = client.resolve_to_addrs(hostname, ip.as_slice());
+            }
+        }
+
         client
             .build()
             .map_err(|e| RhttpError::RhttpUnknownError(format!("{e:?}")))?
@@ -198,4 +251,15 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
         throw_on_status_code: settings.throw_on_status_code,
         cancel_token: CancellationToken::new(),
     })
+}
+
+struct StaticResolver {
+    address: SocketAddr,
+}
+
+impl Resolve for StaticResolver {
+    fn resolve(&self, _: Name) -> Resolving {
+        let addrs: Addrs = Box::new(vec![self.address].clone().into_iter());
+        Box::pin(futures_util::future::ready(Ok(addrs)))
+    }
 }

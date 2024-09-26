@@ -1,3 +1,7 @@
+## 0.7.3
+
+- feat: add `dnsSettings` to `ClientSettings` to provide custom DNS servers
+
 ## 0.7.2
 
 - feat: add `keepAliveTimeout`, `keepAlivePing` to new `TimeoutSettings` (@nicobritos)

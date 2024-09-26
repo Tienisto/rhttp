@@ -57,7 +57,8 @@ export 'src/model/settings.dart'
         ProxySettings,
         RedirectSettings,
         TlsSettings,
-        ClientCertificate;
+        ClientCertificate,
+        DnsSettings;
 export 'src/model/response.dart'
     show
         HttpResponse,

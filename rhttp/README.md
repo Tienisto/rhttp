@@ -26,6 +26,8 @@ The APK size will increase by 2 MB on arm64 and 6 MB if compiled for all archite
 - ✅ Interceptors
 - ✅ Retry (optional)
 - ✅ Certificate pinning
+- ✅ Proxy support
+- ✅ Custom DNS resolution
 - ✅ Strong type safety
 - ✅ Optional compatibility layer for the [http](https://pub.dev/packages/http) package
 
@@ -592,8 +594,7 @@ By default, the system proxy is enabled.
 Disable system proxy:
 
 ```dart
-await Rhttp.get(
-  'https://example.com',
+final client = await RhttpClient.create(
   settings: const ClientSettings(
     proxySettings: ProxySettings.noProxy(),
   ),
@@ -609,11 +610,28 @@ Exceeding the maximum number of redirects will throw a `RhttpRedirectException`.
 You can change the maximum number of redirects and whether to follow redirects:
 
 ```dart
-await Rhttp.get(
-  'https://example.com',
+final client = await RhttpClient.create(
   settings: const ClientSettings(
     redirectSettings: RedirectSettings.limited(5), // or RedirectSettings.none()
   ),
+);
+```
+
+### ➤ DNS resolution
+
+By default, the system DNS resolver is used.
+
+You can override the mapping of hostnames to IP addresses:
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    dnsSettings: DnsSettings(
+      overrides: {
+        'example.com': ['127.0.0.1'],
+      },
+    ),
+  )
 );
 ```
 

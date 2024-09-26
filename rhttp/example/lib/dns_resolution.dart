@@ -34,17 +34,13 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   try {
                     final res = await Rhttp.get(
-                      'https://example.com',
+                      'http://example.com:3000',
                       settings: const ClientSettings(
-                        tlsSettings: TlsSettings(
-                          verifyCertificates: false,
-                          trustedRootCertificates: [
-                            '''
------BEGIN CERTIFICATE-----
-replace with your certificate
------END CERTIFICATE-----
-''',
-                          ],
+                        dnsSettings: DnsSettings(
+                          overrides: {
+                            'example.com': ['127.0.0.1'],
+                          },
+                          fallback: '127.0.0.1'
                         ),
                       ),
                     );

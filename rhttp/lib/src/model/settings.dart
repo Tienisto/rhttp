@@ -12,6 +12,7 @@ const _keepDuration = Duration(microseconds: -9999);
 const _keepProxySettings = ProxySettings.noProxy();
 const _keepRedirectSettings = RedirectSettings.limited(-9999);
 const _keepTlsSettings = TlsSettings();
+const _keepDnsSettings = DnsSettings();
 const _keepTimeoutSettings = TimeoutSettings();
 
 class ClientSettings {
@@ -47,6 +48,9 @@ class ClientSettings {
   /// TLS settings.
   final TlsSettings? tlsSettings;
 
+  /// DNS settings and resolver overrides.
+  final DnsSettings? dnsSettings;
+
   const ClientSettings({
     this.baseUrl,
     this.httpVersionPref = HttpVersionPref.all,
@@ -57,6 +61,7 @@ class ClientSettings {
     this.proxySettings,
     this.redirectSettings,
     this.tlsSettings,
+    this.dnsSettings,
   });
 
   TimeoutSettings? get _timeoutSettings {
@@ -81,6 +86,7 @@ class ClientSettings {
     ProxySettings? proxySettings = _keepProxySettings,
     RedirectSettings? redirectSettings = _keepRedirectSettings,
     TlsSettings? tlsSettings = _keepTlsSettings,
+    DnsSettings? dnsSettings = _keepDnsSettings,
   }) {
     return ClientSettings(
       baseUrl: identical(baseUrl, _keepBaseUrl) ? this.baseUrl : baseUrl,
@@ -105,6 +111,9 @@ class ClientSettings {
       tlsSettings: identical(tlsSettings, _keepTlsSettings)
           ? this.tlsSettings
           : tlsSettings,
+      dnsSettings: identical(dnsSettings, _keepDnsSettings)
+          ? this.dnsSettings
+          : dnsSettings,
     );
   }
 }
@@ -194,6 +203,7 @@ class ClientCertificate {
   });
 }
 
+/// General timeout settings for the client.
 class TimeoutSettings {
   /// The timeout for the request including time to establish a connection.
   final Duration? timeout;
@@ -217,6 +227,22 @@ class TimeoutSettings {
   });
 }
 
+/// DNS settings and resolver overrides.
+class DnsSettings {
+  /// Overrides the DNS resolver for specific hosts.
+  /// The key is the host and the value is a list of IP addresses.
+  final Map<String, List<String>> overrides;
+
+  /// If set, the client will use this IP address for
+  /// all requests that don't match any override.
+  final String? fallback;
+
+  const DnsSettings({
+    this.overrides = const {},
+    this.fallback,
+  });
+}
+
 @internal
 extension ClientSettingsExt on ClientSettings {
   rust_client.ClientSettings toRustType() {
@@ -227,6 +253,7 @@ extension ClientSettingsExt on ClientSettings {
       proxySettings: proxySettings?._toRustType(),
       redirectSettings: redirectSettings?._toRustType(),
       tlsSettings: tlsSettings?._toRustType(),
+      dnsSettings: dnsSettings?._toRustType(),
     );
   }
 }
@@ -292,6 +319,15 @@ extension on ClientCertificate {
     return rust_client.ClientCertificate(
       certificate: Uint8List.fromList(certificate.codeUnits),
       privateKey: Uint8List.fromList(privateKey.codeUnits),
+    );
+  }
+}
+
+extension on DnsSettings {
+  rust_client.DnsSettings _toRustType() {
+    return rust_client.DnsSettings(
+      overrides: overrides,
+      fallback: fallback,
     );
   }
 }

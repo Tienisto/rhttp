@@ -688,6 +688,14 @@ impl SseDecode for std::collections::HashMap<String, String> {
     }
 }
 
+impl SseDecode for std::collections::HashMap<String, Vec<String>> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <Vec<(String, Vec<String>)>>::sse_decode(deserializer);
+        return inner.into_iter().collect();
+    }
+}
+
 impl SseDecode
     for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CancellationToken>>
 {
@@ -778,6 +786,8 @@ impl SseDecode for crate::api::client::ClientSettings {
             <Option<crate::api::client::RedirectSettings>>::sse_decode(deserializer);
         let mut var_tlsSettings =
             <Option<crate::api::client::TlsSettings>>::sse_decode(deserializer);
+        let mut var_dnsSettings =
+            <Option<crate::api::client::DnsSettings>>::sse_decode(deserializer);
         return crate::api::client::ClientSettings {
             http_version_pref: var_httpVersionPref,
             timeout_settings: var_timeoutSettings,
@@ -785,6 +795,20 @@ impl SseDecode for crate::api::client::ClientSettings {
             proxy_settings: var_proxySettings,
             redirect_settings: var_redirectSettings,
             tls_settings: var_tlsSettings,
+            dns_settings: var_dnsSettings,
+        };
+    }
+}
+
+impl SseDecode for crate::api::client::DnsSettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_overrides =
+            <std::collections::HashMap<String, Vec<String>>>::sse_decode(deserializer);
+        let mut var_fallback = <Option<String>>::sse_decode(deserializer);
+        return crate::api::client::DnsSettings {
+            overrides: var_overrides,
+            fallback: var_fallback,
         };
     }
 }
@@ -964,6 +988,18 @@ impl SseDecode for isize {
     }
 }
 
+impl SseDecode for Vec<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<String>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<Vec<u8>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -983,6 +1019,18 @@ impl SseDecode for Vec<u8> {
         let mut ans_ = vec![];
         for idx_ in 0..len_ {
             ans_.push(<u8>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<(String, Vec<String>)> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<(String, Vec<String>)>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -1131,6 +1179,17 @@ impl SseDecode for Option<crate::api::client::ClientSettings> {
     }
 }
 
+impl SseDecode for Option<crate::api::client::DnsSettings> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::client::DnsSettings>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<crate::api::http::HttpBody> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1241,6 +1300,15 @@ impl SseDecode for (Dart2RustStreamSink, Dart2RustStreamReceiver) {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_field0 = <Dart2RustStreamSink>::sse_decode(deserializer);
         let mut var_field1 = <Dart2RustStreamReceiver>::sse_decode(deserializer);
+        return (var_field0, var_field1);
+    }
+}
+
+impl SseDecode for (String, Vec<String>) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_field0 = <String>::sse_decode(deserializer);
+        let mut var_field1 = <Vec<String>>::sse_decode(deserializer);
         return (var_field0, var_field1);
     }
 }
@@ -1559,6 +1627,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::client::ClientSettings {
             self.proxy_settings.into_into_dart().into_dart(),
             self.redirect_settings.into_into_dart().into_dart(),
             self.tls_settings.into_into_dart().into_dart(),
+            self.dns_settings.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -1571,6 +1640,27 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::client::ClientSettings>
     for crate::api::client::ClientSettings
 {
     fn into_into_dart(self) -> crate::api::client::ClientSettings {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::client::DnsSettings {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.overrides.into_into_dart().into_dart(),
+            self.fallback.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::client::DnsSettings
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::client::DnsSettings>
+    for crate::api::client::DnsSettings
+{
+    fn into_into_dart(self) -> crate::api::client::DnsSettings {
         self
     }
 }
@@ -2063,6 +2153,13 @@ impl SseEncode for std::collections::HashMap<String, String> {
     }
 }
 
+impl SseEncode for std::collections::HashMap<String, Vec<String>> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<(String, Vec<String>)>>::sse_encode(self.into_iter().collect(), serializer);
+    }
+}
+
 impl SseEncode
     for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CancellationToken>>
 {
@@ -2153,6 +2250,15 @@ impl SseEncode for crate::api::client::ClientSettings {
             serializer,
         );
         <Option<crate::api::client::TlsSettings>>::sse_encode(self.tls_settings, serializer);
+        <Option<crate::api::client::DnsSettings>>::sse_encode(self.dns_settings, serializer);
+    }
+}
+
+impl SseEncode for crate::api::client::DnsSettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <std::collections::HashMap<String, Vec<String>>>::sse_encode(self.overrides, serializer);
+        <Option<String>>::sse_encode(self.fallback, serializer);
     }
 }
 
@@ -2339,6 +2445,16 @@ impl SseEncode for isize {
     }
 }
 
+impl SseEncode for Vec<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <String>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<Vec<u8>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2355,6 +2471,16 @@ impl SseEncode for Vec<u8> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <u8>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<(String, Vec<String>)> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <(String, Vec<String>)>::sse_encode(item, serializer);
         }
     }
 }
@@ -2478,6 +2604,16 @@ impl SseEncode for Option<crate::api::client::ClientSettings> {
     }
 }
 
+impl SseEncode for Option<crate::api::client::DnsSettings> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::client::DnsSettings>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<crate::api::http::HttpBody> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2578,6 +2714,14 @@ impl SseEncode for (Dart2RustStreamSink, Dart2RustStreamReceiver) {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Dart2RustStreamSink>::sse_encode(self.0, serializer);
         <Dart2RustStreamReceiver>::sse_encode(self.1, serializer);
+    }
+}
+
+impl SseEncode for (String, Vec<String>) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.0, serializer);
+        <Vec<String>>::sse_encode(self.1, serializer);
     }
 }
 

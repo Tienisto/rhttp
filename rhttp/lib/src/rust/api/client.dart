@@ -10,7 +10,8 @@ import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'client.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `create_client`, `new_default`, `new`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`
+// These types are ignored because they are not used by any `pub` functions: `StaticResolver`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `resolve`
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>>
 abstract class RequestClient implements RustOpaqueInterface {}
@@ -43,6 +44,7 @@ class ClientSettings {
   final ProxySettings? proxySettings;
   final RedirectSettings? redirectSettings;
   final TlsSettings? tlsSettings;
+  final DnsSettings? dnsSettings;
 
   const ClientSettings({
     required this.httpVersionPref,
@@ -51,6 +53,7 @@ class ClientSettings {
     this.proxySettings,
     this.redirectSettings,
     this.tlsSettings,
+    this.dnsSettings,
   });
 
   static Future<ClientSettings> default_() =>
@@ -63,7 +66,8 @@ class ClientSettings {
       throwOnStatusCode.hashCode ^
       proxySettings.hashCode ^
       redirectSettings.hashCode ^
-      tlsSettings.hashCode;
+      tlsSettings.hashCode ^
+      dnsSettings.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -75,7 +79,29 @@ class ClientSettings {
           throwOnStatusCode == other.throwOnStatusCode &&
           proxySettings == other.proxySettings &&
           redirectSettings == other.redirectSettings &&
-          tlsSettings == other.tlsSettings;
+          tlsSettings == other.tlsSettings &&
+          dnsSettings == other.dnsSettings;
+}
+
+class DnsSettings {
+  final Map<String, List<String>> overrides;
+  final String? fallback;
+
+  const DnsSettings({
+    required this.overrides,
+    this.fallback,
+  });
+
+  @override
+  int get hashCode => overrides.hashCode ^ fallback.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DnsSettings &&
+          runtimeType == other.runtimeType &&
+          overrides == other.overrides &&
+          fallback == other.fallback;
 }
 
 enum ProxySettings {
