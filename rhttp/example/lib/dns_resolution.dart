@@ -18,6 +18,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   HttpTextResponse? response;
+  int counter = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +34,19 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 onPressed: () async {
                   try {
+                    counter++;
                     final res = await Rhttp.get(
-                      'http://example.com:3000',
-                      settings: const ClientSettings(
-                        dnsSettings: DnsSettings(
-                          overrides: {
-                            'example.com': ['127.0.0.1'],
-                          },
-                          fallback: '127.0.0.1'
+                      'http://example.com',
+                      settings: ClientSettings(
+                        dnsSettings: DnsSettings.dynamic(
+                          resolver: (String host) async {
+                            print('Resolving "$host"');
+                            if (counter % 2 == 0) {
+                              return ['127.0.0.1'];
+                            } else {
+                              return ['93.184.215.14'];
+                            }
+                          }
                         ),
                       ),
                     );

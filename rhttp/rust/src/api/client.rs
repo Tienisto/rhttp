@@ -1,6 +1,7 @@
 use crate::api::error::RhttpError;
 use crate::api::http::HttpVersionPref;
 use chrono::Duration;
+use flutter_rust_bridge::{frb, DartFnFuture};
 use reqwest::dns::{Addrs, Name, Resolve, Resolving};
 use reqwest::{tls, Certificate};
 use std::collections::HashMap;
@@ -8,6 +9,10 @@ use std::net::SocketAddr;
 use std::str::FromStr;
 use std::sync::Arc;
 pub use tokio_util::sync::CancellationToken;
+
+// The port is ignored in DNS resolution.
+// We need to add it regardless so it can be parsed as a SocketAddr.
+const DUMMY_PORT: &'static str = "1111";
 
 pub struct ClientSettings {
     pub http_version_pref: HttpVersionPref,
@@ -44,9 +49,19 @@ pub struct TlsSettings {
     pub max_tls_version: Option<TlsVersion>,
 }
 
-pub struct DnsSettings {
+pub enum DnsSettings {
+    StaticDns(StaticDnsSettings),
+    DynamicDns(DynamicDnsSettings),
+}
+
+pub struct StaticDnsSettings {
     pub overrides: HashMap<String, Vec<String>>,
     pub fallback: Option<String>,
+}
+
+pub struct DynamicDnsSettings {
+    /// A function that takes a hostname and returns a future that resolves to an IP address.
+    resolver: Arc<dyn Fn(String) -> DartFnFuture<Vec<String>> + 'static + Send + Sync>,
 }
 
 pub struct ClientCertificate {
@@ -202,41 +217,49 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
         };
 
         if let Some(dns_settings) = settings.dns_settings {
-            // The port is ignored in DNS resolution.
-            // We need to add it regardless so it can be parsed as a SocketAddr.
-            let dummy_port = "1111";
+            match dns_settings {
+                DnsSettings::StaticDns(settings) => {
+                    if let Some(fallback) = settings.fallback {
+                        client = client.dns_resolver(Arc::new(StaticResolver {
+                            address: SocketAddr::from_str(
+                                format!("{fallback}:{DUMMY_PORT}").as_str(),
+                            )
+                            .map_err(|e| RhttpError::RhttpUnknownError(format!("{e:?}")))?,
+                        }));
+                    }
 
-            if let Some(fallback) = dns_settings.fallback {
-                client = client.dns_resolver(Arc::new(StaticResolver {
-                    address: SocketAddr::from_str(format!("{fallback}:{dummy_port}").as_str())
-                        .map_err(|e| RhttpError::RhttpUnknownError(format!("{e:?}")))?,
-                }));
-            }
+                    for dns_override in settings.overrides {
+                        let (hostname, ip) = dns_override;
+                        let hostname = hostname.as_str();
+                        let mut error: Option<String> = None;
+                        let ip =
+                            ip.into_iter()
+                                .map(|ip| {
+                                    SocketAddr::from_str(format!("{ip}:{DUMMY_PORT}").as_str())
+                                        .map_err(|e| {
+                                            error = Some(format!(
+                                                "Invalid IP address: {}. {}",
+                                                ip.to_string(),
+                                                e.to_string()
+                                            ));
+                                            RhttpError::RhttpUnknownError(e.to_string())
+                                        })
+                                })
+                                .filter_map(Result::ok)
+                                .collect::<Vec<SocketAddr>>();
 
-            for dns_override in dns_settings.overrides {
-                let (hostname, ip) = dns_override;
-                let hostname = hostname.as_str();
-                let mut error: Option<String> = None;
-                let ip = ip
-                    .into_iter()
-                    .map(|ip| {
-                        SocketAddr::from_str(format!("{ip}:{dummy_port}").as_str()).map_err(|e| {
-                            error = Some(format!(
-                                "Invalid IP address: {}. {}",
-                                ip.to_string(),
-                                e.to_string()
-                            ));
-                            RhttpError::RhttpUnknownError(e.to_string())
-                        })
-                    })
-                    .filter_map(Result::ok)
-                    .collect::<Vec<SocketAddr>>();
+                        if let Some(error) = error {
+                            return Err(RhttpError::RhttpUnknownError(error));
+                        }
 
-                if let Some(error) = error {
-                    return Err(RhttpError::RhttpUnknownError(error));
+                        client = client.resolve_to_addrs(hostname, ip.as_slice());
+                    }
                 }
-
-                client = client.resolve_to_addrs(hostname, ip.as_slice());
+                DnsSettings::DynamicDns(settings) => {
+                    client = client.dns_resolver(Arc::new(DynamicResolver {
+                        resolver: settings.resolver,
+                    }));
+                }
             }
         }
 
@@ -262,4 +285,44 @@ impl Resolve for StaticResolver {
         let addrs: Addrs = Box::new(vec![self.address].clone().into_iter());
         Box::pin(futures_util::future::ready(Ok(addrs)))
     }
+}
+
+struct DynamicResolver {
+    resolver: Arc<dyn Fn(String) -> DartFnFuture<Vec<String>> + 'static + Send + Sync>,
+}
+
+impl Resolve for DynamicResolver {
+    fn resolve(&self, name: Name) -> Resolving {
+        let resolver = self.resolver.clone();
+        Box::pin(async move {
+            let ip = resolver(name.as_str().to_owned()).await;
+            let ip = ip
+                .into_iter()
+                .map(|ip| {
+                    SocketAddr::from_str(format!("{ip}:{DUMMY_PORT}").as_str()).map_err(|e| {
+                        RhttpError::RhttpUnknownError(format!("Invalid IP address: {ip}. {e:?}"))
+                    })
+                })
+                .filter_map(Result::ok)
+                .collect::<Vec<SocketAddr>>();
+
+            let addrs: Addrs = Box::new(ip.into_iter());
+
+            Ok(addrs)
+        })
+    }
+}
+
+#[frb(sync)]
+pub fn create_static_resolver_sync(settings: StaticDnsSettings) -> DnsSettings {
+    DnsSettings::StaticDns(settings)
+}
+
+#[frb(sync)]
+pub fn create_dynamic_resolver_sync(
+    resolver: impl Fn(String) -> DartFnFuture<Vec<String>> + 'static + Send + Sync,
+) -> DnsSettings {
+    DnsSettings::DynamicDns(DynamicDnsSettings {
+        resolver: Arc::new(resolver),
+    })
 }

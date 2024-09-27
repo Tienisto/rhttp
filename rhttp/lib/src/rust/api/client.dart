@@ -10,8 +10,20 @@ import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'client.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `create_client`, `new_default`, `new`
-// These types are ignored because they are not used by any `pub` functions: `StaticResolver`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `resolve`
+// These types are ignored because they are not used by any `pub` functions: `DynamicDnsSettings`, `DynamicResolver`, `StaticResolver`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `resolve`, `resolve`
+
+DnsSettings createStaticResolverSync({required StaticDnsSettings settings}) =>
+    RustLib.instance.api
+        .crateApiClientCreateStaticResolverSync(settings: settings);
+
+DnsSettings createDynamicResolverSync(
+        {required FutureOr<List<String>> Function(String) resolver}) =>
+    RustLib.instance.api
+        .crateApiClientCreateDynamicResolverSync(resolver: resolver);
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DnsSettings>>
+abstract class DnsSettings implements RustOpaqueInterface {}
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>>
 abstract class RequestClient implements RustOpaqueInterface {}
@@ -83,27 +95,6 @@ class ClientSettings {
           dnsSettings == other.dnsSettings;
 }
 
-class DnsSettings {
-  final Map<String, List<String>> overrides;
-  final String? fallback;
-
-  const DnsSettings({
-    required this.overrides,
-    this.fallback,
-  });
-
-  @override
-  int get hashCode => overrides.hashCode ^ fallback.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DnsSettings &&
-          runtimeType == other.runtimeType &&
-          overrides == other.overrides &&
-          fallback == other.fallback;
-}
-
 enum ProxySettings {
   noProxy,
   ;
@@ -117,6 +108,27 @@ sealed class RedirectSettings with _$RedirectSettings {
   const factory RedirectSettings.limitedRedirects(
     int field0,
   ) = RedirectSettings_LimitedRedirects;
+}
+
+class StaticDnsSettings {
+  final Map<String, List<String>> overrides;
+  final String? fallback;
+
+  const StaticDnsSettings({
+    required this.overrides,
+    this.fallback,
+  });
+
+  @override
+  int get hashCode => overrides.hashCode ^ fallback.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StaticDnsSettings &&
+          runtimeType == other.runtimeType &&
+          overrides == other.overrides &&
+          fallback == other.fallback;
 }
 
 class TimeoutSettings {

@@ -11,7 +11,7 @@ const _keepBaseUrl = '__rhttp_keep__';
 const _keepProxySettings = ProxySettings.noProxy();
 const _keepRedirectSettings = RedirectSettings.limited(-9999);
 const _keepTlsSettings = TlsSettings();
-const _keepDnsSettings = DnsSettings();
+const _keepDnsSettings = DnsSettings.static();
 const _keepTimeoutSettings = TimeoutSettings();
 
 class ClientSettings {
@@ -194,8 +194,24 @@ class TimeoutSettings {
   });
 }
 
-/// DNS settings and resolver overrides.
-class DnsSettings {
+sealed class DnsSettings {
+  const DnsSettings();
+
+  /// Static DNS settings and resolver overrides
+  /// for simple use cases.
+  const factory DnsSettings.static({
+    Map<String, List<String>> overrides,
+    String? fallback,
+  }) = StaticDnsSettings._;
+
+  /// Dynamic DNS settings and resolver for more complex use cases.
+  const factory DnsSettings.dynamic({
+    required Future<List<String>> Function(String host) resolver,
+  }) = DynamicDnsSettings._;
+}
+
+/// Static DNS settings and resolver overrides.
+class StaticDnsSettings extends DnsSettings {
   /// Overrides the DNS resolver for specific hosts.
   /// The key is the host and the value is a list of IP addresses.
   final Map<String, List<String>> overrides;
@@ -204,9 +220,19 @@ class DnsSettings {
   /// all requests that don't match any override.
   final String? fallback;
 
-  const DnsSettings({
+  const StaticDnsSettings._({
     this.overrides = const {},
     this.fallback,
+  });
+}
+
+/// Dynamic DNS settings and resolver.
+class DynamicDnsSettings extends DnsSettings {
+  /// The function to resolve the IP address for a host.
+  final Future<List<String>> Function(String host) resolver;
+
+  const DynamicDnsSettings._({
+    required this.resolver,
   });
 }
 
@@ -292,9 +318,16 @@ extension on ClientCertificate {
 
 extension on DnsSettings {
   rust_client.DnsSettings _toRustType() {
-    return rust_client.DnsSettings(
-      overrides: overrides,
-      fallback: fallback,
-    );
+    return switch (this) {
+      StaticDnsSettings s => rust_client.createStaticResolverSync(
+          settings: rust_client.StaticDnsSettings(
+            overrides: s.overrides,
+            fallback: s.fallback,
+          ),
+        ),
+      DynamicDnsSettings d => rust_client.createDynamicResolverSync(
+          resolver: d.resolver,
+        ),
+    };
   }
 }

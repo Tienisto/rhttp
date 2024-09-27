@@ -626,10 +626,28 @@ You can override the mapping of hostnames to IP addresses:
 ```dart
 final client = await RhttpClient.create(
   settings: const ClientSettings(
-    dnsSettings: DnsSettings(
+    dnsSettings: DnsSettings.static(
       overrides: {
         'example.com': ['127.0.0.1'],
       },
+    ),
+  )
+);
+```
+
+For a more complex DNS resolution, you can construct a `DnsSettings.dynamic` object:
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    dnsSettings: DnsSettings.dynamic(
+      resolver: (String host) async {
+        if (counter % 2 == 0) {
+          return ['127.0.0.1'];
+        } else {
+          return ['1.2.3.4'];
+        }
+      }
     ),
   )
 );
