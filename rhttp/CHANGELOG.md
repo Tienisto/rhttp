@@ -1,7 +1,7 @@
 ## 0.8.0
 
 - feat: add `IoCompatibleClient`, a compatibility layer for dart:io's `HttpClient`
-- feat: add `dnsSettings` to `ClientSettings` to provide custom DNS servers
+- feat: add `dnsSettings` to `ClientSettings` to provide custom DNS resolution
 - **BREAKING**: `timeout` and `connectTimeout` moved to `TimeoutSettings` (deprecated in 0.7.2)
 
 ## 0.7.2

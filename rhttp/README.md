@@ -639,7 +639,7 @@ For a more complex DNS resolution, you can construct a `DnsSettings.dynamic` obj
 
 ```dart
 final client = await RhttpClient.create(
-  settings: const ClientSettings(
+  settings: ClientSettings(
     dnsSettings: DnsSettings.dynamic(
       resolver: (String host) async {
         if (counter % 2 == 0) {
