@@ -40,10 +40,11 @@ class _MyAppState extends State<MyApp> {
                       settings: ClientSettings(
                         dnsSettings: DnsSettings.dynamic(
                           resolver: (String host) async {
-                            print('Resolving "$host"');
                             if (counter % 2 == 0) {
+                              print('Resolving "$host" as localhost');
                               return ['127.0.0.1'];
                             } else {
+                              print('Resolving "$host" as example.com');
                               return ['93.184.215.14'];
                             }
                           }

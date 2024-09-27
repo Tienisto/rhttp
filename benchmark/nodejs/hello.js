@@ -18,7 +18,7 @@ const requestHandler = async (request, response) => {
 const server = http.createServer(requestHandler);
 
 server.listen(PORT, HOST, () => {
-    console.log(`Server listening on https://${HOST}:${PORT}`);
+    console.log(`Server listening on http://${HOST}:${PORT}`);
 });
 
 function getBody(request) {
