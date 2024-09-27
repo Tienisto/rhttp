@@ -3,13 +3,13 @@ const _bufferSize = 1024; // 1 KB
 /// Listens to a stream while handling backpressure.
 /// It should not read the stream faster than it can process the data.
 Future<void> listenToStreamWithBackpressure({
-  required Stream<int> stream,
+  required Stream<List<int>> stream,
   required Future<void> Function(List<int>) onData,
   required Future<void> Function() onDone,
 }) async {
   List<int> buffer = [];
   await for (var data in stream) {
-    buffer.add(data);
+    buffer.addAll(data);
 
     while (buffer.length > _bufferSize) {
       final complete = buffer.sublist(0, _bufferSize);

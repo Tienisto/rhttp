@@ -22,6 +22,8 @@ class RhttpCompatibleClient with BaseClient {
 
   RhttpCompatibleClient._(this.client);
 
+  /// Creates a new HTTP client asynchronously.
+  /// Use this method if your app is already running to avoid blocking the UI.
   static Future<RhttpCompatibleClient> create({
     ClientSettings? settings,
     List<Interceptor>? interceptors,
@@ -33,6 +35,7 @@ class RhttpCompatibleClient with BaseClient {
     return RhttpCompatibleClient._(client);
   }
 
+  /// Creates a new HTTP client synchronously.
   /// Use this method if your app is starting up to simplify the code
   /// that might arise by using async/await.
   ///

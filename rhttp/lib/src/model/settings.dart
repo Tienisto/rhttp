@@ -8,7 +8,6 @@ import 'package:rhttp/src/rust/api/http.dart' as rust;
 export 'package:rhttp/src/rust/api/client.dart' show TlsVersion;
 
 const _keepBaseUrl = '__rhttp_keep__';
-const _keepDuration = Duration(microseconds: -9999);
 const _keepProxySettings = ProxySettings.noProxy();
 const _keepRedirectSettings = RedirectSettings.limited(-9999);
 const _keepTlsSettings = TlsSettings();
@@ -21,15 +20,6 @@ class ClientSettings {
 
   /// The preferred HTTP version to use.
   final HttpVersionPref httpVersionPref;
-
-  /// The timeout for the request including time to establish a connection.
-  @Deprecated('Use timeoutSettings')
-  final Duration? timeout;
-
-  /// The timeout for establishing a connection.
-  /// See [timeout] for the total timeout.
-  @Deprecated('Use timeoutSettings')
-  final Duration? connectTimeout;
 
   /// Timeout and keep alive settings.
   final TimeoutSettings? timeoutSettings;
@@ -54,8 +44,6 @@ class ClientSettings {
   const ClientSettings({
     this.baseUrl,
     this.httpVersionPref = HttpVersionPref.all,
-    @Deprecated('Use timeoutSettings') this.timeout,
-    @Deprecated('Use timeoutSettings') this.connectTimeout,
     this.timeoutSettings,
     this.throwOnStatusCode = true,
     this.proxySettings,
@@ -64,23 +52,9 @@ class ClientSettings {
     this.dnsSettings,
   });
 
-  TimeoutSettings? get _timeoutSettings {
-    if (timeoutSettings != null) {
-      return timeoutSettings;
-    }
-    // ignore: deprecated_member_use_from_same_package
-    if (timeout != null || connectTimeout != null) {
-      // ignore: deprecated_member_use_from_same_package
-      return TimeoutSettings(timeout: timeout, connectTimeout: connectTimeout);
-    }
-    return null;
-  }
-
   ClientSettings copyWith({
     String? baseUrl = _keepBaseUrl,
     HttpVersionPref? httpVersionPref,
-    @Deprecated('Use timeoutSettings') Duration? timeout = _keepDuration,
-    @Deprecated('Use timeoutSettings') Duration? connectTimeout = _keepDuration,
     TimeoutSettings? timeoutSettings = _keepTimeoutSettings,
     bool? throwOnStatusCode,
     ProxySettings? proxySettings = _keepProxySettings,
@@ -91,13 +65,6 @@ class ClientSettings {
     return ClientSettings(
       baseUrl: identical(baseUrl, _keepBaseUrl) ? this.baseUrl : baseUrl,
       httpVersionPref: httpVersionPref ?? this.httpVersionPref,
-      // ignore: deprecated_member_use_from_same_package
-      timeout: identical(timeout, _keepDuration) ? this.timeout : timeout,
-      // ignore: deprecated_member_use_from_same_package
-      connectTimeout: identical(connectTimeout, _keepDuration)
-          // ignore: deprecated_member_use_from_same_package
-          ? this.connectTimeout
-          : connectTimeout,
       timeoutSettings: identical(timeoutSettings, _keepTimeoutSettings)
           ? this.timeoutSettings
           : timeoutSettings,
@@ -248,7 +215,7 @@ extension ClientSettingsExt on ClientSettings {
   rust_client.ClientSettings toRustType() {
     return rust_client.ClientSettings(
       httpVersionPref: httpVersionPref._toRustType(),
-      timeoutSettings: _timeoutSettings?._toRustType(),
+      timeoutSettings: timeoutSettings?._toRustType(),
       throwOnStatusCode: throwOnStatusCode,
       proxySettings: proxySettings?._toRustType(),
       redirectSettings: redirectSettings?._toRustType(),

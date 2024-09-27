@@ -54,7 +54,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         // transform to Stream
         request = request.copyWith(
           body: HttpBody.stream(
-            Stream.fromIterable(body.bytes),
+            Stream.fromIterable(body.bytes.toList().map((e) => [e])),
             length: body.bytes.length,
           ),
         );

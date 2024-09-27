@@ -382,7 +382,7 @@ sealed class HttpBody {
   /// A body of a raw bytes stream.
   /// This is useful to avoid loading the entire body into memory.
   /// The Content-Length header will be set if [length] is provided.
-  const factory HttpBody.stream(Stream<int> stream, {int? length}) =
+  const factory HttpBody.stream(Stream<List<int>> stream, {int? length}) =
       HttpBodyBytesStream._;
 
   /// A www-form-urlencoded body.
@@ -424,7 +424,7 @@ class HttpBodyBytes extends HttpBody {
 /// The Content-Length header will be set if [length] is provided.
 class HttpBodyBytesStream extends HttpBody {
   final int? length;
-  final Stream<int> stream;
+  final Stream<List<int>> stream;
 
   const HttpBodyBytesStream._(this.stream, {this.length});
 }

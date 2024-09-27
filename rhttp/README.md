@@ -29,7 +29,7 @@ The APK size will increase by 2 MB on arm64 and 6 MB if compiled for all archite
 - ✅ Proxy support
 - ✅ Custom DNS resolution
 - ✅ Strong type safety
-- ✅ Optional compatibility layer for the [http](https://pub.dev/packages/http) package
+- ✅ Compatible with [dart:io](https://api.dart.dev/stable/dart-io/HttpClient-class.html), [http](https://pub.dev/packages/http), and [dio](https://pub.dev/packages/dio)
 
 ## Benchmark
 
@@ -671,6 +671,24 @@ Future<Dio> createDioClient() async {
   final compatibleClient = await RhttpCompatibleClient.create(); // or createSync()
   dio.httpClientAdapter = ConversionLayerAdapter(compatibleClient);
   return dio;
+}
+```
+
+If you are looking for a replacement for `HttpClient` of `dart:io`, you can use the `IoCompatibleClient`:
+
+```dart
+import 'dart:io';
+import 'package:rhttp/rhttp.dart';
+
+void main() async {
+  await Rhttp.init();
+  
+  final client = await IoCompatibleClient.create();
+  final request = await client.getUrl(Uri.parse('https://example.com'));
+  final response = await request.close();
+
+  print(response.statusCode);
+  print(await response.transform(utf8.decoder).join());
 }
 ```
 

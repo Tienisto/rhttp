@@ -1,10 +1,10 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:rhttp/rhttp.dart';
-import 'package:rhttp_example/widgets/response_card.dart';
 
 Future<void> main() async {
   await Rhttp.init();
@@ -19,7 +19,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  HttpTextResponse? response;
+  HttpClient? client;
+  String? response;
 
   @override
   Widget build(BuildContext context) {
@@ -41,25 +42,28 @@ class _MyAppState extends State<MyApp> {
                     'job': 'leader',
                   };
 
-                  final bytes = utf8.encode(jsonEncode(payload));
+                  client ??= await IoCompatibleClient.create();
 
-                  final res = await Rhttp.post(
-                    'https://reqres.in/api/users',
-                    headers: const HttpHeaders.map({
-                      HttpHeaderName.contentType: 'application/json',
-                    }),
-                    body: HttpBody.stream(Stream.fromIterable([bytes]), length: bytes.length),
+                  final req = await client!.postUrl(
+                    Uri.parse('https://reqres.in/api/users'),
                   );
+                  req.headers.add('content-type', 'application/json');
 
-                  print('Got response: $res');
+                  final bytes = utf8.encode(jsonEncode(payload));
+                  req.add(bytes);
+
+                  final res = await req.close();
+                  final resText = await res.transform(utf8.decoder).toList();
+
+                  print('Response: ${resText.join()}');
 
                   setState(() {
-                    response = res;
+                    response = resText.join();
                   });
                 },
                 child: const Text('Test'),
               ),
-              if (response != null) ResponseCard(response: response!),
+              if (response != null) Text(response!),
             ],
           ),
         ),
