@@ -118,7 +118,7 @@ class IoCompatibleClient implements HttpClient {
 
   @override
   set idleTimeout(Duration _) =>
-      throw UnsupportedError('Setting idleTimeout is not supported');
+      client.settings.timeoutSettings?.copyWith(connectTimeout: _);
 
   @override
   int? maxConnectionsPerHost;
@@ -129,30 +129,30 @@ class IoCompatibleClient implements HttpClient {
   @override
   void addCredentials(
           Uri url, String realm, HttpClientCredentials credentials) =>
-      throw UnimplementedError();
+      throw UnimplementedError("addCredentials is not supported");
 
   @override
   void addProxyCredentials(String host, int port, String realm,
           HttpClientCredentials credentials) =>
-      throw UnimplementedError();
+      throw UnimplementedError("addProxyCredentials is not supported");
 
   @override
   set authenticate(
           Future<bool> Function(Uri url, String scheme, String? realm)? f) =>
-      throw UnimplementedError();
+      throw UnimplementedError("authenticate is not supported");
 
   @override
   set authenticateProxy(
           Future<bool> Function(
                   String host, int port, String scheme, String? realm)?
               f) =>
-      throw UnimplementedError();
+      throw UnimplementedError("authenticateProxy is not supported");
 
   @override
   set badCertificateCallback(
           bool Function(X509Certificate cert, String host, int port)?
               callback) =>
-      UnimplementedError();
+      UnimplementedError("badCertificateCallback is not supported");
 
   @override
   void close({bool force = false}) {
@@ -166,12 +166,14 @@ class IoCompatibleClient implements HttpClient {
         String? proxyHost,
         int? proxyPort,
       )? f) {
-    UnimplementedError();
+    UnimplementedError("connectionFactory is not supported");
   }
 
   @override
-  set findProxy(String Function(Uri url)? f) => UnimplementedError();
+  set findProxy(String Function(Uri url)? f) =>
+      UnimplementedError("findProxy is not supported");
 
   @override
-  set keyLog(Function(String line)? callback) => throw UnimplementedError();
+  set keyLog(Function(String line)? callback) =>
+      throw UnimplementedError("keyLog is not supported");
 }

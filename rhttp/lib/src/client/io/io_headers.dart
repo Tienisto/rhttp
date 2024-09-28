@@ -56,7 +56,8 @@ class RhttpIoHeaders implements HttpHeaders {
   }
 
   @override
-  void noFolding(String name) => throw UnimplementedError();
+  void noFolding(String name) =>
+      throw UnimplementedError("noFolding is not supported");
 
   @override
   void remove(String name, Object value) {

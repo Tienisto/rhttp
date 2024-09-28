@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/rust/api/client.dart' as rust_client;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
@@ -192,6 +193,20 @@ class TimeoutSettings {
     this.keepAliveTimeout,
     this.keepAlivePing = const Duration(seconds: 30),
   });
+
+  TimeoutSettings copyWith({
+    Duration? timeout,
+    Duration? connectTimeout,
+    Duration? keepAliveTimeout,
+    Duration? keepAlivePing,
+  }) {
+    return TimeoutSettings(
+      timeout: timeout ?? this.timeout,
+      connectTimeout: connectTimeout ?? this.connectTimeout,
+      keepAliveTimeout: keepAliveTimeout ?? this.keepAliveTimeout,
+      keepAlivePing: keepAlivePing ?? this.keepAlivePing,
+    );
+  }
 }
 
 sealed class DnsSettings {

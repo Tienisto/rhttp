@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:meta/meta.dart';
+import 'package:rhttp/rhttp.dart' as rhttp;
 import 'package:rhttp/src/model/response.dart';
 
 @internal
 class RhttpIoResponse with Stream<List<int>> implements HttpClientResponse {
   final HttpStreamResponse _response;
-
-  RhttpIoResponse(this._response);
+  final HttpHeaders _headers;
+  RhttpIoResponse(this._response, this._headers);
 
   @override
   int get statusCode => _response.statusCode;
@@ -18,7 +19,7 @@ class RhttpIoResponse with Stream<List<int>> implements HttpClientResponse {
       int.tryParse(_response.headerMap['content-length'] ?? '-1') ?? -1;
 
   @override
-  HttpHeaders get headers => throw UnimplementedError();
+  HttpHeaders get headers => _headers;
 
   @override
   X509Certificate? get certificate => throw UnimplementedError();
@@ -37,7 +38,19 @@ class RhttpIoResponse with Stream<List<int>> implements HttpClientResponse {
   Future<Socket> detachSocket() => throw UnimplementedError();
 
   @override
-  bool get isRedirect => throw UnimplementedError();
+  bool get isRedirect {
+    if (_response.request.method == rhttp.HttpMethod.get ||
+        _response.request.method == rhttp.HttpMethod.head) {
+      return statusCode == HttpStatus.movedPermanently ||
+          statusCode == HttpStatus.permanentRedirect ||
+          statusCode == HttpStatus.found ||
+          statusCode == HttpStatus.seeOther ||
+          statusCode == HttpStatus.temporaryRedirect;
+    } else if (_response.request.method == rhttp.HttpMethod.post) {
+      return statusCode == HttpStatus.seeOther;
+    }
+    return false;
+  }
 
   @override
   StreamSubscription<List<int>> listen(
@@ -58,7 +71,7 @@ class RhttpIoResponse with Stream<List<int>> implements HttpClientResponse {
   bool get persistentConnection => throw UnimplementedError();
 
   @override
-  String get reasonPhrase => throw UnimplementedError();
+  String get reasonPhrase => "";
 
   @override
   Future<HttpClientResponse> redirect(
@@ -67,5 +80,6 @@ class RhttpIoResponse with Stream<List<int>> implements HttpClientResponse {
   }
 
   @override
-  List<RedirectInfo> get redirects => throw UnimplementedError();
+  List<RedirectInfo> get redirects =>
+      []; // leaving this empty since we cant extract the redirect from rust side
 }
