@@ -1,3 +1,7 @@
+## 0.8.1
+
+- deps: bump `flutter_rust_bridge` to `2.5.0`
+
 ## 0.8.0
 
 - feat: add `IoCompatibleClient`, a compatibility layer for dart:io's `HttpClient`
