@@ -146,7 +146,6 @@ class RhttpIoRequest implements HttpClientRequest {
 
   @override
   Future<HttpClientResponse> close() async {
-    _controller.close();
     startRequest();
     final response = await _responseCompleter.future;
     return RhttpIoResponse(response, headers);
