@@ -1,3 +1,8 @@
+## 0.8.2
+
+- fix: possible `CloseStreamException` when using `IoCompatibleClient`
+- deps: bump `flutter_rust_bridge` to `2.5.1`
+
 ## 0.8.1
 
 - deps: bump `flutter_rust_bridge` to `2.5.0`
