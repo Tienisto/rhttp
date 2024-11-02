@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
@@ -78,7 +79,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     body: request.body,
   );
 
-  final rust_stream.Dart2RustStreamReceiver? bodyStream;
+  final rust_stream.Dart2RustStreamReceiver? requestBodyStream;
   if (request.body is HttpBodyBytesStream) {
     final body = request.body as HttpBodyBytesStream;
     final bodyLength = body.length ?? -1;
@@ -96,26 +97,29 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         onDone: () async {
           await sender.close();
         });
-    bodyStream = receiver;
+    requestBodyStream = receiver;
   } else {
-    bodyStream = null;
+    requestBodyStream = null;
   }
 
   final ProgressNotifier? receiveNotifier;
-  final bool convertToBytes = request.expectBody == HttpExpectBody.bytes;
+  final bool convertBackToBytes;
   if (request.onReceiveProgress != null) {
     switch (request.expectBody) {
       case HttpExpectBody.stream:
         receiveNotifier = ProgressNotifier(request.onReceiveProgress!);
+        convertBackToBytes = false;
         break;
       case HttpExpectBody.bytes:
         request = request.copyWith(
           expectBody: HttpExpectBody.stream,
         );
+        convertBackToBytes = true;
         receiveNotifier = ProgressNotifier(request.onReceiveProgress!);
         break;
       default:
         receiveNotifier = null;
+        convertBackToBytes = false;
         if (kDebugMode) {
           print(
             'Progress callback is not supported for ${request.expectBody}',
@@ -124,6 +128,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     }
   } else {
     receiveNotifier = null;
+    convertBackToBytes = false;
   }
 
   bool exceptionByInterceptor = false;
@@ -144,7 +149,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         query: request.query?.entries.map((e) => (e.key, e.value)).toList(),
         headers: headers?._toRustType(),
         body: request.body?._toRustType(),
-        bodyStream: bodyStream,
+        bodyStream: requestBodyStream,
         onResponse: (r) => responseCompleter.complete(r),
         onError: (e) => responseCompleter.completeError(e),
         onCancelToken: (cancelRef) => cancelRefCompleter.complete(cancelRef),
@@ -179,14 +184,18 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         bodyStream: stream,
       );
 
-      if (convertToBytes) {
-        final bytes = await stream.toList();
+      if (convertBackToBytes) {
+        // Using BytesBuilder to efficiently concatenate all bytes
+        final bytesBuilder = BytesBuilder(copy: false);
+        await for (final chunk in stream) {
+          bytesBuilder.add(chunk);
+        }
         response = HttpBytesResponse(
           request: request,
           version: response.version,
           statusCode: response.statusCode,
           headers: response.headers,
-          body: Uint8List.fromList(bytes.expand((e) => e).toList()),
+          body: bytesBuilder.takeBytes(),
         );
       }
 
@@ -220,7 +229,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         query: request.query?.entries.map((e) => (e.key, e.value)).toList(),
         headers: headers?._toRustType(),
         body: request.body?._toRustType(),
-        bodyStream: bodyStream,
+        bodyStream: requestBodyStream,
         expectBody: request.expectBody.toRustType(),
         onCancelToken: (cancelRef) => cancelRefCompleter.complete(cancelRef),
         cancelable: request.cancelToken != null,
