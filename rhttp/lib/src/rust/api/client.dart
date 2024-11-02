@@ -95,9 +95,42 @@ class ClientSettings {
           dnsSettings == other.dnsSettings;
 }
 
-enum ProxySettings {
-  noProxy,
+class CustomProxy {
+  final String url;
+  final ProxyCondition condition;
+
+  const CustomProxy({
+    required this.url,
+    required this.condition,
+  });
+
+  @override
+  int get hashCode => url.hashCode ^ condition.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CustomProxy &&
+          runtimeType == other.runtimeType &&
+          url == other.url &&
+          condition == other.condition;
+}
+
+enum ProxyCondition {
+  http,
+  https,
+  all,
   ;
+}
+
+@freezed
+sealed class ProxySettings with _$ProxySettings {
+  const ProxySettings._();
+
+  const factory ProxySettings.noProxy() = ProxySettings_NoProxy;
+  const factory ProxySettings.customProxyList(
+    List<CustomProxy> field0,
+  ) = ProxySettings_CustomProxyList;
 }
 
 @freezed

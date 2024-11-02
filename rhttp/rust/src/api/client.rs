@@ -26,6 +26,18 @@ pub struct ClientSettings {
 
 pub enum ProxySettings {
     NoProxy,
+    CustomProxyList(Vec<CustomProxy>),
+}
+
+pub struct CustomProxy {
+    pub url: String,
+    pub condition: ProxyCondition,
+}
+
+pub enum ProxyCondition {
+    Http,
+    Https,
+    All,
 }
 
 pub enum RedirectSettings {
@@ -114,6 +126,19 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
         if let Some(proxy_settings) = settings.proxy_settings {
             match proxy_settings {
                 ProxySettings::NoProxy => client = client.no_proxy(),
+                ProxySettings::CustomProxyList(proxies) => {
+                    for proxy in proxies {
+                        let proxy = match proxy.condition {
+                            ProxyCondition::Http => reqwest::Proxy::http(&proxy.url),
+                            ProxyCondition::Https => reqwest::Proxy::https(&proxy.url),
+                            ProxyCondition::All => reqwest::Proxy::all(&proxy.url),
+                        }
+                        .map_err(|e| {
+                            RhttpError::RhttpUnknownError(format!("Error creating proxy: {e:?}"))
+                        })?;
+                        client = client.proxy(proxy);
+                    }
+                }
             }
         }
 

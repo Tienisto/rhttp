@@ -1134,6 +1134,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  CustomProxy dco_decode_custom_proxy(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return CustomProxy(
+      url: dco_decode_String(arr[0]),
+      condition: dco_decode_proxy_condition(arr[1]),
+    );
+  }
+
+  @protected
   HttpBody dco_decode_http_body(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
@@ -1256,6 +1268,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<String> dco_decode_list_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_String).toList();
+  }
+
+  @protected
+  List<CustomProxy> dco_decode_list_custom_proxy(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_custom_proxy).toList();
   }
 
   @protected
@@ -1453,9 +1471,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  ProxyCondition dco_decode_proxy_condition(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ProxyCondition.values[raw as int];
+  }
+
+  @protected
   ProxySettings dco_decode_proxy_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return ProxySettings.values[raw as int];
+    switch (raw[0]) {
+      case 0:
+        return ProxySettings_NoProxy();
+      case 1:
+        return ProxySettings_CustomProxyList(
+          dco_decode_list_custom_proxy(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
   }
 
   @protected
@@ -1964,6 +1997,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  CustomProxy sse_decode_custom_proxy(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_url = sse_decode_String(deserializer);
+    var var_condition = sse_decode_proxy_condition(deserializer);
+    return CustomProxy(url: var_url, condition: var_condition);
+  }
+
+  @protected
   HttpBody sse_decode_http_body(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -2092,6 +2133,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <String>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_String(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<CustomProxy> sse_decode_list_custom_proxy(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <CustomProxy>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_custom_proxy(deserializer));
     }
     return ans_;
   }
@@ -2384,10 +2437,26 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  ProxySettings sse_decode_proxy_settings(SseDeserializer deserializer) {
+  ProxyCondition sse_decode_proxy_condition(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_i_32(deserializer);
-    return ProxySettings.values[inner];
+    return ProxyCondition.values[inner];
+  }
+
+  @protected
+  ProxySettings sse_decode_proxy_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        return ProxySettings_NoProxy();
+      case 1:
+        var var_field0 = sse_decode_list_custom_proxy(deserializer);
+        return ProxySettings_CustomProxyList(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
   }
 
   @protected
@@ -2933,6 +3002,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_custom_proxy(CustomProxy self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.url, serializer);
+    sse_encode_proxy_condition(self.condition, serializer);
+  }
+
+  @protected
   void sse_encode_http_body(HttpBody self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
@@ -3047,6 +3123,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_String(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_custom_proxy(
+      List<CustomProxy> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_custom_proxy(item, serializer);
     }
   }
 
@@ -3312,9 +3398,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_proxy_settings(ProxySettings self, SseSerializer serializer) {
+  void sse_encode_proxy_condition(
+      ProxyCondition self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_proxy_settings(ProxySettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case ProxySettings_NoProxy():
+        sse_encode_i_32(0, serializer);
+      case ProxySettings_CustomProxyList(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_list_custom_proxy(field0, serializer);
+      default:
+        throw UnimplementedError('');
+    }
   }
 
   @protected

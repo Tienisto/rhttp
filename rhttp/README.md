@@ -604,6 +604,48 @@ final client = await RhttpClient.create(
 );
 ```
 
+Use a custom proxy:
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    proxySettings: ProxySettings.proxy('http://localhost:8080'),
+  ),
+);
+```
+
+Only proxy unencrypted HTTP traffic:
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    proxySettings: ProxySettings.static(
+      url: 'http://localhost:8080',
+      condition: ProxyCondition.onlyHttp,
+    ),
+  ),
+);
+```
+
+Chain multiple proxies:
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    proxySettings: ProxySettings.list([
+      StaticProxy(
+        url: 'http://localhost:8080',
+        condition: ProxyCondition.onlyHttp,
+      ),
+      StaticProxy(
+        url: 'http://localhost:8081',
+        condition: ProxyCondition.onlyHttps,
+      ),
+    ]),
+  ),
+);
+```
+
 ### ➤ Redirects
 
 By default, up to 10 redirects (e.g. HTTP 302) are followed.

@@ -921,6 +921,18 @@ impl SseDecode for crate::api::client::ClientSettings {
     }
 }
 
+impl SseDecode for crate::api::client::CustomProxy {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_url = <String>::sse_decode(deserializer);
+        let mut var_condition = <crate::api::client::ProxyCondition>::sse_decode(deserializer);
+        return crate::api::client::CustomProxy {
+            url: var_url,
+            condition: var_condition,
+        };
+    }
+}
+
 impl SseDecode for crate::api::http::HttpBody {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1103,6 +1115,18 @@ impl SseDecode for Vec<String> {
         let mut ans_ = vec![];
         for idx_ in 0..len_ {
             ans_.push(<String>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::client::CustomProxy> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::client::CustomProxy>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -1392,14 +1416,36 @@ impl SseDecode for Option<Vec<(String, String)>> {
     }
 }
 
-impl SseDecode for crate::api::client::ProxySettings {
+impl SseDecode for crate::api::client::ProxyCondition {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <i32>::sse_decode(deserializer);
         return match inner {
-            0 => crate::api::client::ProxySettings::NoProxy,
-            _ => unreachable!("Invalid variant for ProxySettings: {}", inner),
+            0 => crate::api::client::ProxyCondition::Http,
+            1 => crate::api::client::ProxyCondition::Https,
+            2 => crate::api::client::ProxyCondition::All,
+            _ => unreachable!("Invalid variant for ProxyCondition: {}", inner),
         };
+    }
+}
+
+impl SseDecode for crate::api::client::ProxySettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                return crate::api::client::ProxySettings::NoProxy;
+            }
+            1 => {
+                let mut var_field0 =
+                    <Vec<crate::api::client::CustomProxy>>::sse_decode(deserializer);
+                return crate::api::client::ProxySettings::CustomProxyList(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -1786,6 +1832,27 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::client::ClientSettings>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::client::CustomProxy {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.url.into_into_dart().into_dart(),
+            self.condition.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::client::CustomProxy
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::client::CustomProxy>
+    for crate::api::client::CustomProxy
+{
+    fn into_into_dart(self) -> crate::api::client::CustomProxy {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::http::HttpBody {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -2051,11 +2118,38 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::http::MultipartValue>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::client::ProxyCondition {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Http => 0.into_dart(),
+            Self::Https => 1.into_dart(),
+            Self::All => 2.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::client::ProxyCondition
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::client::ProxyCondition>
+    for crate::api::client::ProxyCondition
+{
+    fn into_into_dart(self) -> crate::api::client::ProxyCondition {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::client::ProxySettings {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
-            Self::NoProxy => 0.into_dart(),
-            _ => unreachable!(),
+            crate::api::client::ProxySettings::NoProxy => [0.into_dart()].into_dart(),
+            crate::api::client::ProxySettings::CustomProxyList(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
         }
     }
 }
@@ -2414,6 +2508,14 @@ impl SseEncode for crate::api::client::ClientSettings {
     }
 }
 
+impl SseEncode for crate::api::client::CustomProxy {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.url, serializer);
+        <crate::api::client::ProxyCondition>::sse_encode(self.condition, serializer);
+    }
+}
+
 impl SseEncode for crate::api::http::HttpBody {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2603,6 +2705,16 @@ impl SseEncode for Vec<String> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <String>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::client::CustomProxy> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::client::CustomProxy>::sse_encode(item, serializer);
         }
     }
 }
@@ -2846,18 +2958,38 @@ impl SseEncode for Option<Vec<(String, String)>> {
     }
 }
 
-impl SseEncode for crate::api::client::ProxySettings {
+impl SseEncode for crate::api::client::ProxyCondition {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i32>::sse_encode(
             match self {
-                crate::api::client::ProxySettings::NoProxy => 0,
+                crate::api::client::ProxyCondition::Http => 0,
+                crate::api::client::ProxyCondition::Https => 1,
+                crate::api::client::ProxyCondition::All => 2,
                 _ => {
                     unimplemented!("");
                 }
             },
             serializer,
         );
+    }
+}
+
+impl SseEncode for crate::api::client::ProxySettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::client::ProxySettings::NoProxy => {
+                <i32>::sse_encode(0, serializer);
+            }
+            crate::api::client::ProxySettings::CustomProxyList(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <Vec<crate::api::client::CustomProxy>>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 

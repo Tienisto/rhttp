@@ -215,6 +215,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClientSettings dco_decode_client_settings(dynamic raw);
 
   @protected
+  CustomProxy dco_decode_custom_proxy(dynamic raw);
+
+  @protected
   HttpBody dco_decode_http_body(dynamic raw);
 
   @protected
@@ -249,6 +252,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> dco_decode_list_String(dynamic raw);
+
+  @protected
+  List<CustomProxy> dco_decode_list_custom_proxy(dynamic raw);
 
   @protected
   List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw);
@@ -329,6 +335,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<(String, String)>? dco_decode_opt_list_record_string_string(dynamic raw);
+
+  @protected
+  ProxyCondition dco_decode_proxy_condition(dynamic raw);
 
   @protected
   ProxySettings dco_decode_proxy_settings(dynamic raw);
@@ -540,6 +549,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClientSettings sse_decode_client_settings(SseDeserializer deserializer);
 
   @protected
+  CustomProxy sse_decode_custom_proxy(SseDeserializer deserializer);
+
+  @protected
   HttpBody sse_decode_http_body(SseDeserializer deserializer);
 
   @protected
@@ -574,6 +586,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer);
+
+  @protected
+  List<CustomProxy> sse_decode_list_custom_proxy(SseDeserializer deserializer);
 
   @protected
   List<Uint8List> sse_decode_list_list_prim_u_8_strict(
@@ -666,6 +681,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   List<(String, String)>? sse_decode_opt_list_record_string_string(
       SseDeserializer deserializer);
+
+  @protected
+  ProxyCondition sse_decode_proxy_condition(SseDeserializer deserializer);
 
   @protected
   ProxySettings sse_decode_proxy_settings(SseDeserializer deserializer);
@@ -907,6 +925,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       ClientSettings self, SseSerializer serializer);
 
   @protected
+  void sse_encode_custom_proxy(CustomProxy self, SseSerializer serializer);
+
+  @protected
   void sse_encode_http_body(HttpBody self, SseSerializer serializer);
 
   @protected
@@ -944,6 +965,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_custom_proxy(
+      List<CustomProxy> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_list_prim_u_8_strict(
@@ -1040,6 +1065,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_list_record_string_string(
       List<(String, String)>? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_proxy_condition(
+      ProxyCondition self, SseSerializer serializer);
 
   @protected
   void sse_encode_proxy_settings(ProxySettings self, SseSerializer serializer);

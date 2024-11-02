@@ -1,3 +1,11 @@
+## 0.9.0
+
+- feat: add `ProxySettings.proxy('http://localhost:8080')` and other proxy settings
+- feat: improve performance when uploading a byte stream
+- feat: improve performance when tracking progress during download of a large binary file
+- feat: `onSendProgress` and `onReceiveProgress` now always emit the final progress event (100%)
+- fix: set `idleTimeout` in `IoCompatibleClient` no longer throws an exception
+
 ## 0.8.2
 
 - fix: possible `CloseStreamException` when using `IoCompatibleClient`

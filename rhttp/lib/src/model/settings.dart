@@ -91,10 +91,77 @@ sealed class ProxySettings {
 
   /// Disables any proxy settings including system settings.
   const factory ProxySettings.noProxy() = NoProxy._;
+
+  /// Use a single proxy for all requests.
+  /// Example: `ProxySettings.proxy('http://localhost:8080')`
+  const factory ProxySettings.proxy(String url) = StaticProxy.all;
+
+  /// Use a single static proxy for specific requests.
+  const factory ProxySettings.static({
+    required String url,
+    required ProxyCondition condition,
+  }) = StaticProxy;
+
+  /// Use a list of custom proxies.
+  const factory ProxySettings.list(List<CustomProxy> proxies) = CustomProxyList;
 }
 
 class NoProxy extends ProxySettings {
   const NoProxy._();
+}
+
+sealed class CustomProxy extends ProxySettings {
+  const CustomProxy._();
+}
+
+class StaticProxy extends CustomProxy {
+  /// The URL of the proxy server.
+  final String url;
+
+  /// Which requests to proxy.
+  final ProxyCondition condition;
+
+  const StaticProxy({
+    required this.url,
+    required this.condition,
+  }) : super._();
+
+  const StaticProxy.http(String url)
+      : this(
+          url: url,
+          condition: ProxyCondition.onlyHttp,
+        );
+
+  const StaticProxy.https(String url)
+      : this(
+          url: url,
+          condition: ProxyCondition.onlyHttps,
+        );
+
+  const StaticProxy.all(String url)
+      : this(
+          url: url,
+          condition: ProxyCondition.all,
+        );
+}
+
+class CustomProxyList extends ProxySettings {
+  /// A list of custom proxies.
+  /// The first proxy that matches the request will be used.
+  final List<CustomProxy> proxies;
+
+  const CustomProxyList(this.proxies);
+}
+
+enum ProxyCondition {
+  /// Proxy only HTTP requests.
+  onlyHttp,
+
+  /// Proxy only HTTPS requests.
+  onlyHttps,
+
+  /// Proxy all requests.
+  all,
 }
 
 sealed class RedirectSettings {
@@ -269,7 +336,28 @@ extension ClientSettingsExt on ClientSettings {
 extension on ProxySettings {
   rust_client.ProxySettings _toRustType() {
     return switch (this) {
-      NoProxy() => rust_client.ProxySettings.noProxy,
+      NoProxy() => const rust_client.ProxySettings.noProxy(),
+      CustomProxy proxy => rust_client.ProxySettings.customProxyList([
+          proxy._toRustType(),
+        ]),
+      CustomProxyList list => rust_client.ProxySettings.customProxyList(
+          list.proxies.map((e) => e._toRustType()).toList(),
+        ),
+    };
+  }
+}
+
+extension on CustomProxy {
+  rust_client.CustomProxy _toRustType() {
+    return switch (this) {
+      StaticProxy s => rust_client.CustomProxy(
+          url: s.url,
+          condition: switch (s.condition) {
+            ProxyCondition.onlyHttp => rust_client.ProxyCondition.http,
+            ProxyCondition.onlyHttps => rust_client.ProxyCondition.https,
+            ProxyCondition.all => rust_client.ProxyCondition.all,
+          },
+        ),
     };
   }
 }
