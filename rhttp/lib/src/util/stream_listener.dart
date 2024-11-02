@@ -9,14 +9,11 @@ Future<void> listenToStreamWithBackpressure({
   required Future<void> Function(Uint8List) onData,
   required Future<void> Function() onDone,
 }) async {
-  final stopWatch = Stopwatch()..start();
-
   final bytesBuilder = BytesBuilder(copy: false);
   await for (final chunk in stream) {
     bytesBuilder.add(chunk);
 
     if (bytesBuilder.length > _bufferSize) {
-      stopWatch.reset();
       await onData(bytesBuilder.takeBytes());
     }
   }
