@@ -11,7 +11,9 @@ pub struct Dart2RustStreamReceiver {
 }
 
 pub fn create_stream() -> (Dart2RustStreamSink, Dart2RustStreamReceiver) {
-    let (sender, receiver) = mpsc::channel(16 * 1024); // 16KB buffer
+    // We don't need to have a buffer because we already buffer on Dart side.
+    // However, a buffer of 1 seems to improve performance.
+    let (sender, receiver) = mpsc::channel(1);
     (
         Dart2RustStreamSink { sender },
         Dart2RustStreamReceiver { receiver },

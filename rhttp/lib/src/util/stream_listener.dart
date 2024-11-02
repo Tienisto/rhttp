@@ -1,27 +1,28 @@
-const _bufferSize = 1024; // 1 KB
+import 'dart:typed_data';
+
+const _bufferSize = 1024 * 1024; // 1 MB
 
 /// Listens to a stream while handling backpressure.
 /// It should not read the stream faster than it can process the data.
 Future<void> listenToStreamWithBackpressure({
   required Stream<List<int>> stream,
-  required Future<void> Function(List<int>) onData,
+  required Future<void> Function(Uint8List) onData,
   required Future<void> Function() onDone,
 }) async {
-  List<int> buffer = [];
-  await for (var data in stream) {
-    buffer.addAll(data);
+  final stopWatch = Stopwatch()..start();
 
-    while (buffer.length > _bufferSize) {
-      final complete = buffer.sublist(0, _bufferSize);
-      final remaining = buffer.sublist(_bufferSize);
+  final bytesBuilder = BytesBuilder(copy: false);
+  await for (final chunk in stream) {
+    bytesBuilder.add(chunk);
 
-      await onData(complete);
-      buffer = remaining;
+    if (bytesBuilder.length > _bufferSize) {
+      stopWatch.reset();
+      await onData(bytesBuilder.takeBytes());
     }
   }
 
-  if (buffer.isNotEmpty) {
-    await onData(buffer);
+  if (bytesBuilder.isNotEmpty) {
+    await onData(bytesBuilder.takeBytes());
   }
 
   await onDone();
