@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
@@ -14,6 +13,7 @@ import 'package:rhttp/src/rust/api/error.dart' as rust_error;
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/rust/api/stream.dart' as rust_stream;
 import 'package:rhttp/src/rust/lib.dart' as rust_lib;
+import 'package:rhttp/src/util/byte_stream_converter.dart';
 import 'package:rhttp/src/util/collection.dart';
 import 'package:rhttp/src/util/progress_notifier.dart';
 import 'package:rhttp/src/util/stream_listener.dart';
@@ -55,7 +55,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         // transform to Stream
         request = request.copyWith(
           body: HttpBody.stream(
-            Stream.fromIterable(body.bytes.toList().map((e) => [e])),
+            body.bytes.toStream(chunkSize: 1024),
             length: body.bytes.length,
           ),
         );
@@ -95,6 +95,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
                 await sender.add(data: data);
               },
         onDone: () async {
+          sendNotifier?.notifyDone(bodyLength);
           await sender.close();
         });
     requestBodyStream = receiver;
@@ -172,10 +173,14 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
                 ?.$2 ??
             '-1';
         final contentLength = int.tryParse(contentLengthStr) ?? -1;
-        stream = stream.map((event) {
-          receiveNotifier!.notify(event.length, contentLength);
-          return event;
-        });
+        final backingStream = stream;
+        stream = () async* {
+          await for (final chunk in backingStream) {
+            receiveNotifier!.notify(chunk.length, contentLength);
+            yield chunk;
+          }
+          receiveNotifier!.notifyDone(contentLength);
+        }();
       }
 
       HttpResponse response = parseHttpResponse(
@@ -185,17 +190,12 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
       );
 
       if (convertBackToBytes) {
-        // Using BytesBuilder to efficiently concatenate all bytes
-        final bytesBuilder = BytesBuilder(copy: false);
-        await for (final chunk in stream) {
-          bytesBuilder.add(chunk);
-        }
         response = HttpBytesResponse(
           request: request,
           version: response.version,
           statusCode: response.statusCode,
           headers: response.headers,
-          body: bytesBuilder.takeBytes(),
+          body: await stream.toUint8List(),
         );
       }
 

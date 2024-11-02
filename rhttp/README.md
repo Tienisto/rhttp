@@ -319,6 +319,8 @@ Please note that request and response bodies must be either `Stream` or `Uint8Li
 
 The parameter `total` can be `-1` if the total size is unknown.
 
+It always emits the final value with `sent` / `received` and `total` being equal after the request is finished.
+
 ```dart
 final request = Rhttp.post(
   'https://example.com',

@@ -20,4 +20,8 @@ class ProgressNotifier {
       onProgress(bytes, total);
     }
   }
+
+  void notifyDone(int total) {
+    onProgress(total, total);
+  }
 }
