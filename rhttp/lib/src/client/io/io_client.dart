@@ -117,8 +117,9 @@ class IoCompatibleClient implements HttpClient {
       client.settings.timeoutSettings?.keepAliveTimeout ?? Duration.zero;
 
   @override
-  set idleTimeout(Duration d) =>
-      throw UnimplementedError("idleTimeout is immutable");
+  set idleTimeout(Duration d) {
+    // noop
+  }
 
   @override
   int? maxConnectionsPerHost;
