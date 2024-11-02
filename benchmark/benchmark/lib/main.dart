@@ -272,6 +272,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       final response = await client.post(
                         url,
                         body: HttpBody.bytes(_tenMb),
+                        onSendProgress: (curr, total) {},
                       );
                       return response.body;
                     },
@@ -290,6 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       final response = await client.post(
                         url,
                         body: HttpBody.stream(_generateStream()),
+                        onSendProgress: (curr, total) {},
                       );
                       return response.body;
                     },
