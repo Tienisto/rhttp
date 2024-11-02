@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           ElevatedButton(
             onPressed: () async {
-              final time = await benchmarkHelper(
+              final time = await benchmarkDownload(
                 debugLabel: 'http',
                 count: _smallResponseIterations,
                 url: Uri.parse('https://localhost:3000'),
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final time = await benchmarkHelper(
+              final time = await benchmarkDownload(
                 debugLabel: 'http',
                 count: _largeResponseIterations,
                 url: Uri.parse('https://localhost:3000/large'),
@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final time = await benchmarkHelper(
+              final time = await benchmarkDownload(
                 debugLabel: 'dio',
                 count: _smallResponseIterations,
                 url: Uri.parse('https://localhost:3000'),
@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final time = await benchmarkHelper(
+              final time = await benchmarkDownload(
                 debugLabel: 'dio',
                 count: _largeResponseIterations,
                 url: Uri.parse('https://localhost:3000/large'),
@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final time = await benchmarkHelper(
+              final time = await benchmarkDownload(
                 debugLabel: 'rhttp',
                 count: _smallResponseIterations,
                 url: 'https://localhost:3000',
@@ -165,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final time = await benchmarkHelper(
+              final time = await benchmarkDownload(
                 debugLabel: 'rhttp',
                 count: _largeResponseIterations,
                 url: 'https://localhost:3000/large',
@@ -192,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-Future<int> benchmarkHelper<T, U>({
+Future<int> benchmarkDownload<T, U>({
   required String debugLabel,
   required int count,
   required U url,
@@ -211,4 +211,33 @@ Future<int> benchmarkHelper<T, U>({
   }
 
   return stopwatch.elapsedMilliseconds;
+}
+
+final _oneKb = Uint8List(1024);
+
+Future<int> benchmarkUpload<T, U>({
+  required String debugLabel,
+  required int count,
+  required U url,
+  required Future<T> Function() createClient,
+  required Future<void> Function(T client, U url, Stream<List<int>>) upload,
+}) async {
+  print('Downloading benchmark using $debugLabel package...');
+
+  final client = await createClient();
+  final padLeft = count.toString().length;
+
+  final stopwatch = Stopwatch()..start();
+  for (var i = 0; i < count; i++) {
+    await upload(client, url, _generateStream(1024));
+    print('[${'${i + 1}'.padLeft(padLeft)}]');
+  }
+
+  return stopwatch.elapsedMilliseconds;
+}
+
+Stream<List<int>> _generateStream(int length) async* {
+  for (var i = 0; i < length; i += _oneKb.length) {
+    yield _oneKb;
+  }
 }
