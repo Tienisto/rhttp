@@ -295,7 +295,11 @@ final client = await RhttpClient.create(
 
 ### ➤ Cancel Requests
 
-You can cancel a request by providing a `CancelToken`:
+You can cancel a request by providing a `CancelToken`.
+
+If the same `CancelToken` is used for multiple requests, all requests will be canceled.
+
+If a canceled `CancelToken` is used for a request, the request will be canceled immediately.
 
 ```dart
 final cancelToken = CancelToken();

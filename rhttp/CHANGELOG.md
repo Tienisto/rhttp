@@ -1,3 +1,7 @@
+## 0.9.1
+
+- feat: allow reuse of same `CancelToken` for multiple requests, all requests are canceled when token is canceled
+
 ## 0.9.0
 
 - feat: add `ProxySettings.proxy('http://localhost:8080')` and other proxy settings

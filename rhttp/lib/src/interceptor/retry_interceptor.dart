@@ -127,7 +127,7 @@ class RetryInterceptor extends Interceptor {
       );
 
       request = (beforeRetryResult ?? request).copyWith(
-        cancelToken: originalCancelToken?.createDelegatedToken(),
+        cancelToken: originalCancelToken,
       );
       request.additionalData[key] = true;
 
