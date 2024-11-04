@@ -13,11 +13,16 @@ import 'package:rhttp/src/rust/lib.dart' as rust_lib;
 /// If a cancelled token is passed to a request method,
 /// the request is cancelled immediately.
 class CancelToken {
-  final _refController =
-      StreamController<rust_lib.CancellationToken>.broadcast();
+  final _refController = StreamController<rust_lib.CancellationToken>();
+  final _firstRef = Completer<rust_lib.CancellationToken>();
   final _refs = <rust_lib.CancellationToken>[];
 
   bool _isCancelled = false;
+
+  /// Whether the cancellation process has started.
+  /// This is different from [isCancelled] because otherwise,
+  /// we would not receive the stream event.
+  bool _lock = false;
 
   /// Whether the request has been cancelled.
   bool get isCancelled => _isCancelled;
@@ -25,6 +30,9 @@ class CancelToken {
   CancelToken() {
     _refController.stream.listen((ref) {
       _refs.add(ref);
+      if (_refs.length == 1) {
+        _firstRef.complete(ref);
+      }
     });
   }
 
@@ -41,13 +49,23 @@ class CancelToken {
   /// If the [CancelToken] is not passed to the request method,
   /// this method never finishes.
   Future<void> cancel() async {
+    if (_isCancelled) {
+      return;
+    }
+
+    if (_lock) {
+      return;
+    }
+
+    _lock = true;
+
     if (_refs.isNotEmpty) {
       for (final ref in _refs) {
         await rust.cancelRequest(token: ref);
       }
     } else {
       // We need to wait for the ref to be set.
-      final ref = await _refController.stream.first;
+      final ref = await _firstRef.future;
       await rust.cancelRequest(token: ref);
     }
 
