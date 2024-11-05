@@ -1,3 +1,7 @@
+## 0.9.2
+
+- fix: support text body compressed in `gzip` and `brotli`
+
 ## 0.9.1
 
 - feat: allow reuse of same `CancelToken` for multiple requests, all requests are canceled when token is canceled
