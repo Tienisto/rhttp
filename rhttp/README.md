@@ -181,7 +181,7 @@ await Rhttp.post(
 
 **Stream**
 
-Pass a `Stream<int>` to the `HttpBody.stream` constructor.
+Pass a `Stream<List<int>>` to the `HttpBody.stream` constructor.
 
 It is recommended to also provide a `length` to automatically set the `Content-Length` header.
 
@@ -189,7 +189,7 @@ It is recommended to also provide a `length` to automatically set the `Content-L
 await Rhttp.post(
   'https://example.com',
   body: HttpBody.stream(
-    Stream.fromIterable([0, 1, 2]),
+    Stream.fromIterable([[1, 2, 3]]),
     length: 3,
   ),
 );
