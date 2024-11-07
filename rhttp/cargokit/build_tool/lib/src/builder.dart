@@ -159,7 +159,7 @@ class RustBuilder {
       ],
       environment: {
         ...(await _buildEnvironment()),
-        'RUSTFLAGS': '--cfg reqwest_unstable',
+        'RUSTFLAGS': r'--remap-path-prefix=$HOME/.cargo/=/.cargo/ --cfg reqwest_unstable',
       },
     );
     return path.join(
