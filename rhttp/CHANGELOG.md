@@ -1,5 +1,6 @@
 ## 0.9.2
 
+- feat: add `--remap-path-prefix=$HOME/.cargo/=/.cargo/` to `RUSTFLAGS` to be more reproducible
 - fix: support text body compressed in `gzip` and `brotli`
 
 ## 0.9.1
