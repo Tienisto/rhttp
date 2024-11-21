@@ -2,6 +2,8 @@
 
 - feat: add `--remap-path-prefix=$HOME/.cargo/=/.cargo/` to `RUSTFLAGS` to be more reproducible
 - fix: support text body compressed in `gzip` and `brotli`
+- fix: `requestStream` should throw `RhttpCancelException` instead of emitting an `Unhandled Exception` when request is canceled
+- deps: bump `flutter_rust_bridge` to `2.6.0`
 
 ## 0.9.1
 

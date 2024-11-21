@@ -1,3 +1,4 @@
+use flutter_rust_bridge::for_generated::anyhow;
 use flutter_rust_bridge::{frb, DartFnFuture};
 use futures_util::StreamExt;
 use reqwest::header::{HeaderName, HeaderValue};
@@ -9,7 +10,7 @@ use tokio_util::sync::CancellationToken;
 
 use crate::api::client::{ClientSettings, RequestClient};
 use crate::api::error::RhttpError;
-use crate::api::stream;
+use crate::api::{error, stream};
 use crate::frb_generated::{RustAutoOpaque, StreamSink};
 
 pub enum HttpMethod {
@@ -255,7 +256,7 @@ pub async fn make_http_request_receive_stream(
     on_error: impl Fn(RhttpError) -> DartFnFuture<()>,
     on_cancel_token: impl Fn(CancellationToken) -> DartFnFuture<()>,
     cancelable: bool,
-) -> Result<(), RhttpError> {
+) {
     let cancel_tokens = build_cancel_tokens(client.clone());
 
     if cancelable {
@@ -263,8 +264,12 @@ pub async fn make_http_request_receive_stream(
     }
 
     tokio::select! {
-        _ = cancel_tokens.request_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
-        _ = cancel_tokens.client_cancel_token.cancelled() => Err(RhttpError::RhttpCancelError),
+        _ = cancel_tokens.request_cancel_token.cancelled() => {
+            let _ = stream_sink.add_error(anyhow::anyhow!(error::STREAM_CANCEL_ERROR));
+        },
+        _ = cancel_tokens.client_cancel_token.cancelled() => {
+            let _ = stream_sink.add_error(anyhow::anyhow!(error::STREAM_CANCEL_ERROR));
+        },
         _ = make_http_request_receive_stream_inner(
             client,
             settings,
@@ -274,10 +279,10 @@ pub async fn make_http_request_receive_stream(
             headers,
             body,
             body_stream,
-            stream_sink,
+            stream_sink.clone(),
             on_response,
             on_error,
-        ) => Ok(()),
+        ) => {},
     }
 }
 
@@ -293,7 +298,7 @@ async fn make_http_request_receive_stream_inner(
     stream_sink: StreamSink<Vec<u8>>,
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
     on_error: impl Fn(RhttpError) -> DartFnFuture<()>,
-) -> Result<(), RhttpError> {
+) {
     let response = make_http_request_helper(
         client,
         settings,
@@ -307,13 +312,13 @@ async fn make_http_request_receive_stream_inner(
     )
     .await;
 
-    let response = match response {
-        Ok(_) => response,
+    let response: Response = match response {
+        Ok(res) => res,
         Err(e) => {
             on_error(e.clone()).await;
-            Err(e)
+            return;
         }
-    }?;
+    };
 
     let http_response = HttpResponse {
         headers: header_to_vec(response.headers()),
@@ -327,18 +332,22 @@ async fn make_http_request_receive_stream_inner(
     let mut stream = response.bytes_stream();
 
     while let Some(chunk) = stream.next().await {
-        let chunk = chunk.map_err(|e| {
-            let _ = stream_sink.add_error(RhttpError::RhttpUnknownError(e.to_string()));
-            RhttpError::RhttpUnknownError(e.to_string())
-        })?;
+        let chunk = chunk.inspect_err(|e| {
+            let _ = stream_sink.add_error(anyhow::anyhow!(e.to_string()));
+        });
 
-        stream_sink.add(chunk.to_vec()).map_err(|e| {
-            let _ = stream_sink.add_error(RhttpError::RhttpUnknownError(e.to_string()));
-            RhttpError::RhttpUnknownError(e.to_string())
-        })?;
+        if chunk.is_err() {
+            return;
+        }
+
+        let result = stream_sink.add(chunk.unwrap().to_vec()).inspect_err(|e| {
+            let _ = stream_sink.add_error(anyhow::anyhow!(e.to_string()));
+        });
+
+        if result.is_err() {
+            return;
+        }
     }
-
-    Ok(())
 }
 
 /// This function is used to make an HTTP request without any response handling.

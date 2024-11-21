@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:meta/meta.dart';
 import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/exception.dart';
@@ -173,14 +174,24 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
                 ?.$2 ??
             '-1';
         final contentLength = int.tryParse(contentLengthStr) ?? -1;
-        final backingStream = stream;
-        stream = () async* {
-          await for (final chunk in backingStream) {
-            receiveNotifier!.notify(chunk.length, contentLength);
-            yield chunk;
-          }
-          receiveNotifier!.notifyDone(contentLength);
-        }();
+
+        // Somehow, a temporary variable is needed to avoid null check inside the closure
+        final receiveNotifierNotNull = receiveNotifier;
+
+        stream = stream.transform(
+          _createStreamTransformer(
+            request: request,
+            onData: (chunk) =>
+                receiveNotifierNotNull.notify(chunk.length, contentLength),
+            onDone: () => receiveNotifierNotNull.notifyDone(contentLength),
+          ),
+        );
+      } else {
+        stream = stream.transform(
+          _createStreamTransformer(
+            request: request,
+          ),
+        );
       }
 
       HttpResponse response = parseHttpResponse(
@@ -393,4 +404,35 @@ extension on HttpBody {
         )),
     };
   }
+}
+
+/// Creates a [StreamTransformer] that listens to the byte stream.
+/// Maps the error type to [RhttpException].
+StreamTransformer<Uint8List, Uint8List> _createStreamTransformer({
+  required HttpRequest request,
+  void Function(Uint8List chunk)? onData,
+  void Function()? onDone,
+}) {
+  return StreamTransformer<Uint8List, Uint8List>.fromHandlers(
+    handleData: onData == null
+        ? null
+        : (data, sink) {
+            onData(data);
+            sink.add(data);
+          },
+    handleDone: onDone == null ? null : (sink) => onDone(),
+    handleError: (error, stackTrace, sink) {
+      final mappedError = switch (error) {
+        // Flutter Rust Bridge currently always throws AnyhowException
+        AnyhowException _ => switch (error.message) {
+            _ when error.message.contains('STREAM_CANCEL_ERROR') =>
+              RhttpCancelException(request),
+            _ => RhttpUnknownException(request, error.message),
+          },
+        rust_error.RhttpError e => parseError(request, e),
+        _ => RhttpUnknownException(request, error.toString()),
+      };
+      sink.addError(mappedError);
+    },
+  );
 }

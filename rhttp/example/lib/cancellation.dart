@@ -75,6 +75,46 @@ class _MyAppState extends State<MyApp> {
                         ),
                       ),
                     );
+
+                    final resFuture = client!.requestStream(
+                      method: HttpMethod.get,
+                      url: 'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
+                      cancelToken: cancelToken,
+                    );
+
+                    Future.delayed(const Duration(seconds: 1), () async {
+                      await cancelToken.cancel();
+                    });
+
+                    final res = await resFuture;
+
+                    res.body.listen(
+                      (event) {},
+                      onError: (e) {
+                        print('Stream error: $e');
+                      },
+                    );
+
+                    setState(() {
+                      response = res;
+                    });
+                  } catch (e) {
+                    print(e);
+                  }
+                },
+                child: const Text('Cancel after 1 second (stream version)'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    final cancelToken = CancelToken();
+                    client ??= await RhttpClient.create(
+                      settings: const ClientSettings(
+                        timeoutSettings: TimeoutSettings(
+                          timeout: Duration(seconds: 10),
+                        ),
+                      ),
+                    );
                     final resFuture = client!.requestBytes(
                       method: HttpMethod.get,
                       url: 'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',

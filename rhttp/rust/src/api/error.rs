@@ -12,6 +12,9 @@ pub enum RhttpError {
     RhttpUnknownError(String),
 }
 
+// Flutter Rust Bridge only supports anyhow, so we define string constants for the error messages.
+pub(crate) const STREAM_CANCEL_ERROR: &str = "STREAM_CANCEL_ERROR";
+
 impl Display for RhttpError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
