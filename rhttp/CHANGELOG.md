@@ -1,3 +1,8 @@
+## 0.9.3
+
+- feat: `onSendProgress` should infer `total` also from `Content-Length` header
+- fix: `Unhandled Exception` when `HttpBody.stream` or `HttpBody.bytes` with `onSendProgress` is canceled
+
 ## 0.9.2
 
 - feat: add `--remap-path-prefix=$HOME/.cargo/=/.cargo/` to `RUSTFLAGS` to be more reproducible
