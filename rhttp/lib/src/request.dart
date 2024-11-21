@@ -89,19 +89,22 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         -1;
     final (sender, receiver) = await rust_stream.createStream();
     listenToStreamWithBackpressure(
-        stream: body.stream,
-        onData: sendNotifier == null
-            ? (data) async {
-                await sender.add(data: data);
-              }
-            : (data) async {
-                sendNotifier!.notify(data.length, bodyLength);
-                await sender.add(data: data);
-              },
-        onDone: () async {
-          sendNotifier?.notifyDone(bodyLength);
-          await sender.close();
-        });
+      stream: body.stream,
+      onData: sendNotifier == null
+          ? (data) async {
+              await sender.add(data: data);
+            }
+          : (data) async {
+              sendNotifier!.notify(data.length, bodyLength);
+              await sender.add(data: data);
+            },
+      onDone: () async {
+        sendNotifier?.notifyDone(bodyLength);
+        await sender.close();
+      },
+    ).catchError((e) {
+      // Sending errors are caught below anyways.
+    });
     requestBodyStream = receiver;
   } else {
     requestBodyStream = null;
@@ -119,8 +122,8 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         request = request.copyWith(
           expectBody: HttpExpectBody.stream,
         );
-        convertBackToBytes = true;
         receiveNotifier = ProgressNotifier(request.onReceiveProgress!);
+        convertBackToBytes = true;
         break;
       default:
         receiveNotifier = null;
