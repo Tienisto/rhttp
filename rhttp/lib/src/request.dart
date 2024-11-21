@@ -18,6 +18,7 @@ import 'package:rhttp/src/util/byte_stream_converter.dart';
 import 'package:rhttp/src/util/collection.dart';
 import 'package:rhttp/src/util/progress_notifier.dart';
 import 'package:rhttp/src/util/stream_listener.dart';
+import 'package:rhttp/src/util/strings.dart';
 
 /// Non-Generated helper function that is used by
 /// the client and also by the static class.
@@ -83,7 +84,9 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
   final rust_stream.Dart2RustStreamReceiver? requestBodyStream;
   if (request.body is HttpBodyBytesStream) {
     final body = request.body as HttpBodyBytesStream;
-    final bodyLength = body.length ?? -1;
+    final bodyLength = body.length ??
+        request.headers?[HttpHeaderName.contentLength]?.toInt() ??
+        -1;
     final (sender, receiver) = await rust_stream.createStream();
     listenToStreamWithBackpressure(
         stream: body.stream,

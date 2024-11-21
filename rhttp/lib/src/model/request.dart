@@ -9,6 +9,7 @@ import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/request.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
+import 'package:rhttp/src/util/collection.dart';
 
 const Map<String, String> _keepQuery = {'__rhttp_keep__': '__rhttp_keep__'};
 const HttpHeaders _keepHeaders = HttpHeaders.rawMap({'__keep__': '__keep__'});
@@ -243,6 +244,21 @@ sealed class HttpHeaders {
         rawMap.map.keys.any((e) => e.toLowerCase() == key.httpName),
       HttpHeaderList list =>
         list.list.any((e) => e.$1.toLowerCase() == key.httpName),
+    };
+  }
+
+  /// Returns the value of the header with the [key].
+  /// Returns null if the header is not found.
+  String? operator [](HttpHeaderName key) {
+    return switch (this) {
+      HttpHeaderMap map => map.map[key],
+      HttpHeaderRawMap rawMap => rawMap.map[key.httpName] ??
+          rawMap.map.entries
+              .firstWhereOrNull((e) => e.key.toLowerCase() == key.httpName)
+              ?.value,
+      HttpHeaderList list => list.list
+          .firstWhereOrNull((e) => e.$1.toLowerCase() == key.httpName)
+          ?.$2,
     };
   }
 
