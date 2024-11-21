@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
                   try {
                     counter++;
                     final res = await Rhttp.get(
-                      'http://example.com',
+                      'http://portquiz.net:8080',
                       settings: ClientSettings(
                         dnsSettings: DnsSettings.dynamic(
                           resolver: (String host) async {
@@ -44,8 +44,8 @@ class _MyAppState extends State<MyApp> {
                               print('Resolving "$host" as localhost');
                               return ['127.0.0.1'];
                             } else {
-                              print('Resolving "$host" as example.com');
-                              return ['93.184.215.14'];
+                              print('Resolving "$host" as portquiz.net');
+                              return ['35.180.139.74'];
                             }
                           }
                         ),
