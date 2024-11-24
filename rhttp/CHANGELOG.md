@@ -1,6 +1,7 @@
 ## 0.9.3
 
 - feat: `onSendProgress` should infer `total` also from `Content-Length` header
+- feat: optimize compiled binary size @xalanq #40
 - fix: `Unhandled Exception` when `HttpBody.stream` or `HttpBody.bytes` with `onSendProgress` is canceled
 
 ## 0.9.2
