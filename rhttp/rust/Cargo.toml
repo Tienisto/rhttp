@@ -31,7 +31,11 @@ features = [
 ]
 
 [profile.release]
+opt-level = 3
+strip = true
 panic = "abort"
+lto = true
+codegen-units = 1
 
 [profile.dev]
 opt-level = 3
