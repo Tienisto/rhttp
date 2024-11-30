@@ -1,3 +1,8 @@
+## 0.9.4
+
+- feat: allow specifying ports in `DnsSettings`
+- fix: timeout exception when using `DnsSettings` (#39)
+
 ## 0.9.3
 
 - feat: `onSendProgress` should infer `total` also from `Content-Length` header

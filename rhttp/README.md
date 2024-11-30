@@ -702,6 +702,21 @@ final client = await RhttpClient.create(
 );
 ```
 
+By default, the conventional port is used. You can override this behaviour by specifying the port:
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    dnsSettings: DnsSettings.static(
+      overrides: {
+        'example.com': ['127.0.0.1:8080'],
+      },
+    ),
+  )
+);
+```
+  
+
 ### ➤ Compatibility Layer
 
 You can use the `RhttpCompatibleClient` that implements the `Client` of the [http](https://pub.dev/packages/http) package,

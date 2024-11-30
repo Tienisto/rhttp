@@ -1,5 +1,6 @@
 use crate::api::error::RhttpError;
 use crate::api::http::HttpVersionPref;
+use crate::utils::socket_addr::SocketAddrDigester;
 use chrono::Duration;
 use flutter_rust_bridge::{frb, DartFnFuture};
 use reqwest::dns::{Addrs, Name, Resolve, Resolving};
@@ -9,10 +10,6 @@ use std::net::SocketAddr;
 use std::str::FromStr;
 use std::sync::Arc;
 pub use tokio_util::sync::CancellationToken;
-
-// The port is ignored in DNS resolution.
-// We need to add it regardless so it can be parsed as a SocketAddr.
-const DUMMY_PORT: &'static str = "1111";
 
 pub struct ClientSettings {
     pub http_version_pref: HttpVersionPref,
@@ -246,34 +243,28 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
                 DnsSettings::StaticDns(settings) => {
                     if let Some(fallback) = settings.fallback {
                         client = client.dns_resolver(Arc::new(StaticResolver {
-                            address: SocketAddr::from_str(
-                                format!("{fallback}:{DUMMY_PORT}").as_str(),
-                            )
-                            .map_err(|e| RhttpError::RhttpUnknownError(format!("{e:?}")))?,
+                            address: SocketAddr::from_str(fallback.digest_ip().as_str())
+                                .map_err(|e| RhttpError::RhttpUnknownError(format!("{e:?}")))?,
                         }));
                     }
 
                     for dns_override in settings.overrides {
                         let (hostname, ip) = dns_override;
                         let hostname = hostname.as_str();
-                        let mut error: Option<String> = None;
-                        let ip =
-                            ip.into_iter()
-                                .map(|ip| {
-                                    SocketAddr::from_str(format!("{ip}:{DUMMY_PORT}").as_str())
-                                        .map_err(|e| {
-                                            error = Some(format!(
-                                                "Invalid IP address: {}. {}",
-                                                ip.to_string(),
-                                                e.to_string()
-                                            ));
-                                            RhttpError::RhttpUnknownError(e.to_string())
-                                        })
+                        let mut err: Option<String> = None;
+                        let ip = ip
+                            .into_iter()
+                            .map(|ip| {
+                                let ip_digested = ip.digest_ip();
+                                SocketAddr::from_str(ip_digested.as_str()).map_err(|e| {
+                                    err = Some(format!("Invalid IP address: {ip_digested}. {e:?}"));
+                                    RhttpError::RhttpUnknownError(e.to_string())
                                 })
-                                .filter_map(Result::ok)
-                                .collect::<Vec<SocketAddr>>();
+                            })
+                            .filter_map(Result::ok)
+                            .collect::<Vec<SocketAddr>>();
 
-                        if let Some(error) = error {
+                        if let Some(error) = err {
                             return Err(RhttpError::RhttpUnknownError(error));
                         }
 
@@ -324,8 +315,11 @@ impl Resolve for DynamicResolver {
             let ip = ip
                 .into_iter()
                 .map(|ip| {
-                    SocketAddr::from_str(format!("{ip}:{DUMMY_PORT}").as_str()).map_err(|e| {
-                        RhttpError::RhttpUnknownError(format!("Invalid IP address: {ip}. {e:?}"))
+                    let ip_digested = ip.digest_ip();
+                    SocketAddr::from_str(ip_digested.as_str()).map_err(|e| {
+                        RhttpError::RhttpUnknownError(format!(
+                            "Invalid IP address: {ip_digested}. {e:?}"
+                        ))
                     })
                 })
                 .filter_map(Result::ok)
