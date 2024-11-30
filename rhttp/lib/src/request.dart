@@ -187,9 +187,14 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         stream = stream.transform(
           _createStreamTransformer(
             request: request,
-            onData: (chunk) =>
-                receiveNotifierNotNull.notify(chunk.length, contentLength),
-            onDone: () => receiveNotifierNotNull.notifyDone(contentLength),
+            onData: (chunk) {
+              receiveNotifierNotNull.notify(chunk.length, contentLength);
+            },
+            onDone: () {
+              if (contentLength != -1) {
+                receiveNotifierNotNull.notifyDone(contentLength);
+              }
+            },
           ),
         );
       } else {

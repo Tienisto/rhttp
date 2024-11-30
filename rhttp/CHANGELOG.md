@@ -2,6 +2,7 @@
 
 - feat: allow specifying ports in `DnsSettings`
 - fix: timeout exception when using `DnsSettings` (#39)
+- fix: do not emit final `(-1, -1)` progress event when content length is unknown
 
 ## 0.9.3
 
