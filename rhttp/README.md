@@ -43,6 +43,40 @@ Referred packages: [dio](https://pub.dev/packages/dio) (5.5.0+1), [http](https:/
 
 Checkout the benchmark code [here](https://github.com/Tienisto/rhttp/tree/main/benchmark).
 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Request Basics](#request-basics)
+  - [HTTP methods](#-http-methods)
+  - [Request query parameters](#-request-query-parameters)
+  - [Request Headers](#-request-headers)
+  - [Request Body](#-request-body)
+  - [Response Body](#-response-body)
+- [Request Lifecycle](#request-lifecycle)
+  - [Cancel Requests](#-cancel-requests)
+  - [Progress](#-progress)
+- [Client Settings](#client-settings)
+  - [Connection Reuse](#-connection-reuse)
+  - [Keep-Alive](#-keep-alive)
+  - [Timeout](#-timeout)
+  - [Base URL](#-base-url)
+  - [HTTP version](#-http-version)
+  - [TLS version](#-tls-version)
+  - [Certificate Pinning](#-certificate-pinning)
+  - [Disable pre-installed root certificates](#-disable-pre-installed-root-certificates)
+  - [Client Authentication](#-client-authentication--mutual-tls)
+  - [Disable certificate verification](#-disable-certificate-verification)
+  - [Proxy](#-proxy)
+  - [Redirects](#-redirects)
+  - [DNS resolution](#-dns-resolution)
+- [Intercept](#intercept)
+  - [Interceptors](#-interceptors)
+  - [RetryInterceptor](#-retryinterceptor)
+- [Error Handling](#error-handling)
+  - [Exceptions](#-exceptions)
+  - [Throw on Status Code](#-throw-on-status-code)
+- [Compatibility Layer](#compatibility-layer)
+
 ## Getting Started
 
 ### ➤ Installation
@@ -104,7 +138,7 @@ void main() async {
 }
 ```
 
-## Features
+## Request Basics
 
 ### ➤ HTTP methods
 
@@ -246,52 +280,7 @@ HttpStreamResponse response = await Rhttp.getStream('https://example.com');
 Stream<Uint8List> body = response.body;
 ```
 
-### ➤ Connection Reuse
-
-To improve performance, it is recommended to create a client and reuse it for multiple requests.
-
-This allows you to reuse connections (with same servers).
-Furthermore, it avoids the overhead of creating a new client for each request.
-
-```dart
-final client = await RhttpClient.create();
-
-await client.get('https://example.com');
-```
-
-You can dispose the client when you are done with it:
-
-```dart
-client.dispose();
-```
-
-To create a client synchronously, use `RhttpClient.createSync`.
-This should only be called during app start to avoid blocking the UI thread.
-
-```dart
-final client = RhttpClient.createSync();
-```
-
-### ➤ Keep-Alive
-
-By default, connections are not kept alive. On HTTP/2, the same connection
-is reused for multiple requests that are done on the same time, but the socket
-is closed immediately after the last request is finished.
-
-Setting `keepAliveTimeout` to a value greater than `0` will keep the socket 
-open when idle for the specified duration, both in HTTP/1.1 and HTTP/2.
-
-```dart
-final client = await RhttpClient.create(
-  settings: const ClientSettings(
-    timeoutSettings: TimeoutSettings(
-      keepAliveTimeout: Duration(seconds: 60),
-      keepAlivePing: Duration(seconds: 30),
-    ),
-  ),
-);
-```
-
+## Request Lifecycle
 
 ### ➤ Cancel Requests
 
@@ -338,23 +327,53 @@ final request = Rhttp.post(
 );
 ```
 
-### ➤ Error Handling
+## Client Settings
 
-All exceptions are subclasses of `RhttpException`.
+### ➤ Connection Reuse
 
-The following exceptions can be thrown:
+To improve performance, it is recommended to create a client and reuse it for multiple requests.
 
-| Exception                          | Description                                           |
-|------------------------------------|-------------------------------------------------------|
-| `RhttpCancelException`             | Request was canceled.                                 |
-| `RhttpTimeoutException`            | Request timed out.                                    |
-| `RhttpRedirectException`           | Too many redirects.                                   |
-| `RhttpStatusCodeException`         | Response has 4xx or 5xx status code.                  |
-| `RhttpInvalidCertificateException` | Server certificate is invalid.                        |
-| `RhttpConnectionException`         | Connection error. (no internet, server not reachable) |
-| `RhttpClientDisposedException`     | Client is already disposed.                           |
-| `RhttpInterceptorException`        | Interceptor threw an exception.                       |
-| `RhttpUnknownException`            | Unknown error occurred.                               |
+This allows you to reuse connections (with same servers).
+Furthermore, it avoids the overhead of creating a new client for each request.
+
+```dart
+final client = await RhttpClient.create();
+
+await client.get('https://example.com');
+```
+
+You can dispose the client when you are done with it:
+
+```dart
+client.dispose();
+```
+
+To create a client synchronously, use `RhttpClient.createSync`.
+This should only be called during app start to avoid blocking the UI thread.
+
+```dart
+final client = RhttpClient.createSync();
+```
+
+### ➤ Keep-Alive
+
+By default, connections are not kept alive. On HTTP/2, the same connection
+is reused for multiple requests that are done on the same time, but the socket
+is closed immediately after the last request is finished.
+
+Setting `keepAliveTimeout` to a value greater than `0` will keep the socket 
+open when idle for the specified duration, both in HTTP/1.1 and HTTP/2.
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    timeoutSettings: TimeoutSettings(
+      keepAliveTimeout: Duration(seconds: 60),
+      keepAlivePing: Duration(seconds: 30),
+    ),
+  ),
+);
+```
 
 ### ➤ Timeout
 
@@ -372,20 +391,6 @@ await Rhttp.get(
 );
 ```
 
-### ➤ Throw on Status Code
-
-By default, an exception is thrown if the response has a 4xx or 5xx status code.
-You can disable this behavior by setting `throwOnStatusCode` to `false`.
-
-```dart
-await Rhttp.get(
-  'https://example.com',
-  settings: const ClientSettings(
-    throwOnStatusCode: false,
-  ),
-);
-```
-
 ### ➤ Base URL
 
 Add a base URL to the client to avoid repeating the same URL or to change the base URL easily.
@@ -397,100 +402,6 @@ final client = await RhttpClient.create(
   ),
 );
 ```
-
-### ➤ Interceptors
-
-You can add interceptors to the client to modify requests / responses, handle errors, observe requests, etc.
-
-Any exception thrown by an interceptor that is not a subclass of `RhttpException`
-will be caught and wrapped in a `RhttpInterceptorException`.
-
-```dart
-class TestInterceptor extends Interceptor {
-  @override
-  Future<InterceptorResult<HttpRequest>> beforeRequest(
-    HttpRequest request,
-  ) async {
-    return Interceptor.next(request.addHeader(
-      name: HttpHeaderName.accept,
-      value: 'application/json',
-    ));
-  }
-
-  @override
-  Future<InterceptorResult<HttpResponse>> afterResponse(
-    HttpResponse response,
-  ) async {
-    return Interceptor.next();
-  }
-
-  @override
-  Future<InterceptorResult<RhttpException>> onError(
-    RhttpException exception,
-  ) async {
-    return Interceptor.next();
-  }
-}
-```
-
-There are 4 termination methods:
-
-- `Interceptor.next()`: Continue with the next interceptor.
-- `Interceptor.stop()`: Stop the interceptor chain.
-- `Interceptor.resolve()`: Resolve the request with the given response.
-- `throw RhttpException`: Throw an exception. The stack trace will be preserved.
-
-Instead of implementing the `Interceptor` class, you can use the `SimpleInterceptor` class:
-
-```dart
-final client = await RhttpClient.create(
-  interceptors: [
-    SimpleInterceptor(
-      onError: (exception) async {
-        if (exception is RhttpStatusCodeException && exception.statusCode == 401) {
-          // Log out
-        }
-        return Interceptor.next();
-      },
-    ),
-  ],
-);
-```
-
-### ➤ RetryInterceptor
-
-There is a built-in `RetryInterceptor` that retries the request if it fails.
-
-```dart
-class RefreshTokenInterceptor extends RetryInterceptor {
-  final Ref ref;
-
-  RefreshTokenInterceptor(this.ref);
-
-  @override
-  int get maxRetries => 1;
-
-  @override
-  bool shouldRetry(HttpResponse? response, RhttpException? exception) {
-    return exception is RhttpStatusCodeException &&
-        (exception.statusCode == 401 || exception.statusCode == 403);
-  }
-
-  @override
-  Future<HttpRequest?> beforeRetry(
-    int attempt,
-    HttpRequest request,
-    HttpResponse? response,
-    RhttpException? exception,
-  ) async {
-    ref.read(authProvider.notifier).state = await refresh();
-    return null;
-  }
-}
-```
-
-Checkout this [example](https://github.com/Tienisto/rhttp/blob/main/rhttp/example/lib/interceptor_riverpod.dart)
-to see how access tokens can be refreshed using Riverpod.
 
 ### ➤ HTTP version
 
@@ -715,9 +626,138 @@ final client = await RhttpClient.create(
   )
 );
 ```
-  
 
-### ➤ Compatibility Layer
+## Intercept
+
+### ➤ Interceptors
+
+You can add interceptors to the client to modify requests / responses, handle errors, observe requests, etc.
+
+Any exception thrown by an interceptor that is not a subclass of `RhttpException`
+will be caught and wrapped in a `RhttpInterceptorException`.
+
+```dart
+class TestInterceptor extends Interceptor {
+  @override
+  Future<InterceptorResult<HttpRequest>> beforeRequest(
+    HttpRequest request,
+  ) async {
+    return Interceptor.next(request.addHeader(
+      name: HttpHeaderName.accept,
+      value: 'application/json',
+    ));
+  }
+
+  @override
+  Future<InterceptorResult<HttpResponse>> afterResponse(
+    HttpResponse response,
+  ) async {
+    return Interceptor.next();
+  }
+
+  @override
+  Future<InterceptorResult<RhttpException>> onError(
+    RhttpException exception,
+  ) async {
+    return Interceptor.next();
+  }
+}
+```
+
+There are 4 termination methods:
+
+- `Interceptor.next()`: Continue with the next interceptor.
+- `Interceptor.stop()`: Stop the interceptor chain.
+- `Interceptor.resolve()`: Resolve the request with the given response.
+- `throw RhttpException`: Throw an exception. The stack trace will be preserved.
+
+Instead of implementing the `Interceptor` class, you can use the `SimpleInterceptor` class:
+
+```dart
+final client = await RhttpClient.create(
+  interceptors: [
+    SimpleInterceptor(
+      onError: (exception) async {
+        if (exception is RhttpStatusCodeException && exception.statusCode == 401) {
+          // Log out
+        }
+        return Interceptor.next();
+      },
+    ),
+  ],
+);
+```
+
+### ➤ RetryInterceptor
+
+There is a built-in `RetryInterceptor` that retries the request if it fails.
+
+```dart
+class RefreshTokenInterceptor extends RetryInterceptor {
+  final Ref ref;
+
+  RefreshTokenInterceptor(this.ref);
+
+  @override
+  int get maxRetries => 1;
+
+  @override
+  bool shouldRetry(HttpResponse? response, RhttpException? exception) {
+    return exception is RhttpStatusCodeException &&
+        (exception.statusCode == 401 || exception.statusCode == 403);
+  }
+
+  @override
+  Future<HttpRequest?> beforeRetry(
+    int attempt,
+    HttpRequest request,
+    HttpResponse? response,
+    RhttpException? exception,
+  ) async {
+    ref.read(authProvider.notifier).state = await refresh();
+    return null;
+  }
+}
+```
+
+Checkout this [example](https://github.com/Tienisto/rhttp/blob/main/rhttp/example/lib/interceptor_riverpod.dart)
+to see how access tokens can be refreshed using Riverpod.
+
+## Error Handling
+
+### ➤ Exceptions
+
+All exceptions are subclasses of `RhttpException`.
+
+The following exceptions can be thrown:
+
+| Exception                          | Description                                           |
+|------------------------------------|-------------------------------------------------------|
+| `RhttpCancelException`             | Request was canceled.                                 |
+| `RhttpTimeoutException`            | Request timed out.                                    |
+| `RhttpRedirectException`           | Too many redirects.                                   |
+| `RhttpStatusCodeException`         | Response has 4xx or 5xx status code.                  |
+| `RhttpInvalidCertificateException` | Server certificate is invalid.                        |
+| `RhttpConnectionException`         | Connection error. (no internet, server not reachable) |
+| `RhttpClientDisposedException`     | Client is already disposed.                           |
+| `RhttpInterceptorException`        | Interceptor threw an exception.                       |
+| `RhttpUnknownException`            | Unknown error occurred.                               |
+
+### ➤ Throw on Status Code
+
+By default, an exception is thrown if the response has a 4xx or 5xx status code.
+You can disable this behavior by setting `throwOnStatusCode` to `false`.
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    throwOnStatusCode: false,
+  ),
+);
+```
+
+## Compatibility Layer
 
 You can use the `RhttpCompatibleClient` that implements the `Client` of the [http](https://pub.dev/packages/http) package,
 thereby exposing the same API as the default HTTP client in the Dart ecosystem.
