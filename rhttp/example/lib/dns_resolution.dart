@@ -42,10 +42,10 @@ class _MyAppState extends State<MyApp> {
                           resolver: (String host) async {
                             if (counter % 2 == 0) {
                               print('Resolving "$host" as localhost');
-                              return ['127.0.0.1'];
+                              return ['127.0.0.1:80'];
                             } else {
                               print('Resolving "$host" as portquiz.net');
-                              return ['35.180.139.74'];
+                              return ['35.180.139.74:80'];
                             }
                           }
                         ),

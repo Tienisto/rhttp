@@ -677,7 +677,7 @@ final client = await RhttpClient.create(
   settings: const ClientSettings(
     dnsSettings: DnsSettings.static(
       overrides: {
-        'example.com': ['127.0.0.1'],
+        'example.com': ['127.0.0.1:80'],
       },
     ),
   )
@@ -692,9 +692,9 @@ final client = await RhttpClient.create(
     dnsSettings: DnsSettings.dynamic(
       resolver: (String host) async {
         if (counter % 2 == 0) {
-          return ['127.0.0.1'];
+          return ['127.0.0.1:80'];
         } else {
-          return ['1.2.3.4'];
+          return ['1.2.3.4:80'];
         }
       }
     ),

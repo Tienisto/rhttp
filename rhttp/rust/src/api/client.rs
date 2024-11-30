@@ -10,10 +10,6 @@ use std::str::FromStr;
 use std::sync::Arc;
 pub use tokio_util::sync::CancellationToken;
 
-// The port is ignored in DNS resolution.
-// We need to add it regardless so it can be parsed as a SocketAddr.
-const DUMMY_PORT: &'static str = "1111";
-
 pub struct ClientSettings {
     pub http_version_pref: HttpVersionPref,
     pub timeout_settings: Option<TimeoutSettings>,
@@ -247,7 +243,7 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
                     if let Some(fallback) = settings.fallback {
                         client = client.dns_resolver(Arc::new(StaticResolver {
                             address: SocketAddr::from_str(
-                                format!("{fallback}:{DUMMY_PORT}").as_str(),
+                                format!("{fallback}").as_str(),
                             )
                             .map_err(|e| RhttpError::RhttpUnknownError(format!("{e:?}")))?,
                         }));
@@ -260,10 +256,10 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
                         let ip =
                             ip.into_iter()
                                 .map(|ip| {
-                                    SocketAddr::from_str(format!("{ip}:{DUMMY_PORT}").as_str())
+                                    SocketAddr::from_str(format!("{ip}").as_str())
                                         .map_err(|e| {
                                             error = Some(format!(
-                                                "Invalid IP address: {}. {}",
+                                                "Invalid socket address: {}. {}",
                                                 ip.to_string(),
                                                 e.to_string()
                                             ));
@@ -324,8 +320,8 @@ impl Resolve for DynamicResolver {
             let ip = ip
                 .into_iter()
                 .map(|ip| {
-                    SocketAddr::from_str(format!("{ip}:{DUMMY_PORT}").as_str()).map_err(|e| {
-                        RhttpError::RhttpUnknownError(format!("Invalid IP address: {ip}. {e:?}"))
+                    SocketAddr::from_str(format!("{ip}").as_str()).map_err(|e| {
+                        RhttpError::RhttpUnknownError(format!("Invalid socket address: {ip}. {e:?}"))
                     })
                 })
                 .filter_map(Result::ok)
