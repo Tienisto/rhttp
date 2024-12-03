@@ -121,7 +121,7 @@ void main() async {
 
 Alternatively, you can use the `RhttpCompatibleClient` that implements the `Client` of the [http](https://pub.dev/packages/http) package.
 
-For more information, see [Compatibility Layer](#-compatibility-layer).
+For more information, see [Compatibility Layer](#compatibility-layer).
 
 ```dart
 import 'package:rhttp/rhttp.dart';
