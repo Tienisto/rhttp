@@ -1,3 +1,8 @@
+## 0.9.5
+
+- feat: DevTools integration (Network Tab)
+- feat: `HttpBody.json` now accepts `Object?` instead of `Map<String, dynamic>` to align with JSON spec
+
 ## 0.9.4
 
 - feat: allow specifying ports in `DnsSettings`

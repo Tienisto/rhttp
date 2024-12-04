@@ -10,6 +10,7 @@ import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/request.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/util/collection.dart';
+import 'package:rhttp/src/util/http_header.dart';
 
 const Map<String, String> _keepQuery = {'__rhttp_keep__': '__rhttp_keep__'};
 const HttpHeaders _keepHeaders = HttpHeaders.rawMap({'__keep__': '__keep__'});
@@ -82,6 +83,9 @@ class HttpRequest extends BaseHttpRequest {
   /// The settings to use for the request.
   /// This is **only** used if [client] is `null`.
   final ClientSettings? settings;
+
+  /// The settings to use for the request.
+  ClientSettings? get digestedSettings => client?.settings ?? settings;
 
   /// The interceptor to use for the request.
   /// This can be a [QueuedInterceptor] if there are multiple interceptors.
@@ -343,6 +347,21 @@ sealed class HttpHeaders {
         ]),
     };
   }
+
+  /// Converts the headers to a map where duplicate headers are represented
+  /// using a list of values.
+  Map<String, List<String>> toMapList() {
+    return switch (this) {
+      HttpHeaderMap map => {
+          for (final entry in map.map.entries)
+            entry.key.httpName: [entry.value],
+        },
+      HttpHeaderRawMap rawMap => {
+          for (final entry in rawMap.map.entries) entry.key: [entry.value],
+        },
+      HttpHeaderList list => list.list.asHeaderMapList,
+    };
+  }
 }
 
 /// A typed header map with a set of predefined keys.
@@ -390,7 +409,7 @@ sealed class HttpBody {
 
   /// A JSON body.
   /// The Content-Type header will be set to `application/json` if not provided.
-  const factory HttpBody.json(Map<String, dynamic> json) = HttpBodyJson._;
+  const factory HttpBody.json(Object? json) = HttpBodyJson._;
 
   /// A body of raw bytes.
   const factory HttpBody.bytes(Uint8List bytes) = HttpBodyBytes._;
@@ -423,7 +442,7 @@ class HttpBodyText extends HttpBody {
 /// A JSON body.
 /// The Content-Type header will be set to `application/json` if not provided.
 class HttpBodyJson extends HttpBody {
-  final Map<String, dynamic> json;
+  final Object? json;
 
   const HttpBodyJson._(this.json);
 }

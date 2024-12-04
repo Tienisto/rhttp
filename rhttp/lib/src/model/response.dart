@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/rust/api/http.dart' as rust;
+import 'package:rhttp/src/util/http_header.dart';
 
 sealed class HttpResponse {
   final HttpRequest request;
@@ -11,9 +12,11 @@ sealed class HttpResponse {
   final int statusCode;
   final List<(String, String)> headers;
 
-  Map<String, String> get headerMap => {
-        for (final entry in headers) entry.$1: entry.$2,
-      };
+  /// Response headers converted as a map.
+  Map<String, String> get headerMap => headers.asHeaderMap;
+
+  /// Response headers converted as a map respecting multiple values.
+  Map<String, List<String>> get headerMapList => headers.asHeaderMapList;
 
   const HttpResponse({
     required this.request,

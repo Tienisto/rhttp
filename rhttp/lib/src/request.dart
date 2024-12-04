@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:meta/meta.dart';
+import 'package:rhttp/src/dev_tools.dart';
 import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/exception.dart';
 import 'package:rhttp/src/model/header.dart';
@@ -145,6 +147,12 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     null => request.url,
   };
 
+  final profile = createProfileForRequest(
+    request: request,
+    url: url,
+    headers: headers,
+  );
+
   try {
     if (request.expectBody == HttpExpectBody.stream) {
       final cancelRefCompleter = Completer<rust_lib.CancellationToken>();
@@ -171,6 +179,9 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
       }
 
       final rustResponse = await responseCompleter.future;
+      final bytesBuilder = profile == null || convertBackToBytes
+          ? null
+          : BytesBuilder(copy: false);
 
       if (receiveNotifier != null) {
         final contentLengthStr = rustResponse.headers
@@ -189,6 +200,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
             request: request,
             onData: (chunk) {
               receiveNotifierNotNull.notify(chunk.length, contentLength);
+              bytesBuilder?.add(chunk);
             },
             onDone: () {
               if (contentLength != -1) {
@@ -201,6 +213,9 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         stream = stream.transform(
           _createStreamTransformer(
             request: request,
+            onData: bytesBuilder == null
+                ? null
+                : (chunk) => bytesBuilder.add(chunk),
           ),
         );
       }
@@ -220,6 +235,12 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
           body: await stream.toUint8List(),
         );
       }
+
+      populateProfileForResponse(
+        profile: profile,
+        response: response,
+        streamBody: bytesBuilder?.takeBytes(),
+      );
 
       if (interceptors != null) {
         try {
@@ -270,6 +291,12 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         rustResponse,
       );
 
+      populateProfileForResponse(
+        profile: profile,
+        response: response,
+        streamBody: null,
+      );
+
       if (interceptors != null) {
         try {
           final result = await interceptors.afterResponse(response);
@@ -297,6 +324,16 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     }
     if (e is rust_error.RhttpError) {
       RhttpException exception = parseError(request, e);
+
+      if (profile != null && exception is RhttpStatusCodeException) {
+        populateProfileForCustomResponse(
+          profile: profile,
+          statusCode: exception.statusCode,
+          headers: exception.headers,
+          body: exception.body,
+        );
+      }
+
       if (interceptors == null) {
         // throw converted exception with same stack trace
         Error.throwWithStackTrace(exception, st);

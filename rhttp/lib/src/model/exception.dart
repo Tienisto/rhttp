@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/rust/api/error.dart' as rust;
 import 'package:rhttp/src/rust/api/http.dart' as rust_http;
+import 'package:rhttp/src/util/http_header.dart';
 
 /// The base class for all exceptions thrown by the `rhttp` library
 /// or by interceptors.
@@ -49,9 +50,11 @@ class RhttpStatusCodeException extends RhttpException {
   /// Response headers.
   final List<(String, String)> headers;
 
-  Map<String, String> get headerMap => {
-        for (final entry in headers) entry.$1: entry.$2,
-      };
+  /// Response headers converted as a map.
+  Map<String, String> get headerMap => headers.asHeaderMap;
+
+  /// Response headers converted as a map respecting multiple values.
+  Map<String, List<String>> get headerMapList => headers.asHeaderMapList;
 
   /// The response body. For simplicity, we don't differentiate between
   /// text or bytes. Streams are always null.
