@@ -58,18 +58,28 @@ HttpClientRequestProfile? createDevToolsProfile({
 }
 
 extension HttpClientRequestProfileExt on HttpClientRequestProfile {
-  void trackResponse({
-    required HttpResponse response,
-    required Uint8List? streamBody,
-  }) {
+  void trackResponse(HttpResponse response) {
+    assert(response is! HttpStreamResponse);
+
     trackCustomResponse(
       statusCode: response.statusCode,
       headers: response.headers,
       body: switch (response) {
         HttpTextResponse() => utf8.encode(response.body),
         HttpBytesResponse() => response.body,
-        HttpStreamResponse() => streamBody!,
+        HttpStreamResponse() => throw 'Should not happen. Report this issue.',
       },
+    );
+  }
+
+  void trackStreamResponse({
+    required HttpStreamResponse response,
+    required Uint8List? streamBody,
+  }) {
+    trackCustomResponse(
+      statusCode: response.statusCode,
+      headers: response.headers,
+      body: streamBody,
     );
   }
 

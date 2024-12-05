@@ -1,3 +1,7 @@
+## 0.9.6
+
+- fix: missing response body in DevTools when using Stream response
+
 ## 0.9.5
 
 - feat: DevTools integration (Network Tab)

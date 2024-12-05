@@ -19,7 +19,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   HttpStreamResponse? response;
-  List<int> bytes = [];
   String text = '';
 
   @override
@@ -55,6 +54,7 @@ class _MyAppState extends State<MyApp> {
                     response = res;
                   });
 
+                  final bytes = <int>[];
                   res.body.listen((event) {
                     print('Bytes: $event');
                     bytes.addAll(event);

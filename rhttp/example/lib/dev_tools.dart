@@ -57,6 +57,46 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 onPressed: () async {
                   try {
+                    final res = await Rhttp.post(
+                      'https://reqres.ina/api/users',
+                      body: const HttpBody.json({
+                        'name': 'morpheus',
+                        'job': 'leader',
+                      }),
+                    );
+                    setState(() {
+                      response = res;
+                    });
+                  } catch (e, st) {
+                    print(e);
+                    print(st);
+                  }
+                },
+                child: const Text('Rhttp Connection Error Test'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    final res = await Rhttp.post(
+                      'https://reqres.in/aapi/users',
+                      body: const HttpBody.json({
+                        'name': 'morpheus',
+                        'job': 'leader',
+                      }),
+                    );
+                    setState(() {
+                      response = res;
+                    });
+                  } catch (e, st) {
+                    print(e);
+                    print(st);
+                  }
+                },
+                child: const Text('Rhttp 404 Error Test'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
                     await http.post(
                       Uri.parse('https://reqres.in/api/users'),
                       body: jsonEncode({

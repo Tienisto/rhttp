@@ -17,6 +17,7 @@ import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/rust/api/stream.dart' as rust_stream;
 import 'package:rhttp/src/rust/lib.dart' as rust_lib;
 import 'package:rhttp/src/util/byte_stream_converter.dart';
+import 'package:rhttp/src/util/byte_stream_subscription.dart';
 import 'package:rhttp/src/util/collection.dart';
 import 'package:rhttp/src/util/progress_notifier.dart';
 import 'package:rhttp/src/util/stream_listener.dart';
@@ -83,34 +84,15 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     body: request.body,
   );
 
-  final rust_stream.Dart2RustStreamReceiver? requestBodyStream;
-  if (request.body is HttpBodyBytesStream) {
-    final body = request.body as HttpBodyBytesStream;
-    final bodyLength = body.length ??
-        request.headers?[HttpHeaderName.contentLength]?.toInt() ??
-        -1;
-    final (sender, receiver) = await rust_stream.createStream();
-    listenToStreamWithBackpressure(
-      stream: body.stream,
-      onData: sendNotifier == null
-          ? (data) async {
-              await sender.add(data: data);
-            }
-          : (data) async {
-              sendNotifier!.notify(data.length, bodyLength);
-              await sender.add(data: data);
-            },
-      onDone: () async {
-        sendNotifier?.notifyDone(bodyLength);
-        await sender.close();
-      },
-    ).catchError((e) {
-      // Sending errors are caught below anyways.
-    });
-    requestBodyStream = receiver;
-  } else {
-    requestBodyStream = null;
-  }
+  // Convert the Dart stream to a Dart2Rust stream
+  final requestBodyStream = switch (request.body) {
+    HttpBodyBytesStream body => await _createDart2RustStream(
+        body: body,
+        headers: headers,
+        sendNotifier: sendNotifier,
+      ),
+    _ => null,
+  };
 
   final ProgressNotifier? receiveNotifier;
   final bool convertBackToBytes;
@@ -179,9 +161,9 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
       }
 
       final rustResponse = await responseCompleter.future;
-      final bytesBuilder = profile == null || convertBackToBytes
+      final profileByteStream = profile == null || convertBackToBytes
           ? null
-          : BytesBuilder(copy: false);
+          : ByteStreamSubscription();
 
       if (receiveNotifier != null) {
         final contentLengthStr = rustResponse.headers
@@ -200,12 +182,13 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
             request: request,
             onData: (chunk) {
               receiveNotifierNotNull.notify(chunk.length, contentLength);
-              bytesBuilder?.add(chunk);
+              profileByteStream?.addBytes(chunk);
             },
             onDone: () {
               if (contentLength != -1) {
                 receiveNotifierNotNull.notifyDone(contentLength);
               }
+              profileByteStream?.close();
             },
           ),
         );
@@ -213,9 +196,10 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         stream = stream.transform(
           _createStreamTransformer(
             request: request,
-            onData: bytesBuilder == null
+            onData: profileByteStream == null
                 ? null
-                : (chunk) => bytesBuilder.add(chunk),
+                : (chunk) => profileByteStream.addBytes(chunk),
+            onDone: profileByteStream?.close,
           ),
         );
       }
@@ -234,12 +218,18 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
           headers: response.headers,
           body: await stream.toUint8List(),
         );
-      }
 
-      profile?.trackResponse(
-        response: response,
-        streamBody: bytesBuilder?.takeBytes(),
-      );
+        profile?.trackResponse(response);
+      } else if (profile != null && profileByteStream != null) {
+        // Notify DevTools as soon as the complete body is received.
+        // Using then() to return the response immediately.
+        profileByteStream.waitForBytes().then((bytes) {
+          profile.trackStreamResponse(
+            response: response as HttpStreamResponse,
+            streamBody: bytes,
+          );
+        });
+      }
 
       if (interceptors != null) {
         try {
@@ -290,10 +280,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         rustResponse,
       );
 
-      profile?.trackResponse(
-        response: response,
-        streamBody: null,
-      );
+      profile?.trackResponse(response);
 
       if (interceptors != null) {
         try {
@@ -398,6 +385,35 @@ HttpHeaders? _addHeaderIfNotExists({
     );
   }
   return headers;
+}
+
+Future<rust_stream.Dart2RustStreamReceiver> _createDart2RustStream({
+  required HttpBodyBytesStream body,
+  required HttpHeaders? headers,
+  required ProgressNotifier? sendNotifier,
+}) async {
+  final bodyLength =
+      body.length ?? headers?[HttpHeaderName.contentLength]?.toInt() ?? -1;
+  final (sender, receiver) = await rust_stream.createStream();
+  listenToStreamWithBackpressure(
+    stream: body.stream,
+    onData: sendNotifier == null
+        ? (data) async {
+            await sender.add(data: data);
+          }
+        : (data) async {
+            sendNotifier.notify(data.length, bodyLength);
+            await sender.add(data: data);
+          },
+    onDone: () async {
+      sendNotifier?.notifyDone(bodyLength);
+      await sender.close();
+    },
+  ).catchError((e) {
+    // Sending errors are caught later anyways.
+  });
+
+  return receiver;
 }
 
 extension on HttpMethod {
