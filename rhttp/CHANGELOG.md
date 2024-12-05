@@ -1,6 +1,7 @@
 ## 0.9.6
 
 - fix: missing response body in DevTools when using Stream response
+- fix: Stream not finishing when using `onReceiveProgress`
 
 ## 0.9.5
 

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
@@ -487,7 +486,12 @@ StreamTransformer<Uint8List, Uint8List> _createStreamTransformer({
             onData(data);
             sink.add(data);
           },
-    handleDone: onDone == null ? null : (sink) => onDone(),
+    handleDone: onDone == null
+        ? null
+        : (sink) {
+            onDone();
+            sink.close();
+          },
     handleError: (error, stackTrace, sink) {
       final mappedError = switch (error) {
         // Flutter Rust Bridge currently always throws AnyhowException
