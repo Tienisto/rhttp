@@ -1,8 +1,11 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
+
 import 'package:cupertino_http/cupertino_http.dart';
 import 'package:flutter/material.dart';
 import 'package:rhttp/rhttp.dart';
+import 'package:http/http.dart' as http;
 import 'package:rhttp_example/widgets/response_card.dart';
 
 Future<void> main() async {
@@ -35,7 +38,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   try {
                     final res = await Rhttp.post(
-                      'https://reqres.in/api/users',
+                      'https://reqres.inaa/api/users',
                       body: const HttpBody.json({
                         'name': 'morpheus',
                         'job': 'leader',
@@ -50,6 +53,23 @@ class _MyAppState extends State<MyApp> {
                   }
                 },
                 child: const Text('Rhttp Test'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await http.post(
+                      Uri.parse('https://reqres.inaa/api/users'),
+                      body: jsonEncode({
+                        'name': 'morpheus',
+                        'job': 'leader',
+                      }),
+                    );
+                  } catch (e, st) {
+                    print(e);
+                    print(st);
+                  }
+                },
+                child: const Text('Http Test'),
               ),
               ElevatedButton(
                 onPressed: () async {

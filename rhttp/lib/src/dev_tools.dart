@@ -7,7 +7,7 @@ import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/model/settings.dart';
 import 'package:rhttp/src/util/http_header.dart';
 
-HttpClientRequestProfile? createProfileForRequest({
+HttpClientRequestProfile? createDevToolsProfile({
   required HttpRequest request,
   required String url,
   required HttpHeaders? headers,
@@ -45,7 +45,7 @@ HttpClientRequestProfile? createProfileForRequest({
     HttpBodyForm form => utf8
         .encode(form.form.entries.map((e) => '${e.key}=${e.value}').join('&')),
     HttpBodyMultipart multipart =>
-      utf8.encode(multipart.parts.map((e) => '${e.$1}=<TODO>').join('&')),
+      utf8.encode(multipart.parts.map((e) => '${e.$1}=<...>').join('&')),
     null => null,
   };
 
@@ -57,12 +57,12 @@ HttpClientRequestProfile? createProfileForRequest({
   return profile;
 }
 
-void populateProfileForResponse({
+void profileResponse({
   required HttpClientRequestProfile? profile,
   required HttpResponse response,
   required Uint8List? streamBody,
 }) {
-  populateProfileForCustomResponse(
+  profileCustomResponse(
     profile: profile,
     statusCode: response.statusCode,
     headers: response.headers,
@@ -74,7 +74,7 @@ void populateProfileForResponse({
   );
 }
 
-void populateProfileForCustomResponse({
+void profileCustomResponse({
   required HttpClientRequestProfile? profile,
   required int statusCode,
   required List<(String, String)> headers,
@@ -102,4 +102,16 @@ void populateProfileForCustomResponse({
   }
 
   profile.responseData.close();
+}
+
+void profileError({
+  required HttpClientRequestProfile? profile,
+  required String error,
+}) {
+  if (profile == null) {
+    return;
+  }
+
+  profile.requestData.closeWithError(error);
+  profile.responseData.closeWithError(error);
 }
