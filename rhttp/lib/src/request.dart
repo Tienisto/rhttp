@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:meta/meta.dart';
-import 'package:rhttp/src/dev_tools.dart' as dev_tools;
+import 'package:rhttp/src/dev_tools.dart';
 import 'package:rhttp/src/interceptor/interceptor.dart';
 import 'package:rhttp/src/model/exception.dart';
 import 'package:rhttp/src/model/header.dart';
@@ -147,7 +147,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     null => request.url,
   };
 
-  final profile = dev_tools.createDevToolsProfile(
+  final profile = createDevToolsProfile(
     request: request,
     url: url,
     headers: headers,
@@ -236,8 +236,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         );
       }
 
-      dev_tools.profileResponse(
-        profile: profile,
+      profile?.trackResponse(
         response: response,
         streamBody: bytesBuilder?.takeBytes(),
       );
@@ -291,8 +290,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         rustResponse,
       );
 
-      dev_tools.profileResponse(
-        profile: profile,
+      profile?.trackResponse(
         response: response,
         streamBody: null,
       );
@@ -325,18 +323,18 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
     if (e is rust_error.RhttpError) {
       RhttpException exception = parseError(request, e);
 
-      if (profile != null && exception is RhttpStatusCodeException) {
-        dev_tools.profileCustomResponse(
-          profile: profile,
-          statusCode: exception.statusCode,
-          headers: exception.headers,
-          body: exception.body,
-        );
-      } else {
-        dev_tools.profileError(
-          profile: profile,
-          error: e.toString(),
-        );
+      if (profile != null) {
+        if (exception is RhttpStatusCodeException) {
+          profile.trackCustomResponse(
+            statusCode: exception.statusCode,
+            headers: exception.headers,
+            body: exception.body,
+          );
+        } else {
+          profile.trackError(
+            error: e.toString(),
+          );
+        }
       }
 
       if (interceptors == null) {

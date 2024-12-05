@@ -57,61 +57,55 @@ HttpClientRequestProfile? createDevToolsProfile({
   return profile;
 }
 
-void profileResponse({
-  required HttpClientRequestProfile? profile,
-  required HttpResponse response,
-  required Uint8List? streamBody,
-}) {
-  profileCustomResponse(
-    profile: profile,
-    statusCode: response.statusCode,
-    headers: response.headers,
-    body: switch (response) {
-      HttpTextResponse() => utf8.encode(response.body),
-      HttpBytesResponse() => response.body,
-      HttpStreamResponse() => streamBody!,
-    },
-  );
-}
-
-void profileCustomResponse({
-  required HttpClientRequestProfile? profile,
-  required int statusCode,
-  required List<(String, String)> headers,
-  required Object? body,
-}) {
-  if (profile == null) {
-    return;
+extension HttpClientRequestProfileExt on HttpClientRequestProfile {
+  void trackResponse({
+    required HttpResponse response,
+    required Uint8List? streamBody,
+  }) {
+    trackCustomResponse(
+      statusCode: response.statusCode,
+      headers: response.headers,
+      body: switch (response) {
+        HttpTextResponse() => utf8.encode(response.body),
+        HttpBytesResponse() => response.body,
+        HttpStreamResponse() => streamBody!,
+      },
+    );
   }
 
-  profile.requestData.close();
+  void trackCustomResponse({
+    required int statusCode,
+    required List<(String, String)> headers,
+    required Object? body,
+  }) {
+    final profile = this;
 
-  profile.responseData
-    ..statusCode = statusCode
-    ..headersListValues = headers.asHeaderMapList;
+    profile.requestData.close();
 
-  final bodyBytes = switch (body) {
-    String() => utf8.encode(body),
-    Uint8List() => body,
-    _ => null,
-  };
+    profile.responseData
+      ..statusCode = statusCode
+      ..headersListValues = headers.asHeaderMapList;
 
-  if (bodyBytes != null) {
-    profile.responseData.bodySink.add(bodyBytes);
-    profile.responseData.bodySink.close();
+    final bodyBytes = switch (body) {
+      String() => utf8.encode(body),
+      Uint8List() => body,
+      _ => null,
+    };
+
+    if (bodyBytes != null) {
+      profile.responseData.bodySink.add(bodyBytes);
+      profile.responseData.bodySink.close();
+    }
+
+    profile.responseData.close();
   }
 
-  profile.responseData.close();
-}
+  void trackError({
+    required String error,
+  }) {
+    final profile = this;
 
-void profileError({
-  required HttpClientRequestProfile? profile,
-  required String error,
-}) {
-  if (profile == null) {
-    return;
+    profile.requestData.closeWithError(error);
+    profile.responseData.closeWithError(error);
   }
-
-  profile.requestData.closeWithError(error);
-  profile.responseData.closeWithError(error);
 }

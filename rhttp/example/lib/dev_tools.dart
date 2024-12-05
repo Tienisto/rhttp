@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   try {
                     final res = await Rhttp.post(
-                      'https://reqres.inaa/api/users',
+                      'https://reqres.in/api/users',
                       body: const HttpBody.json({
                         'name': 'morpheus',
                         'job': 'leader',
@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () async {
                   try {
                     await http.post(
-                      Uri.parse('https://reqres.inaa/api/users'),
+                      Uri.parse('https://reqres.in/api/users'),
                       body: jsonEncode({
                         'name': 'morpheus',
                         'job': 'leader',
