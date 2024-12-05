@@ -29,7 +29,7 @@ The APK size will increase by 2 MB on arm64 and 6 MB if compiled for all archite
 - ✅ Proxy support
 - ✅ Custom DNS resolution
 - ✅ Strong type safety
-- ✅ DevTools support (Network tab)
+- ✅ [DevTools](https://docs.flutter.dev/tools/devtools/network) support (Network tab)
 - ✅ Compatible with [dart:io](https://api.dart.dev/stable/dart-io/HttpClient-class.html), [http](https://pub.dev/packages/http), and [dio](https://pub.dev/packages/dio)
 
 ## Benchmark
