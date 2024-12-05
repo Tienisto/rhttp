@@ -9,6 +9,10 @@ const privateKey = fs.readFileSync('../cert/privateKey.pem', 'utf8');
 const certificate = fs.readFileSync('../cert/cert.pem', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
+// Create a buffer filled with zeros
+const oneKb = Buffer.alloc(1024, 0);
+const tenMb = Buffer.alloc(10485760, 0);
+
 const requestHandler = (request, response) => {
     let receivedBytes = 0;
 
@@ -20,7 +24,26 @@ const requestHandler = (request, response) => {
     request.on('end', () => {
         console.log(`Received ${receivedBytes} bytes`);
         response.statusCode = 200;
-        response.end(receivedBytes.toString());
+
+        let file;
+        switch (request.url) {
+            case '/small':
+                file = oneKb;
+                break;
+            case '/large':
+                file = tenMb;
+                break;
+            case '/upload':
+                response.end(receivedBytes.toString());
+                return;
+        }
+
+        if (file) {
+            response.setHeader('Content-Type', 'application/octet-stream');
+            response.setHeader('Content-Disposition', 'attachment; filename="zeros.bin"');
+            response.setHeader('Content-Length', file.length);
+            response.end(file);
+        }
     });
 
     request.on('error', (err) => {

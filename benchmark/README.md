@@ -4,7 +4,7 @@ Start server:
 
 ```shell
 cd nodejs
-node download.js
+node server.js
 ```
 
 Start benchmark:
