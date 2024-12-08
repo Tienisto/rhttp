@@ -1586,6 +1586,7 @@ impl SseDecode for crate::api::client::TlsSettings {
             <Option<crate::api::client::TlsVersion>>::sse_decode(deserializer);
         let mut var_maxTlsVersion =
             <Option<crate::api::client::TlsVersion>>::sse_decode(deserializer);
+        let mut var_enableTlsSni = <bool>::sse_decode(deserializer);
         return crate::api::client::TlsSettings {
             trust_root_certificates: var_trustRootCertificates,
             trusted_root_certificates: var_trustedRootCertificates,
@@ -1593,6 +1594,7 @@ impl SseDecode for crate::api::client::TlsSettings {
             client_certificate: var_clientCertificate,
             min_tls_version: var_minTlsVersion,
             max_tls_version: var_maxTlsVersion,
+            enable_tls_sni: var_enableTlsSni,
         };
     }
 }
@@ -1869,6 +1871,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::http::HttpBody {
             crate::api::http::HttpBody::Multipart(field0) => {
                 [4.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
+            _ => {
+                unimplemented!("");
+            }
         }
     }
 }
@@ -1908,6 +1913,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::http::HttpHeaders {
             }
             crate::api::http::HttpHeaders::List(field0) => {
                 [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
             }
         }
     }
@@ -1979,6 +1987,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::http::HttpResponseBody {
                 [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             crate::api::http::HttpResponseBody::Stream => [2.into_dart()].into_dart(),
+            _ => {
+                unimplemented!("");
+            }
         }
     }
 }
@@ -2091,6 +2102,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::http::MultipartValue {
             crate::api::http::MultipartValue::File(field0) => {
                 [2.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
+            _ => {
+                unimplemented!("");
+            }
         }
     }
 }
@@ -2135,6 +2149,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::client::ProxySettings {
             crate::api::client::ProxySettings::CustomProxyList(field0) => {
                 [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
+            _ => {
+                unimplemented!("");
+            }
         }
     }
 }
@@ -2156,6 +2173,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::client::RedirectSettings {
             crate::api::client::RedirectSettings::NoRedirect => [0.into_dart()].into_dart(),
             crate::api::client::RedirectSettings::LimitedRedirects(field0) => {
                 [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
             }
         }
     }
@@ -2193,6 +2213,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::error::RhttpError {
             }
             crate::api::error::RhttpError::RhttpUnknownError(field0) => {
                 [6.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
             }
         }
     }
@@ -2259,6 +2282,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::client::TlsSettings {
             self.client_certificate.into_into_dart().into_dart(),
             self.min_tls_version.into_into_dart().into_dart(),
             self.max_tls_version.into_into_dart().into_dart(),
+            self.enable_tls_sni.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -2518,6 +2542,9 @@ impl SseEncode for crate::api::http::HttpBody {
                 <i32>::sse_encode(4, serializer);
                 <crate::api::http::MultipartPayload>::sse_encode(field0, serializer);
             }
+            _ => {
+                unimplemented!("");
+            }
         }
     }
 }
@@ -2549,6 +2576,9 @@ impl SseEncode for crate::api::http::HttpHeaders {
             crate::api::http::HttpHeaders::List(field0) => {
                 <i32>::sse_encode(1, serializer);
                 <Vec<(String, String)>>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
             }
         }
     }
@@ -2601,6 +2631,9 @@ impl SseEncode for crate::api::http::HttpResponseBody {
             }
             crate::api::http::HttpResponseBody::Stream => {
                 <i32>::sse_encode(2, serializer);
+            }
+            _ => {
+                unimplemented!("");
             }
         }
     }
@@ -2770,6 +2803,9 @@ impl SseEncode for crate::api::http::MultipartValue {
             crate::api::http::MultipartValue::File(field0) => {
                 <i32>::sse_encode(2, serializer);
                 <String>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
             }
         }
     }
@@ -2953,6 +2989,9 @@ impl SseEncode for crate::api::client::ProxySettings {
                 <i32>::sse_encode(1, serializer);
                 <Vec<crate::api::client::CustomProxy>>::sse_encode(field0, serializer);
             }
+            _ => {
+                unimplemented!("");
+            }
         }
     }
 }
@@ -3000,6 +3039,9 @@ impl SseEncode for crate::api::client::RedirectSettings {
                 <i32>::sse_encode(1, serializer);
                 <i32>::sse_encode(field0, serializer);
             }
+            _ => {
+                unimplemented!("");
+            }
         }
     }
 }
@@ -3035,6 +3077,9 @@ impl SseEncode for crate::api::error::RhttpError {
                 <i32>::sse_encode(6, serializer);
                 <String>::sse_encode(field0, serializer);
             }
+            _ => {
+                unimplemented!("");
+            }
         }
     }
 }
@@ -3069,6 +3114,7 @@ impl SseEncode for crate::api::client::TlsSettings {
         );
         <Option<crate::api::client::TlsVersion>>::sse_encode(self.min_tls_version, serializer);
         <Option<crate::api::client::TlsVersion>>::sse_encode(self.max_tls_version, serializer);
+        <bool>::sse_encode(self.enable_tls_sni, serializer);
     }
 }
 

@@ -214,6 +214,9 @@ class TlsSettings {
   /// The maximum TLS version to use.
   final rust_client.TlsVersion? maxTlsVersion;
 
+  /// Enable TLS Server Name Indication (SNI).
+  final bool enableTlsSni;
+
   const TlsSettings({
     this.trustRootCertificates = true,
     this.trustedRootCertificates = const [],
@@ -221,6 +224,7 @@ class TlsSettings {
     this.clientCertificate,
     this.minTlsVersion,
     this.maxTlsVersion,
+    this.enableTlsSni = true,
   });
 }
 
@@ -394,6 +398,7 @@ extension on TlsSettings {
       clientCertificate: clientCertificate?._toRustType(),
       minTlsVersion: minTlsVersion,
       maxTlsVersion: maxTlsVersion,
+      enableTlsSni: enableTlsSni
     );
   }
 }
