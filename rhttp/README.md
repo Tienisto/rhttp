@@ -85,6 +85,7 @@ Checkout the benchmark code [here](https://github.com/Tienisto/rhttp/tree/main/b
 1. Install Rust via [rustup](https://rustup.rs/).
    - Rust 1.80.0 or later is required.
 2. For Android: Install [Command-line tools](https://stackoverflow.com/questions/68236007/i-am-getting-error-cmdline-tools-component-is-missing-after-installing-flutter)
+   - Make sure to have the latest NDK installed. [#44](https://github.com/Tienisto/rhttp/issues/44)
 3. Add `rhttp` to `pubspec.yaml`:
 
 ```yaml
