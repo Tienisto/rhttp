@@ -1627,8 +1627,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TlsSettings dco_decode_tls_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 7)
+      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
     return TlsSettings(
       trustRootCertificates: dco_decode_bool(arr[0]),
       trustedRootCertificates: dco_decode_list_list_prim_u_8_strict(arr[1]),
@@ -1636,6 +1636,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       clientCertificate: dco_decode_opt_box_autoadd_client_certificate(arr[3]),
       minTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[4]),
       maxTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[5]),
+      enableTlsSni: dco_decode_bool(arr[6]),
     );
   }
 
@@ -2590,13 +2591,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_decode_opt_box_autoadd_tls_version(deserializer);
     var var_maxTlsVersion =
         sse_decode_opt_box_autoadd_tls_version(deserializer);
+    var var_enableTlsSni = sse_decode_bool(deserializer);
     return TlsSettings(
         trustRootCertificates: var_trustRootCertificates,
         trustedRootCertificates: var_trustedRootCertificates,
         verifyCertificates: var_verifyCertificates,
         clientCertificate: var_clientCertificate,
         minTlsVersion: var_minTlsVersion,
-        maxTlsVersion: var_maxTlsVersion);
+        maxTlsVersion: var_maxTlsVersion,
+        enableTlsSni: var_enableTlsSni);
   }
 
   @protected
@@ -3026,6 +3029,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case HttpBody_Multipart(field0: final field0):
         sse_encode_i_32(4, serializer);
         sse_encode_box_autoadd_multipart_payload(field0, serializer);
+      default:
+        throw UnimplementedError('');
     }
   }
 
@@ -3046,6 +3051,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case HttpHeaders_List(field0: final field0):
         sse_encode_i_32(1, serializer);
         sse_encode_list_record_string_string(field0, serializer);
+      default:
+        throw UnimplementedError('');
     }
   }
 
@@ -3077,6 +3084,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_list_prim_u_8_strict(field0, serializer);
       case HttpResponseBody_Stream():
         sse_encode_i_32(2, serializer);
+      default:
+        throw UnimplementedError('');
     }
   }
 
@@ -3216,6 +3225,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case MultipartValue_File(field0: final field0):
         sse_encode_i_32(2, serializer);
         sse_encode_String(field0, serializer);
+      default:
+        throw UnimplementedError('');
     }
   }
 
@@ -3405,6 +3416,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case ProxySettings_CustomProxyList(field0: final field0):
         sse_encode_i_32(1, serializer);
         sse_encode_list_custom_proxy(field0, serializer);
+      default:
+        throw UnimplementedError('');
     }
   }
 
@@ -3454,6 +3467,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case RedirectSettings_LimitedRedirects(field0: final field0):
         sse_encode_i_32(1, serializer);
         sse_encode_i_32(field0, serializer);
+      default:
+        throw UnimplementedError('');
     }
   }
 
@@ -3485,6 +3500,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case RhttpError_RhttpUnknownError(field0: final field0):
         sse_encode_i_32(6, serializer);
         sse_encode_String(field0, serializer);
+      default:
+        throw UnimplementedError('');
     }
   }
 
@@ -3518,6 +3535,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         self.clientCertificate, serializer);
     sse_encode_opt_box_autoadd_tls_version(self.minTlsVersion, serializer);
     sse_encode_opt_box_autoadd_tls_version(self.maxTlsVersion, serializer);
+    sse_encode_bool(self.enableTlsSni, serializer);
   }
 
   @protected
