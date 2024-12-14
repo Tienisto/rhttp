@@ -202,6 +202,7 @@ class TlsSettings {
   final ClientCertificate? clientCertificate;
   final TlsVersion? minTlsVersion;
   final TlsVersion? maxTlsVersion;
+  final bool enableTlsSni;
 
   const TlsSettings({
     required this.trustRootCertificates,
@@ -210,6 +211,7 @@ class TlsSettings {
     this.clientCertificate,
     this.minTlsVersion,
     this.maxTlsVersion,
+    required this.enableTlsSni,
   });
 
   @override
@@ -219,7 +221,8 @@ class TlsSettings {
       verifyCertificates.hashCode ^
       clientCertificate.hashCode ^
       minTlsVersion.hashCode ^
-      maxTlsVersion.hashCode;
+      maxTlsVersion.hashCode ^
+      enableTlsSni.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -231,7 +234,8 @@ class TlsSettings {
           verifyCertificates == other.verifyCertificates &&
           clientCertificate == other.clientCertificate &&
           minTlsVersion == other.minTlsVersion &&
-          maxTlsVersion == other.maxTlsVersion;
+          maxTlsVersion == other.maxTlsVersion &&
+          enableTlsSni == other.enableTlsSni;
 }
 
 enum TlsVersion {

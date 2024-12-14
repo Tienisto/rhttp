@@ -436,6 +436,21 @@ await Rhttp.get(
 );
 ```
 
+### ➤ TLS SNI
+
+Controls the use of TLS server name indication.
+
+```dart
+await Rhttp.get(
+  'https://example.com',
+  settings: const ClientSettings(
+    tlsSettings: TlsSettings(
+      enableTlsSni: false,
+    ),
+  ),
+);
+```
+
 ### ➤ Certificate Pinning
 
 To improve security, you can specify the expected server certificate.
