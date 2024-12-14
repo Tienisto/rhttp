@@ -7,4 +7,3 @@ analyzer:
   exclude:
     - 'benchmark/**'
     - 'cargokit/**'
-    - 'lib/src/rust/**'
