@@ -1,3 +1,8 @@
+## 0.9.7
+
+- feat: add `TlsSettings.sni` to configure Server Name Indication for TLS (default: `true`) (#43)
+- deps: bump `flutter_rust_bridge` to `2.7.0`
+
 ## 0.9.6
 
 - fix: missing response body in DevTools when using Stream response

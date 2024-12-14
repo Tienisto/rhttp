@@ -89,6 +89,9 @@ class _$HttpBodyCopyWithImpl<$Res, $Val extends HttpBody>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -108,6 +111,8 @@ class __$$HttpBody_TextImplCopyWithImpl<$Res>
       _$HttpBody_TextImpl _value, $Res Function(_$HttpBody_TextImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -146,7 +151,9 @@ class _$HttpBody_TextImpl extends HttpBody_Text {
   @override
   int get hashCode => Object.hash(runtimeType, field0);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HttpBody_TextImplCopyWith<_$HttpBody_TextImpl> get copyWith =>
@@ -238,7 +245,10 @@ abstract class HttpBody_Text extends HttpBody {
   const HttpBody_Text._() : super._();
 
   String get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpBody_TextImplCopyWith<_$HttpBody_TextImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -260,6 +270,8 @@ class __$$HttpBody_BytesImplCopyWithImpl<$Res>
       _$HttpBody_BytesImpl _value, $Res Function(_$HttpBody_BytesImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -299,7 +311,9 @@ class _$HttpBody_BytesImpl extends HttpBody_Bytes {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(field0));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HttpBody_BytesImplCopyWith<_$HttpBody_BytesImpl> get copyWith =>
@@ -392,7 +406,10 @@ abstract class HttpBody_Bytes extends HttpBody {
   const HttpBody_Bytes._() : super._();
 
   Uint8List get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpBody_BytesImplCopyWith<_$HttpBody_BytesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -411,6 +428,9 @@ class __$$HttpBody_BytesStreamImplCopyWithImpl<$Res>
   __$$HttpBody_BytesStreamImplCopyWithImpl(_$HttpBody_BytesStreamImpl _value,
       $Res Function(_$HttpBody_BytesStreamImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -536,6 +556,8 @@ class __$$HttpBody_FormImplCopyWithImpl<$Res>
       _$HttpBody_FormImpl _value, $Res Function(_$HttpBody_FormImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -582,7 +604,9 @@ class _$HttpBody_FormImpl extends HttpBody_Form {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(_field0));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HttpBody_FormImplCopyWith<_$HttpBody_FormImpl> get copyWith =>
@@ -675,7 +699,10 @@ abstract class HttpBody_Form extends HttpBody {
   const HttpBody_Form._() : super._();
 
   Map<String, String> get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpBody_FormImplCopyWith<_$HttpBody_FormImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -697,6 +724,8 @@ class __$$HttpBody_MultipartImplCopyWithImpl<$Res>
       $Res Function(_$HttpBody_MultipartImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -735,7 +764,9 @@ class _$HttpBody_MultipartImpl extends HttpBody_Multipart {
   @override
   int get hashCode => Object.hash(runtimeType, field0);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HttpBody_MultipartImplCopyWith<_$HttpBody_MultipartImpl> get copyWith =>
@@ -829,7 +860,10 @@ abstract class HttpBody_Multipart extends HttpBody {
   const HttpBody_Multipart._() : super._();
 
   MultipartPayload get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HttpBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpBody_MultipartImplCopyWith<_$HttpBody_MultipartImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -893,6 +927,9 @@ class _$HttpHeadersCopyWithImpl<$Res, $Val extends HttpHeaders>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of HttpHeaders
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -912,6 +949,8 @@ class __$$HttpHeaders_MapImplCopyWithImpl<$Res>
       _$HttpHeaders_MapImpl _value, $Res Function(_$HttpHeaders_MapImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HttpHeaders
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -958,7 +997,9 @@ class _$HttpHeaders_MapImpl extends HttpHeaders_Map {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(_field0));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HttpHeaders
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HttpHeaders_MapImplCopyWith<_$HttpHeaders_MapImpl> get copyWith =>
@@ -1035,7 +1076,10 @@ abstract class HttpHeaders_Map extends HttpHeaders {
 
   @override
   Map<String, String> get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HttpHeaders
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpHeaders_MapImplCopyWith<_$HttpHeaders_MapImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1057,6 +1101,8 @@ class __$$HttpHeaders_ListImplCopyWithImpl<$Res>
       $Res Function(_$HttpHeaders_ListImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HttpHeaders
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1103,7 +1149,9 @@ class _$HttpHeaders_ListImpl extends HttpHeaders_List {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(_field0));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HttpHeaders
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HttpHeaders_ListImplCopyWith<_$HttpHeaders_ListImpl> get copyWith =>
@@ -1180,7 +1228,10 @@ abstract class HttpHeaders_List extends HttpHeaders {
 
   @override
   List<(String, String)> get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HttpHeaders
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpHeaders_ListImplCopyWith<_$HttpHeaders_ListImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1249,6 +1300,9 @@ class _$HttpResponseBodyCopyWithImpl<$Res, $Val extends HttpResponseBody>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of HttpResponseBody
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1269,6 +1323,8 @@ class __$$HttpResponseBody_TextImplCopyWithImpl<$Res>
       $Res Function(_$HttpResponseBody_TextImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HttpResponseBody
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1307,7 +1363,9 @@ class _$HttpResponseBody_TextImpl extends HttpResponseBody_Text {
   @override
   int get hashCode => Object.hash(runtimeType, field0);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HttpResponseBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HttpResponseBody_TextImplCopyWith<_$HttpResponseBody_TextImpl>
@@ -1389,7 +1447,10 @@ abstract class HttpResponseBody_Text extends HttpResponseBody {
   const HttpResponseBody_Text._() : super._();
 
   String get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HttpResponseBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpResponseBody_TextImplCopyWith<_$HttpResponseBody_TextImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -1413,6 +1474,8 @@ class __$$HttpResponseBody_BytesImplCopyWithImpl<$Res>
       $Res Function(_$HttpResponseBody_BytesImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HttpResponseBody
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1452,7 +1515,9 @@ class _$HttpResponseBody_BytesImpl extends HttpResponseBody_Bytes {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(field0));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HttpResponseBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HttpResponseBody_BytesImplCopyWith<_$HttpResponseBody_BytesImpl>
@@ -1534,7 +1599,10 @@ abstract class HttpResponseBody_Bytes extends HttpResponseBody {
   const HttpResponseBody_Bytes._() : super._();
 
   Uint8List get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HttpResponseBody
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpResponseBody_BytesImplCopyWith<_$HttpResponseBody_BytesImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -1555,6 +1623,9 @@ class __$$HttpResponseBody_StreamImplCopyWithImpl<$Res>
       _$HttpResponseBody_StreamImpl _value,
       $Res Function(_$HttpResponseBody_StreamImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of HttpResponseBody
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1716,6 +1787,9 @@ class _$MultipartValueCopyWithImpl<$Res, $Val extends MultipartValue>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of MultipartValue
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -1735,6 +1809,8 @@ class __$$MultipartValue_TextImplCopyWithImpl<$Res>
       $Res Function(_$MultipartValue_TextImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of MultipartValue
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1773,7 +1849,9 @@ class _$MultipartValue_TextImpl extends MultipartValue_Text {
   @override
   int get hashCode => Object.hash(runtimeType, field0);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MultipartValue
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MultipartValue_TextImplCopyWith<_$MultipartValue_TextImpl> get copyWith =>
@@ -1856,7 +1934,10 @@ abstract class MultipartValue_Text extends MultipartValue {
 
   @override
   String get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of MultipartValue
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MultipartValue_TextImplCopyWith<_$MultipartValue_TextImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1878,6 +1959,8 @@ class __$$MultipartValue_BytesImplCopyWithImpl<$Res>
       $Res Function(_$MultipartValue_BytesImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of MultipartValue
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1917,7 +2000,9 @@ class _$MultipartValue_BytesImpl extends MultipartValue_Bytes {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(field0));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MultipartValue
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MultipartValue_BytesImplCopyWith<_$MultipartValue_BytesImpl>
@@ -2001,7 +2086,10 @@ abstract class MultipartValue_Bytes extends MultipartValue {
 
   @override
   Uint8List get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of MultipartValue
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MultipartValue_BytesImplCopyWith<_$MultipartValue_BytesImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -2023,6 +2111,8 @@ class __$$MultipartValue_FileImplCopyWithImpl<$Res>
       $Res Function(_$MultipartValue_FileImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of MultipartValue
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2061,7 +2151,9 @@ class _$MultipartValue_FileImpl extends MultipartValue_File {
   @override
   int get hashCode => Object.hash(runtimeType, field0);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MultipartValue
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MultipartValue_FileImplCopyWith<_$MultipartValue_FileImpl> get copyWith =>
@@ -2144,7 +2236,10 @@ abstract class MultipartValue_File extends MultipartValue {
 
   @override
   String get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of MultipartValue
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MultipartValue_FileImplCopyWith<_$MultipartValue_FileImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

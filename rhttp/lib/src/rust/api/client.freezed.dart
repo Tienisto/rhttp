@@ -73,6 +73,9 @@ class _$ProxySettingsCopyWithImpl<$Res, $Val extends ProxySettings>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of ProxySettings
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -90,6 +93,9 @@ class __$$ProxySettings_NoProxyImplCopyWithImpl<$Res>
   __$$ProxySettings_NoProxyImplCopyWithImpl(_$ProxySettings_NoProxyImpl _value,
       $Res Function(_$ProxySettings_NoProxyImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of ProxySettings
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -201,6 +207,8 @@ class __$$ProxySettings_CustomProxyListImplCopyWithImpl<$Res>
       $Res Function(_$ProxySettings_CustomProxyListImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ProxySettings
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -248,7 +256,9 @@ class _$ProxySettings_CustomProxyListImpl
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(_field0));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ProxySettings
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ProxySettings_CustomProxyListImplCopyWith<
@@ -326,7 +336,10 @@ abstract class ProxySettings_CustomProxyList extends ProxySettings {
   const ProxySettings_CustomProxyList._() : super._();
 
   List<CustomProxy> get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ProxySettings
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ProxySettings_CustomProxyListImplCopyWith<
           _$ProxySettings_CustomProxyListImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -392,6 +405,9 @@ class _$RedirectSettingsCopyWithImpl<$Res, $Val extends RedirectSettings>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of RedirectSettings
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -411,6 +427,9 @@ class __$$RedirectSettings_NoRedirectImplCopyWithImpl<$Res>
       _$RedirectSettings_NoRedirectImpl _value,
       $Res Function(_$RedirectSettings_NoRedirectImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of RedirectSettings
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -524,6 +543,8 @@ class __$$RedirectSettings_LimitedRedirectsImplCopyWithImpl<$Res>
       $Res Function(_$RedirectSettings_LimitedRedirectsImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of RedirectSettings
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -563,7 +584,9 @@ class _$RedirectSettings_LimitedRedirectsImpl
   @override
   int get hashCode => Object.hash(runtimeType, field0);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of RedirectSettings
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RedirectSettings_LimitedRedirectsImplCopyWith<
@@ -642,7 +665,10 @@ abstract class RedirectSettings_LimitedRedirects extends RedirectSettings {
   const RedirectSettings_LimitedRedirects._() : super._();
 
   int get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of RedirectSettings
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RedirectSettings_LimitedRedirectsImplCopyWith<
           _$RedirectSettings_LimitedRedirectsImpl>
       get copyWith => throw _privateConstructorUsedError;

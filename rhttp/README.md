@@ -29,7 +29,7 @@ The APK size will increase by 2 MB on arm64 and 6 MB if compiled for all archite
 - ✅ Proxy support
 - ✅ Custom DNS resolution
 - ✅ Strong type safety
-- ✅ [DevTools](https://docs.flutter.dev/tools/devtools/network) support (Network tab)
+- ✅ DevTools support ([Network tab](https://docs.flutter.dev/tools/devtools/network))
 - ✅ Compatible with [dart:io](https://api.dart.dev/stable/dart-io/HttpClient-class.html), [http](https://pub.dev/packages/http), and [dio](https://pub.dev/packages/dio)
 
 ## Benchmark
@@ -63,6 +63,7 @@ Checkout the benchmark code [here](https://github.com/Tienisto/rhttp/tree/main/b
   - [Base URL](#-base-url)
   - [HTTP version](#-http-version)
   - [TLS version](#-tls-version)
+  - [TLS Server Name Indication (SNI)](#-tls-server-name-indication-sni)
   - [Certificate Pinning](#-certificate-pinning)
   - [Disable pre-installed root certificates](#-disable-pre-installed-root-certificates)
   - [Client Authentication](#-client-authentication--mutual-tls)
@@ -436,16 +437,18 @@ await Rhttp.get(
 );
 ```
 
-### ➤ TLS SNI
+### ➤ TLS Server Name Indication (SNI)
 
 Controls the use of TLS server name indication.
+
+This option is enabled by default.
 
 ```dart
 await Rhttp.get(
   'https://example.com',
   settings: const ClientSettings(
     tlsSettings: TlsSettings(
-      enableTlsSni: false,
+      sni: false,
     ),
   ),
 );

@@ -121,6 +121,9 @@ class _$RhttpErrorCopyWithImpl<$Res, $Val extends RhttpError>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -139,6 +142,9 @@ class __$$RhttpError_RhttpCancelErrorImplCopyWithImpl<$Res>
       _$RhttpError_RhttpCancelErrorImpl _value,
       $Res Function(_$RhttpError_RhttpCancelErrorImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -295,6 +301,9 @@ class __$$RhttpError_RhttpTimeoutErrorImplCopyWithImpl<$Res>
       _$RhttpError_RhttpTimeoutErrorImpl _value,
       $Res Function(_$RhttpError_RhttpTimeoutErrorImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -451,6 +460,9 @@ class __$$RhttpError_RhttpRedirectErrorImplCopyWithImpl<$Res>
       _$RhttpError_RhttpRedirectErrorImpl _value,
       $Res Function(_$RhttpError_RhttpRedirectErrorImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -615,6 +627,8 @@ class __$$RhttpError_RhttpStatusCodeErrorImplCopyWithImpl<$Res>
       $Res Function(_$RhttpError_RhttpStatusCodeErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -638,6 +652,8 @@ class __$$RhttpError_RhttpStatusCodeErrorImplCopyWithImpl<$Res>
     ));
   }
 
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HttpResponseBodyCopyWith<$Res> get field2 {
@@ -688,7 +704,9 @@ class _$RhttpError_RhttpStatusCodeErrorImpl
   int get hashCode => Object.hash(runtimeType, field0,
       const DeepCollectionEquality().hash(_field1), field2);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RhttpError_RhttpStatusCodeErrorImplCopyWith<
@@ -818,7 +836,10 @@ abstract class RhttpError_RhttpStatusCodeError extends RhttpError {
   int get field0;
   List<(String, String)> get field1;
   HttpResponseBody get field2;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RhttpError_RhttpStatusCodeErrorImplCopyWith<
           _$RhttpError_RhttpStatusCodeErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -844,6 +865,8 @@ class __$$RhttpError_RhttpInvalidCertificateErrorImplCopyWithImpl<$Res>
       $Res Function(_$RhttpError_RhttpInvalidCertificateErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -883,7 +906,9 @@ class _$RhttpError_RhttpInvalidCertificateErrorImpl
   @override
   int get hashCode => Object.hash(runtimeType, field0);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RhttpError_RhttpInvalidCertificateErrorImplCopyWith<
@@ -1010,7 +1035,10 @@ abstract class RhttpError_RhttpInvalidCertificateError extends RhttpError {
   const RhttpError_RhttpInvalidCertificateError._() : super._();
 
   String get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RhttpError_RhttpInvalidCertificateErrorImplCopyWith<
           _$RhttpError_RhttpInvalidCertificateErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -1036,6 +1064,8 @@ class __$$RhttpError_RhttpConnectionErrorImplCopyWithImpl<$Res>
       $Res Function(_$RhttpError_RhttpConnectionErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1075,7 +1105,9 @@ class _$RhttpError_RhttpConnectionErrorImpl
   @override
   int get hashCode => Object.hash(runtimeType, field0);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RhttpError_RhttpConnectionErrorImplCopyWith<
@@ -1201,7 +1233,10 @@ abstract class RhttpError_RhttpConnectionError extends RhttpError {
   const RhttpError_RhttpConnectionError._() : super._();
 
   String get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RhttpError_RhttpConnectionErrorImplCopyWith<
           _$RhttpError_RhttpConnectionErrorImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -1226,6 +1261,8 @@ class __$$RhttpError_RhttpUnknownErrorImplCopyWithImpl<$Res>
       $Res Function(_$RhttpError_RhttpUnknownErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1264,7 +1301,9 @@ class _$RhttpError_RhttpUnknownErrorImpl extends RhttpError_RhttpUnknownError {
   @override
   int get hashCode => Object.hash(runtimeType, field0);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RhttpError_RhttpUnknownErrorImplCopyWith<
@@ -1390,7 +1429,10 @@ abstract class RhttpError_RhttpUnknownError extends RhttpError {
   const RhttpError_RhttpUnknownError._() : super._();
 
   String get field0;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of RhttpError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RhttpError_RhttpUnknownErrorImplCopyWith<
           _$RhttpError_RhttpUnknownErrorImpl>
       get copyWith => throw _privateConstructorUsedError;

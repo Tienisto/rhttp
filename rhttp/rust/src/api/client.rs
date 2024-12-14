@@ -56,7 +56,7 @@ pub struct TlsSettings {
     pub client_certificate: Option<ClientCertificate>,
     pub min_tls_version: Option<TlsVersion>,
     pub max_tls_version: Option<TlsVersion>,
-    pub enable_tls_sni: bool
+    pub sni: bool
 }
 
 pub enum DnsSettings {
@@ -231,7 +231,7 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
                 });
             }
 
-            client = client.tls_sni(tls_settings.enable_tls_sni);
+            client = client.tls_sni(tls_settings.sni);
         }
 
         client = match settings.http_version_pref {
