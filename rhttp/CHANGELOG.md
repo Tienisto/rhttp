@@ -1,3 +1,7 @@
+## 0.9.8
+
+- deps: bump `freezed_annotation` constraint to `^2.4.4`
+
 ## 0.9.7
 
 - feat: add `TlsSettings.sni` to configure Server Name Indication for TLS (default: `true`) (#43)
