@@ -82,11 +82,7 @@ class HttpRequest extends BaseHttpRequest {
   final RhttpClient? client;
 
   /// The settings to use for the request.
-  /// This is **only** used if [client] is `null`.
   final ClientSettings? settings;
-
-  /// The settings to use for the request.
-  ClientSettings? get digestedSettings => client?.settings ?? settings;
 
   /// The interceptor to use for the request.
   /// This can be a [SequentialInterceptor] if there are multiple interceptors.

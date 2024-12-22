@@ -31,7 +31,7 @@ HttpClientRequestProfile? createDevToolsProfile({
 
   profile.requestData
     ..headersListValues = headers?.toMapList()
-    ..maxRedirects = switch (request.digestedSettings?.redirectSettings) {
+    ..maxRedirects = switch (request.settings?.redirectSettings) {
       LimitedRedirects limited => limited.maxRedirects,
       NoRedirectSetting _ => 0,
       null => null,
