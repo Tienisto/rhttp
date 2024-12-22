@@ -24,6 +24,7 @@ features = [
     "rustls-tls-native-roots",
     "stream",
     "multipart",
+    "socks",
 
     # Compression
     "brotli",
