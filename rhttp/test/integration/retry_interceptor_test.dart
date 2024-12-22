@@ -43,13 +43,50 @@ void main() {
     expect(response.body, 'Retried!');
     expect(requestCount, 2);
     expect(
-      exceptionInBeforeRetry,
-      isA<RhttpUnknownException>().having(
-        (e) => e.message,
-        'message',
-        'Failed 123',
-      ),
+      (exceptionInBeforeRetry as RhttpUnknownException).message,
+      'Failed 123',
     );
+  });
+
+  test('Should call next interceptor after successful retry', () async {
+    int requestCount = 0;
+    mockApi.mockCustomResponse(
+      body: 'Retried!',
+      onAnswer: (_) {
+        requestCount++;
+        if (requestCount == 1) {
+          throw const rust_error.RhttpError_RhttpUnknownError('Failed 222');
+        }
+      },
+    );
+
+    RhttpException? exceptionInBeforeRetry;
+    int secondInterceptorCalled = 0;
+    final response = await Rhttp.post(
+      'https://example.com',
+      interceptors: [
+        RetryInterceptor(
+          beforeRetry: (attempt, request, response, exception) async {
+            exceptionInBeforeRetry = exception;
+            return null;
+          },
+        ),
+        SimpleInterceptor(
+          afterResponse: (response) async {
+            secondInterceptorCalled++;
+            return Interceptor.next();
+          },
+        )
+      ],
+    );
+
+    expect(response.body, 'Retried!');
+    expect(requestCount, 2);
+    expect(
+      (exceptionInBeforeRetry as RhttpUnknownException).message,
+      'Failed 222',
+    );
+    expect(secondInterceptorCalled, 1);
   });
 
   test('Should fail after retrying once and it also fails', () async {
@@ -86,20 +123,12 @@ void main() {
     expect(response, null);
     expect(requestCount, 2);
     expect(
-      exceptionInBeforeRetry,
-      isA<RhttpUnknownException>().having(
-        (e) => e.message,
-        'message',
-        'Failed 111',
-      ),
+      (exceptionInBeforeRetry as RhttpUnknownException).message,
+      'Failed 111',
     );
     expect(
-      exceptionInCatch,
-      isA<RhttpUnknownException>().having(
-        (e) => e.message,
-        'message',
-        'Failed 111',
-      ),
+      (exceptionInCatch as RhttpUnknownException).message,
+      'Failed 111',
     );
   });
 
@@ -132,12 +161,8 @@ void main() {
     expect(response.body, 'Retried!');
     expect(requestCount, 3);
     expect(
-      exceptionInBeforeRetry,
-      isA<RhttpUnknownException>().having(
-        (e) => e.message,
-        'message',
-        'Failed 456',
-      ),
+      (exceptionInBeforeRetry as RhttpUnknownException).message,
+      'Failed 456',
     );
   });
 
@@ -165,7 +190,7 @@ void main() {
 
     final observedExceptionsInInterceptor = <RhttpStatusCodeException>[];
 
-    final interceptor = RetryInterceptor(
+    final retry = RetryInterceptor(
       maxRetries: 99,
       shouldRetry: (response, exception) {
         if (exception is RhttpStatusCodeException) {
@@ -178,34 +203,28 @@ void main() {
     );
 
     Object? exceptionInCatch;
-    HttpTextResponse? response;
+    HttpTextResponse? res;
 
     try {
-      response =
-          await Rhttp.post('https://example.com', interceptors: [interceptor]);
+      res = await Rhttp.post('https://example.com', interceptors: [retry]);
     } catch (e) {
       exceptionInCatch = e;
     }
 
-    expect(response?.body, null);
+    expect(res?.body, null);
     expect(requestCount, 1);
     expect(
-      exceptionInCatch,
-      isA<RhttpStatusCodeException>().having(
-        (e) => e.statusCode,
-        'statusCode',
-        400,
-      ),
+      (exceptionInCatch as RhttpStatusCodeException).statusCode,
+      400,
     );
 
     try {
-      response =
-          await Rhttp.post('https://example.com', interceptors: [interceptor]);
+      res = await Rhttp.post('https://example.com', interceptors: [retry]);
     } catch (e) {
       exceptionInCatch = e;
     }
 
-    expect(response?.body, null);
+    expect(res?.body, null);
     expect(requestCount, 2);
     expect(
       exceptionInCatch,
@@ -219,34 +238,17 @@ void main() {
     exceptionInCatch = null;
 
     try {
-      response =
-          await Rhttp.post('https://example.com', interceptors: [interceptor]);
+      res = await Rhttp.post('https://example.com', interceptors: [retry]);
     } catch (e) {
       exceptionInCatch = e;
     }
 
-    expect(response?.body, 'Retried!');
+    expect(res?.body, 'Retried!');
     expect(requestCount, 4);
     expect(exceptionInCatch, null);
     expect(
-      observedExceptionsInInterceptor,
-      [
-        isA<RhttpStatusCodeException>().having(
-          (e) => e.statusCode,
-          'statusCode',
-          400,
-        ),
-        isA<RhttpStatusCodeException>().having(
-          (e) => e.statusCode,
-          'statusCode',
-          401,
-        ),
-        isA<RhttpStatusCodeException>().having(
-          (e) => e.statusCode,
-          'statusCode',
-          403,
-        ),
-      ],
+      observedExceptionsInInterceptor.map((e) => e.statusCode),
+      [400, 401, 403],
     );
   });
 }
