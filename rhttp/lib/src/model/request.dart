@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:meta/meta.dart';
 import 'package:rhttp/src/client/rhttp_client.dart';
 import 'package:rhttp/src/interceptor/interceptor.dart';
+import 'package:rhttp/src/interceptor/sequential_interceptor.dart';
 import 'package:rhttp/src/model/cancel_token.dart';
 import 'package:rhttp/src/model/header.dart';
 import 'package:rhttp/src/model/response.dart';
@@ -88,7 +89,7 @@ class HttpRequest extends BaseHttpRequest {
   ClientSettings? get digestedSettings => client?.settings ?? settings;
 
   /// The interceptor to use for the request.
-  /// This can be a [QueuedInterceptor] if there are multiple interceptors.
+  /// This can be a [SequentialInterceptor] if there are multiple interceptors.
   final Interceptor? interceptor;
 
   HttpRequest({

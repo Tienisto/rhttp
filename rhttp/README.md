@@ -194,7 +194,7 @@ await Rhttp.post(
 
 **JSON**
 
-Pass JSON map to the `HttpBody.json` constructor.
+Pass a JSON data structure to the `HttpBody.json` constructor.
 
 The Content-Type header will be set to `application/json` if not provided.
 
@@ -269,8 +269,6 @@ await Rhttp.post(
 ### ➤ Response Body
 
 To let Rust do most of the work, you must specify the expected response body type before making the request.
-
-Most convenience functions (e.g. `Rhttp.get`, `Rhttp.request`) return a `HttpTextResponse`.
 
 ```dart
 HttpTextResponse response = await Rhttp.getText('https://example.com');
@@ -711,6 +709,8 @@ final client = await RhttpClient.create(
 ### ➤ RetryInterceptor
 
 There is a built-in `RetryInterceptor` that retries the request if it fails.
+
+During the retry, all interceptors except `RetryInterceptor` are called again.
 
 ```dart
 class RefreshTokenInterceptor extends RetryInterceptor {
