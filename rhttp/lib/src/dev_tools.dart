@@ -74,7 +74,7 @@ extension HttpClientRequestProfileExt on HttpClientRequestProfile {
 
   void trackStreamResponse({
     required HttpStreamResponse response,
-    required Uint8List? streamBody,
+    required Uint8List streamBody,
   }) {
     trackCustomResponse(
       statusCode: response.statusCode,
