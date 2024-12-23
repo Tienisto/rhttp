@@ -6,21 +6,13 @@ function Resolve-Symlinks {
         [string] $Path
     )
 
-    [string] $separator = '/'
-    [string[]] $parts = $Path.Split($separator)
-
-    [string] $realPath = ''
-    foreach ($part in $parts) {
-        if ($realPath -and !$realPath.EndsWith($separator)) {
-            $realPath += $separator
-        }
-        $realPath += $part
-        $item = Get-Item $realPath
-        if ($item.Target) {
-            $realPath = $item.Target.Replace('\', '/')
-        }
+    $Private:Item = Get-Item -LiteralPath $Path
+    if ([string]::IsNullOrEmpty($Private:Item.Target)) {
+        return Resolve-Symlinks $Private:Item.Parent
     }
-    $realPath
+    else {
+        return $Private:Item.Target
+    }
 }
 
 $path=Resolve-Symlinks -Path $args[0]
