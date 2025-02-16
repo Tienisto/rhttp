@@ -64,15 +64,15 @@ class BaseHttpRequest {
   final Map<String, dynamic> additionalData = {};
 
   BaseHttpRequest({
-    required this.method,
+    this.method = HttpMethod.get,
     required this.url,
-    required this.query,
-    required this.headers,
-    required this.body,
-    required this.expectBody,
-    required this.cancelToken,
-    required this.onSendProgress,
-    required this.onReceiveProgress,
+    this.query,
+    this.headers,
+    this.body,
+    this.expectBody = HttpExpectBody.stream,
+    this.cancelToken,
+    this.onSendProgress,
+    this.onReceiveProgress,
   });
 }
 
@@ -89,25 +89,25 @@ class HttpRequest extends BaseHttpRequest {
   final Interceptor? interceptor;
 
   HttpRequest({
-    required this.client,
-    required this.settings,
-    required this.interceptor,
-    required super.method,
+    this.client,
+    this.settings,
+    this.interceptor,
+    super.method,
     required super.url,
-    required super.query,
-    required super.headers,
-    required super.body,
-    required super.expectBody,
-    required super.cancelToken,
-    required super.onSendProgress,
-    required super.onReceiveProgress,
+    super.query,
+    super.headers,
+    super.body,
+    super.expectBody,
+    super.cancelToken,
+    super.onSendProgress,
+    super.onReceiveProgress,
   });
 
   factory HttpRequest.from({
     required BaseHttpRequest request,
-    required RhttpClient? client,
-    required ClientSettings? settings,
-    required Interceptor? interceptor,
+    RhttpClient? client,
+    ClientSettings? settings,
+    Interceptor? interceptor,
   }) =>
       HttpRequest(
         client: client,
