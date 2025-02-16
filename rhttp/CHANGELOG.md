@@ -1,3 +1,10 @@
+## 0.10.0
+
+- feat: use `rustls-tls-webpki-roots` to avoid errors with corrupted system setting
+- feat: simplify `BaseHttpRequest` and `HttpRequest` constructor @FrankenApps (#52)
+- fix: `requestStream` never return if cancelled immediately using `CancelToken` @xalanq (#54)
+- deps: bump `flutter_rust_bridge` to `2.7.1`
+
 ## 0.9.8
 
 - deps: bump `freezed_annotation` constraint to `^2.4.4`
