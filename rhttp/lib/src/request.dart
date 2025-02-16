@@ -147,8 +147,16 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         headers: headers?._toRustType(),
         body: request.body?._toRustType(),
         bodyStream: requestBodyStream,
-        onResponse: (r) => responseCompleter.complete(r),
-        onError: (e) => responseCompleter.completeError(e),
+        onResponse: (r) {
+          if (!responseCompleter.isCompleted) {
+            responseCompleter.complete(r);
+          }
+        },
+        onError: (e) {
+          if (!responseCompleter.isCompleted) {
+            responseCompleter.completeError(e);
+          }
+        },
         onCancelToken: (cancelRef) => cancelRefCompleter.complete(cancelRef),
         cancelable: request.cancelToken != null,
       );
