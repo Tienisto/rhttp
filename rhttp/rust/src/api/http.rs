@@ -266,9 +266,11 @@ pub async fn make_http_request_receive_stream(
     tokio::select! {
         _ = cancel_tokens.request_cancel_token.cancelled() => {
             let _ = stream_sink.add_error(anyhow::anyhow!(error::STREAM_CANCEL_ERROR));
+            on_error(RhttpError::RhttpCancelError).await;
         },
         _ = cancel_tokens.client_cancel_token.cancelled() => {
             let _ = stream_sink.add_error(anyhow::anyhow!(error::STREAM_CANCEL_ERROR));
+            on_error(RhttpError::RhttpCancelError).await;
         },
         _ = make_http_request_receive_stream_inner(
             client,
@@ -281,7 +283,7 @@ pub async fn make_http_request_receive_stream(
             body_stream,
             stream_sink.clone(),
             on_response,
-            on_error,
+            &on_error,
         ) => {},
     }
 }
@@ -297,7 +299,7 @@ async fn make_http_request_receive_stream_inner(
     body_stream: Option<stream::Dart2RustStreamReceiver>,
     stream_sink: StreamSink<Vec<u8>>,
     on_response: impl Fn(HttpResponse) -> DartFnFuture<()>,
-    on_error: impl Fn(RhttpError) -> DartFnFuture<()>,
+    on_error: &impl Fn(RhttpError) -> DartFnFuture<()>,
 ) {
     let response = make_http_request_helper(
         client,
