@@ -14,7 +14,7 @@ HttpClientRequestProfile? createDevToolsProfile({
 }) {
   final profile = HttpClientRequestProfile.profile(
     requestStartTime: DateTime.now(),
-    requestMethod: request.method.name.toUpperCase(),
+    requestMethod: request.method.value,
     requestUri: switch (request.query?.isNotEmpty ?? false) {
       true => Uri.parse(url).replace(queryParameters: request.query).toString(),
       false => url,

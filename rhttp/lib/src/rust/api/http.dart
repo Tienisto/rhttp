@@ -117,17 +117,22 @@ sealed class HttpHeaders with _$HttpHeaders {
   ) = HttpHeaders_List;
 }
 
-enum HttpMethod {
-  options,
-  get_,
-  post,
-  put,
-  delete,
-  head,
-  trace,
-  connect,
-  patch,
-  ;
+class HttpMethod {
+  final String method;
+
+  const HttpMethod({
+    required this.method,
+  });
+
+  @override
+  int get hashCode => method.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HttpMethod &&
+          runtimeType == other.runtimeType &&
+          method == other.method;
 }
 
 class HttpResponse {
