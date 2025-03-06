@@ -57,18 +57,7 @@ class RhttpCompatibleClient with BaseClient {
   Future<StreamedResponse> send(BaseRequest request) async {
     try {
       final response = await client.requestStream(
-        method: switch (request.method) {
-          'GET' => HttpMethod.get,
-          'POST' => HttpMethod.post,
-          'PUT' => HttpMethod.put,
-          'PATCH' => HttpMethod.patch,
-          'DELETE' => HttpMethod.delete,
-          'HEAD' => HttpMethod.head,
-          'OPTIONS' => HttpMethod.options,
-          'TRACE' => HttpMethod.trace,
-          'CONNECT' => HttpMethod.connect,
-          _ => throw ArgumentError('Unsupported method: ${request.method}'),
-        },
+        method: HttpMethod(request.method.toUpperCase()),
         url: request.url.toString(),
         headers: HttpHeaders.rawMap(request.headers),
         body: HttpBody.bytes(await request.finalize().toBytes()),
