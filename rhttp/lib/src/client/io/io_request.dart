@@ -43,7 +43,7 @@ class RhttpIoRequest implements HttpClientRequest {
     started = true;
 
     final response = client.requestStream(
-      method: switch (method) {
+      method: switch (method.toUpperCase()) {
         'GET' => HttpMethod.get,
         'POST' => HttpMethod.post,
         'PUT' => HttpMethod.put,
