@@ -444,7 +444,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_opt_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
             client, serializer);
         sse_encode_opt_box_autoadd_client_settings(settings, serializer);
-        sse_encode_http_method(method, serializer);
+        sse_encode_box_autoadd_http_method(method, serializer);
         sse_encode_String(url, serializer);
         sse_encode_opt_list_record_string_string(query, serializer);
         sse_encode_opt_box_autoadd_http_headers(headers, serializer);
@@ -519,7 +519,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_opt_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
             client, serializer);
         sse_encode_opt_box_autoadd_client_settings(settings, serializer);
-        sse_encode_http_method(method, serializer);
+        sse_encode_box_autoadd_http_method(method, serializer);
         sse_encode_String(url, serializer);
         sse_encode_opt_list_record_string_string(query, serializer);
         sse_encode_opt_box_autoadd_http_headers(headers, serializer);
@@ -1055,6 +1055,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  HttpMethod dco_decode_box_autoadd_http_method(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_http_method(raw);
+  }
+
+  @protected
   HttpResponseBody dco_decode_box_autoadd_http_response_body(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_http_response_body(raw);
@@ -1198,7 +1204,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   HttpMethod dco_decode_http_method(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return HttpMethod.values[raw as int];
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1)
+      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return HttpMethod(
+      method: dco_decode_String(arr[0]),
+    );
   }
 
   @protected
@@ -1908,6 +1919,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  HttpMethod sse_decode_box_autoadd_http_method(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_http_method(deserializer));
+  }
+
+  @protected
   HttpResponseBody sse_decode_box_autoadd_http_response_body(
       SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2057,8 +2074,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   HttpMethod sse_decode_http_method(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_i_32(deserializer);
-    return HttpMethod.values[inner];
+    var var_method = sse_decode_String(deserializer);
+    return HttpMethod(method: var_method);
   }
 
   @protected
@@ -2925,6 +2942,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_http_method(
+      HttpMethod self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_http_method(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_http_response_body(
       HttpResponseBody self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3055,7 +3079,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   void sse_encode_http_method(HttpMethod self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.index, serializer);
+    sse_encode_String(self.method, serializer);
   }
 
   @protected

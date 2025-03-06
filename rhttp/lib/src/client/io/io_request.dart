@@ -43,18 +43,7 @@ class RhttpIoRequest implements HttpClientRequest {
     started = true;
 
     final response = client.requestStream(
-      method: switch (method) {
-        'GET' => HttpMethod.get,
-        'POST' => HttpMethod.post,
-        'PUT' => HttpMethod.put,
-        'PATCH' => HttpMethod.patch,
-        'DELETE' => HttpMethod.delete,
-        'HEAD' => HttpMethod.head,
-        'OPTIONS' => HttpMethod.options,
-        'TRACE' => HttpMethod.trace,
-        'CONNECT' => HttpMethod.connect,
-        _ => throw ArgumentError('Unsupported method: $method'),
-      },
+      method: HttpMethod(method.toUpperCase()),
       url: '${uri.scheme}://${uri.host}:${uri.port}${uri.path}',
       headers: HttpHeaders.list([
         for (final entry in headers.headers.entries)

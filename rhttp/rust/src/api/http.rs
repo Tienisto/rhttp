@@ -13,31 +13,13 @@ use crate::api::error::RhttpError;
 use crate::api::{error, stream};
 use crate::frb_generated::{RustAutoOpaque, StreamSink};
 
-pub enum HttpMethod {
-    Options,
-    Get,
-    Post,
-    Put,
-    Delete,
-    Head,
-    Trace,
-    Connect,
-    Patch,
+pub struct HttpMethod {
+    pub method: String,
 }
 
 impl HttpMethod {
     fn to_method(&self) -> Method {
-        match self {
-            HttpMethod::Options => Method::OPTIONS,
-            HttpMethod::Get => Method::GET,
-            HttpMethod::Post => Method::POST,
-            HttpMethod::Put => Method::PUT,
-            HttpMethod::Delete => Method::DELETE,
-            HttpMethod::Head => Method::HEAD,
-            HttpMethod::Trace => Method::TRACE,
-            HttpMethod::Connect => Method::CONNECT,
-            HttpMethod::Patch => Method::PATCH,
-        }
+        Method::from_bytes(self.method.as_bytes()).unwrap()
     }
 }
 

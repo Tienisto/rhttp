@@ -187,17 +187,28 @@ enum HttpExpectBody {
 }
 
 /// The HTTP method to use.
-enum HttpMethod {
-  options,
-  get,
-  post,
-  put,
-  delete,
-  head,
-  trace,
-  connect,
-  patch,
-  ;
+class HttpMethod {
+  final String value;
+
+  const HttpMethod(this.value);
+
+  static const options = HttpMethod('OPTIONS');
+
+  static const get = HttpMethod('GET');
+
+  static const post = HttpMethod('POST');
+
+  static const put = HttpMethod('PUT');
+
+  static const delete = HttpMethod('DELETE');
+
+  static const head = HttpMethod('HEAD');
+
+  static const trace = HttpMethod('TRACE');
+
+  static const connect = HttpMethod('CONNECT');
+
+  static const patch = HttpMethod('PATCH');
 }
 
 enum HttpVersionPref {

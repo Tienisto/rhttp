@@ -185,6 +185,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   HttpHeaders dco_decode_box_autoadd_http_headers(dynamic raw);
 
   @protected
+  HttpMethod dco_decode_box_autoadd_http_method(dynamic raw);
+
+  @protected
   HttpResponseBody dco_decode_box_autoadd_http_response_body(dynamic raw);
 
   @protected
@@ -511,6 +514,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   HttpHeaders sse_decode_box_autoadd_http_headers(SseDeserializer deserializer);
+
+  @protected
+  HttpMethod sse_decode_box_autoadd_http_method(SseDeserializer deserializer);
 
   @protected
   HttpResponseBody sse_decode_box_autoadd_http_response_body(
@@ -883,6 +889,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_http_headers(
       HttpHeaders self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_http_method(
+      HttpMethod self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_http_response_body(

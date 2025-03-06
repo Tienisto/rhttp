@@ -425,17 +425,7 @@ Future<rust_stream.Dart2RustStreamReceiver> _createDart2RustStream({
 
 extension on HttpMethod {
   rust.HttpMethod _toRustType() {
-    return switch (this) {
-      HttpMethod.options => rust.HttpMethod.options,
-      HttpMethod.get => rust.HttpMethod.get_,
-      HttpMethod.post => rust.HttpMethod.post,
-      HttpMethod.put => rust.HttpMethod.put,
-      HttpMethod.delete => rust.HttpMethod.delete,
-      HttpMethod.head => rust.HttpMethod.head,
-      HttpMethod.trace => rust.HttpMethod.trace,
-      HttpMethod.connect => rust.HttpMethod.connect,
-      HttpMethod.patch => rust.HttpMethod.patch,
-    };
+    return rust.HttpMethod(method: value);
   }
 }
 
