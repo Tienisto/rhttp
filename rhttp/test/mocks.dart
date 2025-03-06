@@ -10,7 +10,7 @@ import 'package:rhttp/src/rust/lib.dart' as rust_lib;
 
 class MockRustLibApi extends Mock implements RustLibApi {
   MockRustLibApi.createAndRegister() {
-    registerFallbackValue(rust_http.HttpMethod.get_);
+    registerFallbackValue(rust_http.HttpMethod(method: "GET"));
     registerFallbackValue(rust_http.HttpExpectBody.text);
     registerFallbackValue(const ClientSettings(
       httpVersionPref: rust_http.HttpVersionPref.http11,
