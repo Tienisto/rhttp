@@ -1,3 +1,7 @@
+## 0.11.0
+
+- feat: `HttpMethod` accepts any string as method name
+
 ## 0.10.0
 
 - feat: use `rustls-tls-webpki-roots` to avoid errors with corrupted system setting
