@@ -14,6 +14,7 @@ const _keepRedirectSettings = RedirectSettings.limited(-9999);
 const _keepTlsSettings = TlsSettings();
 const _keepDnsSettings = DnsSettings.static();
 const _keepTimeoutSettings = TimeoutSettings();
+const _keepUserAgent = '';
 
 class ClientSettings {
   /// Base URL to be prefixed to all requests.
@@ -42,6 +43,11 @@ class ClientSettings {
   /// DNS settings and resolver overrides.
   final DnsSettings? dnsSettings;
 
+  /// The UserAgent of the client.
+  ///
+  /// By default there will be no UserAgent header added.
+  final String? userAgent;
+
   const ClientSettings({
     this.baseUrl,
     this.httpVersionPref = HttpVersionPref.all,
@@ -51,6 +57,7 @@ class ClientSettings {
     this.redirectSettings,
     this.tlsSettings,
     this.dnsSettings,
+    this.userAgent,
   });
 
   ClientSettings copyWith({
@@ -62,6 +69,7 @@ class ClientSettings {
     RedirectSettings? redirectSettings = _keepRedirectSettings,
     TlsSettings? tlsSettings = _keepTlsSettings,
     DnsSettings? dnsSettings = _keepDnsSettings,
+    String? userAgent = _keepUserAgent,
   }) {
     return ClientSettings(
       baseUrl: identical(baseUrl, _keepBaseUrl) ? this.baseUrl : baseUrl,
@@ -82,6 +90,8 @@ class ClientSettings {
       dnsSettings: identical(dnsSettings, _keepDnsSettings)
           ? this.dnsSettings
           : dnsSettings,
+      userAgent:
+          identical(userAgent, _keepUserAgent) ? this.userAgent : userAgent,
     );
   }
 }
@@ -333,6 +343,7 @@ extension ClientSettingsExt on ClientSettings {
       redirectSettings: redirectSettings?._toRustType(),
       tlsSettings: tlsSettings?._toRustType(),
       dnsSettings: dnsSettings?._toRustType(),
+      userAgent: userAgent,
     );
   }
 }

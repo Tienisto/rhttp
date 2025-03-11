@@ -1124,8 +1124,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ClientSettings dco_decode_client_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 7)
-      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
     return ClientSettings(
       httpVersionPref: dco_decode_http_version_pref(arr[0]),
       timeoutSettings: dco_decode_opt_box_autoadd_timeout_settings(arr[1]),
@@ -1136,6 +1136,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       dnsSettings:
           dco_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettings(
               arr[6]),
+      userAgent: dco_decode_opt_String(arr[7]),
     );
   }
 
@@ -2004,6 +2005,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_dnsSettings =
         sse_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettings(
             deserializer);
+    var var_userAgent = sse_decode_opt_String(deserializer);
     return ClientSettings(
         httpVersionPref: var_httpVersionPref,
         timeoutSettings: var_timeoutSettings,
@@ -2011,7 +2013,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         proxySettings: var_proxySettings,
         redirectSettings: var_redirectSettings,
         tlsSettings: var_tlsSettings,
-        dnsSettings: var_dnsSettings);
+        dnsSettings: var_dnsSettings,
+        userAgent: var_userAgent);
   }
 
   @protected
@@ -3026,6 +3029,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_box_autoadd_tls_settings(self.tlsSettings, serializer);
     sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettings(
         self.dnsSettings, serializer);
+    sse_encode_opt_String(self.userAgent, serializer);
   }
 
   @protected

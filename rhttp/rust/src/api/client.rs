@@ -19,6 +19,7 @@ pub struct ClientSettings {
     pub redirect_settings: Option<RedirectSettings>,
     pub tls_settings: Option<TlsSettings>,
     pub dns_settings: Option<DnsSettings>,
+    pub user_agent: Option<String>,
 }
 
 pub enum ProxySettings {
@@ -94,6 +95,7 @@ impl Default for ClientSettings {
             redirect_settings: None,
             tls_settings: None,
             dns_settings: None,
+            user_agent: None,
         }
     }
 }
@@ -279,6 +281,12 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
                         resolver: settings.resolver,
                     }));
                 }
+            }
+        }
+
+        if let Some(user_agent) = settings.user_agent {
+            if user_agent != String::new() {
+                client = client.user_agent(user_agent);
             }
         }
 
