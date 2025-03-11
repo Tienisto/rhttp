@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -214,6 +215,49 @@ class _MyAppState extends State<MyApp> {
                     }
                   },
                   child: const Text('Cancel multiple requests'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final cancelToken = CancelToken();
+                    client ??= await RhttpClient.create(
+                      settings: const ClientSettings(
+                        timeoutSettings: TimeoutSettings(
+                          timeout: Duration(seconds: 10),
+                        ),
+                      ),
+                    );
+
+                    final resFuture = client!.requestBytes(
+                      method: HttpMethod.get,
+                      url:
+                          'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
+                      cancelToken: cancelToken,
+                    );
+
+                    final resFuture2 = client!.requestBytes(
+                      method: HttpMethod.get,
+                      url:
+                          'https://github.com/localsend/localsend/releases/download/v1.16.0/LocalSend-1.16.0-linux-x86-64.AppImage',
+                      cancelToken: cancelToken,
+                    );
+
+                    Timer.run(() async {
+                      await cancelToken.cancel();
+                    });
+
+                    try {
+                      await resFuture;
+                    } catch (e) {
+                      print(e);
+                    }
+
+                    try {
+                      await resFuture2;
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                  child: const Text('Cancel multiple requests (Timer)'),
                 ),
                 if (response != null) ResponseCard(response: response!),
               ],
