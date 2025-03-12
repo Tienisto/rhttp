@@ -57,7 +57,7 @@ pub struct TlsSettings {
     pub client_certificate: Option<ClientCertificate>,
     pub min_tls_version: Option<TlsVersion>,
     pub max_tls_version: Option<TlsVersion>,
-    pub sni: bool
+    pub sni: bool,
 }
 
 pub enum DnsSettings {
@@ -285,9 +285,7 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
         }
 
         if let Some(user_agent) = settings.user_agent {
-            if user_agent != String::new() {
-                client = client.user_agent(user_agent);
-            }
+            client = client.user_agent(user_agent);
         }
 
         client
