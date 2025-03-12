@@ -164,7 +164,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
       final cancelToken = request.cancelToken;
       if (cancelToken != null) {
         final cancelRef = await cancelRefCompleter.future;
-        cancelToken.setRef(cancelRef);
+        cancelToken.addRef(cancelRef);
       }
 
       final rustResponse = await responseCompleter.future;
@@ -277,7 +277,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
       final cancelToken = request.cancelToken;
       if (cancelToken != null) {
         final cancelRef = await cancelRefCompleter.future;
-        cancelToken.setRef(cancelRef);
+        cancelToken.addRef(cancelRef);
       }
 
       final rustResponse = await responseFuture;
