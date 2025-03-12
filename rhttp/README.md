@@ -8,15 +8,18 @@ Make HTTP requests using Rust for Flutter developers.
 
 ## About
 
+This package is a Dart wrapper around the [reqwest](https://crates.io/crates/reqwest) crate, which is a fast and reliable HTTP client for Rust.
+For optimal performance, we use FFI with [flutter_rust_bridge](https://pub.dev/packages/flutter_rust_bridge) to call Rust code.
+
 The default HTTP client in Dart is part of `dart:io`, which lacks configurability and performance compared to other HTTP clients.
 Furthermore, HTTP/2 and HTTP/3 are either missing or not supported by default.
-This package uses FFI with [flutter_rust_bridge](https://pub.dev/packages/flutter_rust_bridge) to call Rust code. This allows you to use a faster and more efficient HTTP client.
-On Rust's side, the [reqwest](https://crates.io/crates/reqwest) crate is used to make the requests.
 
-Why shouldn't I use [cronet_http](https://pub.dev/packages/cronet_http) or [cupertino_http](https://pub.dev/packages/cupertino_http)?
-These packages for instance only support Android or iOS, while rhttp supports all platforms (except web currently) with a single configuration.
+Compared to [cronet_http](https://pub.dev/packages/cronet_http) and [cupertino_http](https://pub.dev/packages/cupertino_http), this package offers a unified, feature-rich API
+that also works on Windows and Linux.
 
 The APK size will increase by 2 MB on arm64 and 6 MB if compiled for all architectures (x64, arm32, arm64).
+
+Web is currently not supported.
 
 ## Features
 
@@ -851,7 +854,7 @@ void main() async {
 
 MIT License
 
-Copyright (c) 2024 Tien Do Nam
+Copyright (c) 2024-2025 Tien Do Nam
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
