@@ -9,8 +9,11 @@ enum CancelState {
   /// This is the default state.
   idle,
 
+  /// The token is waiting for the first reference
+  /// of the cancellation token on the Rust side.
+  waitingForRef,
+
   /// One or more requests are being cancelled.
-  /// This state is set when [CancelToken.cancel] is called.
   cancelling,
 
   /// The cancellation process has finished.
@@ -40,14 +43,20 @@ class CancelToken {
 
   CancelToken() {
     _refController.stream.listen((ref) {
-      if (_state != CancelState.idle) {
-        rust.cancelRequest(token: ref);
-        return;
-      }
-
-      _refs.add(ref);
-      if (_refs.length == 1) {
-        _firstRef.complete(ref);
+      switch (_state) {
+        case CancelState.idle:
+          _refs.add(ref);
+          break;
+        case CancelState.waitingForRef:
+          // "complete" adds a microtask,
+          // so we need to set the state first to avoid completing twice.
+          _state = CancelState.cancelling;
+          _firstRef.complete(ref);
+          break;
+        case CancelState.cancelling:
+        case CancelState.done:
+          rust.cancelRequest(token: ref);
+          break;
       }
     });
   }
@@ -69,14 +78,14 @@ class CancelToken {
       return;
     }
 
-    _state = CancelState.cancelling;
-
     if (_refs.isNotEmpty) {
+      _state = CancelState.cancelling;
       for (final ref in _refs) {
         await rust.cancelRequest(token: ref);
       }
     } else {
       // We need to wait for the ref to be set.
+      _state = CancelState.waitingForRef;
       final ref = await _firstRef.future;
       await rust.cancelRequest(token: ref);
     }
