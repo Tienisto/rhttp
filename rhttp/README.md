@@ -800,8 +800,8 @@ thereby exposing the same API as the default HTTP client in the Dart ecosystem.
 
 This comes with some downsides, such as:
 
-- inferior type safety due to the flaw that `body` is of type `Object?` instead of a sane supertype.
-- body of type `Map` is implicitly interpreted as `x-www-form-urlencoded` that is only documented in StackOverflow (as of writing this).
+- inferior type safety due to the flaw that `body` is of type `Object?` instead of an explicit type
+- body of type `Map` is implicitly interpreted as `x-www-form-urlencoded` that cannot be changed
 - no support for cancellation
 
 ```dart
