@@ -4,6 +4,7 @@
 - feat: add `ClientSettings.userAgent` @FrankenApps (#63)
 - fix: race condition leading to `ConcurrentModificationError` when using the same `CancelToken` for multiple requests
 - docs: add internet permission to example app
+- deps: bump `flutter_rust_bridge` to `2.9.0`
 
 ## 0.10.0
 
