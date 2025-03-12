@@ -909,6 +909,7 @@ impl SseDecode for crate::api::client::ClientSettings {
         let mut var_tlsSettings =
             <Option<crate::api::client::TlsSettings>>::sse_decode(deserializer);
         let mut var_dnsSettings = <Option<DnsSettings>>::sse_decode(deserializer);
+        let mut var_userAgent = <Option<String>>::sse_decode(deserializer);
         return crate::api::client::ClientSettings {
             http_version_pref: var_httpVersionPref,
             timeout_settings: var_timeoutSettings,
@@ -917,6 +918,7 @@ impl SseDecode for crate::api::client::ClientSettings {
             redirect_settings: var_redirectSettings,
             tls_settings: var_tlsSettings,
             dns_settings: var_dnsSettings,
+            user_agent: var_userAgent,
         };
     }
 }
@@ -1807,6 +1809,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::client::ClientSettings {
             self.redirect_settings.into_into_dart().into_dart(),
             self.tls_settings.into_into_dart().into_dart(),
             self.dns_settings.into_into_dart().into_dart(),
+            self.user_agent.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -2486,6 +2489,7 @@ impl SseEncode for crate::api::client::ClientSettings {
         );
         <Option<crate::api::client::TlsSettings>>::sse_encode(self.tls_settings, serializer);
         <Option<DnsSettings>>::sse_encode(self.dns_settings, serializer);
+        <Option<String>>::sse_encode(self.user_agent, serializer);
     }
 }
 

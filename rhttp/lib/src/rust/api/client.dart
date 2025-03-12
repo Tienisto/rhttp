@@ -57,6 +57,7 @@ class ClientSettings {
   final RedirectSettings? redirectSettings;
   final TlsSettings? tlsSettings;
   final DnsSettings? dnsSettings;
+  final String? userAgent;
 
   const ClientSettings({
     required this.httpVersionPref,
@@ -66,6 +67,7 @@ class ClientSettings {
     this.redirectSettings,
     this.tlsSettings,
     this.dnsSettings,
+    this.userAgent,
   });
 
   static Future<ClientSettings> default_() =>
@@ -79,7 +81,8 @@ class ClientSettings {
       proxySettings.hashCode ^
       redirectSettings.hashCode ^
       tlsSettings.hashCode ^
-      dnsSettings.hashCode;
+      dnsSettings.hashCode ^
+      userAgent.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -92,7 +95,8 @@ class ClientSettings {
           proxySettings == other.proxySettings &&
           redirectSettings == other.redirectSettings &&
           tlsSettings == other.tlsSettings &&
-          dnsSettings == other.dnsSettings;
+          dnsSettings == other.dnsSettings &&
+          userAgent == other.userAgent;
 }
 
 class CustomProxy {
