@@ -1,6 +1,9 @@
 ## 0.11.0
 
 - feat: `HttpMethod` accepts any string as method name
+- feat: add `ClientSettings.userAgent` @FrankenApps (#63)
+- fix: race condition leading to `ConcurrentModificationError` when using the same `CancelToken` for multiple requests
+- docs: add internet permission to example app
 
 ## 0.10.0
 

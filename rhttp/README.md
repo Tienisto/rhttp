@@ -71,6 +71,7 @@ Checkout the benchmark code [here](https://github.com/Tienisto/rhttp/tree/main/b
   - [Proxy](#-proxy)
   - [Redirects](#-redirects)
   - [DNS resolution](#-dns-resolution)
+  - [User-Agent](#-user-agent)
 - [Intercept](#intercept)
   - [Interceptors](#-interceptors)
   - [RetryInterceptor](#-retryinterceptor)
@@ -642,6 +643,18 @@ final client = await RhttpClient.create(
       },
     ),
   )
+);
+```
+
+### ➤ User-Agent
+
+A convenient way to set the `User-Agent` header.
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    userAgent: 'MyApp/1.0',
+  ),
 );
 ```
 

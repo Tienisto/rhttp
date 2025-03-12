@@ -14,7 +14,7 @@ const _keepRedirectSettings = RedirectSettings.limited(-9999);
 const _keepTlsSettings = TlsSettings();
 const _keepDnsSettings = DnsSettings.static();
 const _keepTimeoutSettings = TimeoutSettings();
-const _keepUserAgent = '';
+const _keepUserAgent = '__rhttp_keep__';
 
 class ClientSettings {
   /// Base URL to be prefixed to all requests.
@@ -43,9 +43,8 @@ class ClientSettings {
   /// DNS settings and resolver overrides.
   final DnsSettings? dnsSettings;
 
-  /// The UserAgent of the client.
-  ///
-  /// By default there will be no UserAgent header added.
+  /// A convenient way to set the User-Agent header.
+  /// By default, there is no User-Agent header.
   final String? userAgent;
 
   const ClientSettings({
