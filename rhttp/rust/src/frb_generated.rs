@@ -898,6 +898,8 @@ impl SseDecode for crate::api::client::ClientCertificate {
 impl SseDecode for crate::api::client::ClientSettings {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_cookieSettings =
+            <Option<crate::api::client::CookieSettings>>::sse_decode(deserializer);
         let mut var_httpVersionPref = <crate::api::http::HttpVersionPref>::sse_decode(deserializer);
         let mut var_timeoutSettings =
             <Option<crate::api::client::TimeoutSettings>>::sse_decode(deserializer);
@@ -911,6 +913,7 @@ impl SseDecode for crate::api::client::ClientSettings {
         let mut var_dnsSettings = <Option<DnsSettings>>::sse_decode(deserializer);
         let mut var_userAgent = <Option<String>>::sse_decode(deserializer);
         return crate::api::client::ClientSettings {
+            cookie_settings: var_cookieSettings,
             http_version_pref: var_httpVersionPref,
             timeout_settings: var_timeoutSettings,
             throw_on_status_code: var_throwOnStatusCode,
@@ -919,6 +922,16 @@ impl SseDecode for crate::api::client::ClientSettings {
             tls_settings: var_tlsSettings,
             dns_settings: var_dnsSettings,
             user_agent: var_userAgent,
+        };
+    }
+}
+
+impl SseDecode for crate::api::client::CookieSettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_storeCookies = <bool>::sse_decode(deserializer);
+        return crate::api::client::CookieSettings {
+            store_cookies: var_storeCookies,
         };
     }
 }
@@ -1305,6 +1318,19 @@ impl SseDecode for Option<crate::api::client::ClientSettings> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<crate::api::client::ClientSettings>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::client::CookieSettings> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::client::CookieSettings>::sse_decode(
                 deserializer,
             ));
         } else {
@@ -1802,6 +1828,7 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::client::ClientCertificate>
 impl flutter_rust_bridge::IntoDart for crate::api::client::ClientSettings {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
+            self.cookie_settings.into_into_dart().into_dart(),
             self.http_version_pref.into_into_dart().into_dart(),
             self.timeout_settings.into_into_dart().into_dart(),
             self.throw_on_status_code.into_into_dart().into_dart(),
@@ -1822,6 +1849,23 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::client::ClientSettings>
     for crate::api::client::ClientSettings
 {
     fn into_into_dart(self) -> crate::api::client::ClientSettings {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::client::CookieSettings {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [self.store_cookies.into_into_dart().into_dart()].into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::client::CookieSettings
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::client::CookieSettings>
+    for crate::api::client::CookieSettings
+{
+    fn into_into_dart(self) -> crate::api::client::CookieSettings {
         self
     }
 }
@@ -2476,6 +2520,7 @@ impl SseEncode for crate::api::client::ClientCertificate {
 impl SseEncode for crate::api::client::ClientSettings {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<crate::api::client::CookieSettings>>::sse_encode(self.cookie_settings, serializer);
         <crate::api::http::HttpVersionPref>::sse_encode(self.http_version_pref, serializer);
         <Option<crate::api::client::TimeoutSettings>>::sse_encode(
             self.timeout_settings,
@@ -2490,6 +2535,13 @@ impl SseEncode for crate::api::client::ClientSettings {
         <Option<crate::api::client::TlsSettings>>::sse_encode(self.tls_settings, serializer);
         <Option<DnsSettings>>::sse_encode(self.dns_settings, serializer);
         <Option<String>>::sse_encode(self.user_agent, serializer);
+    }
+}
+
+impl SseEncode for crate::api::client::CookieSettings {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.store_cookies, serializer);
     }
 }
 
@@ -2843,6 +2895,16 @@ impl SseEncode for Option<crate::api::client::ClientSettings> {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <crate::api::client::ClientSettings>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::client::CookieSettings> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::client::CookieSettings>::sse_encode(value, serializer);
         }
     }
 }

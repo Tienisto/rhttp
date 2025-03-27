@@ -18,6 +18,7 @@ version = "0.12.12"
 default-features = false
 features = [
     "charset",
+    "cookies",
     "http2",
     "http3",
     "rustls-tls-webpki-roots",

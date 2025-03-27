@@ -1044,6 +1044,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  CookieSettings dco_decode_box_autoadd_cookie_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_cookie_settings(raw);
+  }
+
+  @protected
   HttpBody dco_decode_box_autoadd_http_body(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_http_body(raw);
@@ -1125,19 +1131,31 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ClientSettings dco_decode_client_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 8)
-      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    if (arr.length != 9)
+      throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
     return ClientSettings(
-      httpVersionPref: dco_decode_http_version_pref(arr[0]),
-      timeoutSettings: dco_decode_opt_box_autoadd_timeout_settings(arr[1]),
-      throwOnStatusCode: dco_decode_bool(arr[2]),
-      proxySettings: dco_decode_opt_box_autoadd_proxy_settings(arr[3]),
-      redirectSettings: dco_decode_opt_box_autoadd_redirect_settings(arr[4]),
-      tlsSettings: dco_decode_opt_box_autoadd_tls_settings(arr[5]),
+      cookieSettings: dco_decode_opt_box_autoadd_cookie_settings(arr[0]),
+      httpVersionPref: dco_decode_http_version_pref(arr[1]),
+      timeoutSettings: dco_decode_opt_box_autoadd_timeout_settings(arr[2]),
+      throwOnStatusCode: dco_decode_bool(arr[3]),
+      proxySettings: dco_decode_opt_box_autoadd_proxy_settings(arr[4]),
+      redirectSettings: dco_decode_opt_box_autoadd_redirect_settings(arr[5]),
+      tlsSettings: dco_decode_opt_box_autoadd_tls_settings(arr[6]),
       dnsSettings:
           dco_decode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettings(
-              arr[6]),
-      userAgent: dco_decode_opt_String(arr[7]),
+              arr[7]),
+      userAgent: dco_decode_opt_String(arr[8]),
+    );
+  }
+
+  @protected
+  CookieSettings dco_decode_cookie_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1)
+      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return CookieSettings(
+      storeCookies: dco_decode_bool(arr[0]),
     );
   }
 
@@ -1432,6 +1450,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ClientSettings? dco_decode_opt_box_autoadd_client_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_client_settings(raw);
+  }
+
+  @protected
+  CookieSettings? dco_decode_opt_box_autoadd_cookie_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_cookie_settings(raw);
   }
 
   @protected
@@ -1908,6 +1932,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  CookieSettings sse_decode_box_autoadd_cookie_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_cookie_settings(deserializer));
+  }
+
+  @protected
   HttpBody sse_decode_box_autoadd_http_body(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_http_body(deserializer));
@@ -1994,6 +2025,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   ClientSettings sse_decode_client_settings(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_cookieSettings =
+        sse_decode_opt_box_autoadd_cookie_settings(deserializer);
     var var_httpVersionPref = sse_decode_http_version_pref(deserializer);
     var var_timeoutSettings =
         sse_decode_opt_box_autoadd_timeout_settings(deserializer);
@@ -2008,6 +2041,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             deserializer);
     var var_userAgent = sse_decode_opt_String(deserializer);
     return ClientSettings(
+        cookieSettings: var_cookieSettings,
         httpVersionPref: var_httpVersionPref,
         timeoutSettings: var_timeoutSettings,
         throwOnStatusCode: var_throwOnStatusCode,
@@ -2016,6 +2050,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         tlsSettings: var_tlsSettings,
         dnsSettings: var_dnsSettings,
         userAgent: var_userAgent);
+  }
+
+  @protected
+  CookieSettings sse_decode_cookie_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_storeCookies = sse_decode_bool(deserializer);
+    return CookieSettings(storeCookies: var_storeCookies);
   }
 
   @protected
@@ -2358,6 +2399,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_box_autoadd_client_settings(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  CookieSettings? sse_decode_opt_box_autoadd_cookie_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_cookie_settings(deserializer));
     } else {
       return null;
     }
@@ -2932,6 +2985,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_cookie_settings(
+      CookieSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_cookie_settings(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_http_body(
       HttpBody self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3020,6 +3080,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_client_settings(
       ClientSettings self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_opt_box_autoadd_cookie_settings(self.cookieSettings, serializer);
     sse_encode_http_version_pref(self.httpVersionPref, serializer);
     sse_encode_opt_box_autoadd_timeout_settings(
         self.timeoutSettings, serializer);
@@ -3031,6 +3092,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettings(
         self.dnsSettings, serializer);
     sse_encode_opt_String(self.userAgent, serializer);
+  }
+
+  @protected
+  void sse_encode_cookie_settings(
+      CookieSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_bool(self.storeCookies, serializer);
   }
 
   @protected
@@ -3330,6 +3398,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
       sse_encode_box_autoadd_client_settings(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_cookie_settings(
+      CookieSettings? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_cookie_settings(self, serializer);
     }
   }
 

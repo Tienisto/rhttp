@@ -50,6 +50,7 @@ class ClientCertificate {
 }
 
 class ClientSettings {
+  final CookieSettings? cookieSettings;
   final HttpVersionPref httpVersionPref;
   final TimeoutSettings? timeoutSettings;
   final bool throwOnStatusCode;
@@ -60,6 +61,7 @@ class ClientSettings {
   final String? userAgent;
 
   const ClientSettings({
+    this.cookieSettings,
     required this.httpVersionPref,
     this.timeoutSettings,
     required this.throwOnStatusCode,
@@ -75,6 +77,7 @@ class ClientSettings {
 
   @override
   int get hashCode =>
+      cookieSettings.hashCode ^
       httpVersionPref.hashCode ^
       timeoutSettings.hashCode ^
       throwOnStatusCode.hashCode ^
@@ -89,6 +92,7 @@ class ClientSettings {
       identical(this, other) ||
       other is ClientSettings &&
           runtimeType == other.runtimeType &&
+          cookieSettings == other.cookieSettings &&
           httpVersionPref == other.httpVersionPref &&
           timeoutSettings == other.timeoutSettings &&
           throwOnStatusCode == other.throwOnStatusCode &&
@@ -97,6 +101,24 @@ class ClientSettings {
           tlsSettings == other.tlsSettings &&
           dnsSettings == other.dnsSettings &&
           userAgent == other.userAgent;
+}
+
+class CookieSettings {
+  final bool storeCookies;
+
+  const CookieSettings({
+    required this.storeCookies,
+  });
+
+  @override
+  int get hashCode => storeCookies.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CookieSettings &&
+          runtimeType == other.runtimeType &&
+          storeCookies == other.storeCookies;
 }
 
 class CustomProxy {

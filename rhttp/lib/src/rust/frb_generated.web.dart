@@ -179,6 +179,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ClientSettings dco_decode_box_autoadd_client_settings(dynamic raw);
 
   @protected
+  CookieSettings dco_decode_box_autoadd_cookie_settings(dynamic raw);
+
+  @protected
   HttpBody dco_decode_box_autoadd_http_body(dynamic raw);
 
   @protected
@@ -216,6 +219,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ClientSettings dco_decode_client_settings(dynamic raw);
+
+  @protected
+  CookieSettings dco_decode_cookie_settings(dynamic raw);
 
   @protected
   CustomProxy dco_decode_custom_proxy(dynamic raw);
@@ -314,6 +320,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ClientSettings? dco_decode_opt_box_autoadd_client_settings(dynamic raw);
+
+  @protected
+  CookieSettings? dco_decode_opt_box_autoadd_cookie_settings(dynamic raw);
 
   @protected
   HttpBody? dco_decode_opt_box_autoadd_http_body(dynamic raw);
@@ -510,6 +519,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       SseDeserializer deserializer);
 
   @protected
+  CookieSettings sse_decode_box_autoadd_cookie_settings(
+      SseDeserializer deserializer);
+
+  @protected
   HttpBody sse_decode_box_autoadd_http_body(SseDeserializer deserializer);
 
   @protected
@@ -553,6 +566,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ClientSettings sse_decode_client_settings(SseDeserializer deserializer);
+
+  @protected
+  CookieSettings sse_decode_cookie_settings(SseDeserializer deserializer);
 
   @protected
   CustomProxy sse_decode_custom_proxy(SseDeserializer deserializer);
@@ -655,6 +671,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   ClientSettings? sse_decode_opt_box_autoadd_client_settings(
+      SseDeserializer deserializer);
+
+  @protected
+  CookieSettings? sse_decode_opt_box_autoadd_cookie_settings(
       SseDeserializer deserializer);
 
   @protected
@@ -883,6 +903,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       ClientSettings self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_cookie_settings(
+      CookieSettings self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_http_body(
       HttpBody self, SseSerializer serializer);
 
@@ -933,6 +957,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_client_settings(
       ClientSettings self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_cookie_settings(
+      CookieSettings self, SseSerializer serializer);
 
   @protected
   void sse_encode_custom_proxy(CustomProxy self, SseSerializer serializer);
@@ -1043,6 +1071,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_box_autoadd_client_settings(
       ClientSettings? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_cookie_settings(
+      CookieSettings? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_http_body(

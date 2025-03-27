@@ -31,6 +31,7 @@ Web is currently not supported.
 - ✅ Certificate pinning
 - ✅ Proxy support
 - ✅ Custom DNS resolution
+- ✅ Cookies
 - ✅ Strong type safety
 - ✅ DevTools support ([Network tab](https://docs.flutter.dev/tools/devtools/network))
 - ✅ Compatible with [dart:io](https://api.dart.dev/stable/dart-io/HttpClient-class.html), [http](https://pub.dev/packages/http), and [dio](https://pub.dev/packages/dio)
@@ -74,6 +75,7 @@ Checkout the benchmark code [here](https://github.com/Tienisto/rhttp/tree/main/b
   - [Proxy](#-proxy)
   - [Redirects](#-redirects)
   - [DNS resolution](#-dns-resolution)
+  - [Cookies](#-cookies)
   - [User-Agent](#-user-agent)
 - [Intercept](#intercept)
   - [Interceptors](#-interceptors)
@@ -646,6 +648,19 @@ final client = await RhttpClient.create(
       },
     ),
   )
+);
+```
+
+### ➤ Cookies
+
+It is possible to optionally activate automatic Cookie handling. This will store Cookies sent by the
+server in an ephemeral Cookie [`Jar`](https://docs.rs/reqwest/latest/reqwest/cookie/struct.Jar.html).
+
+```dart
+final client = await RhttpClient.create(
+  settings: const ClientSettings(
+    cookieSettings: CookieSettings(storeCookies: true),
+  ),
 );
 ```
 
