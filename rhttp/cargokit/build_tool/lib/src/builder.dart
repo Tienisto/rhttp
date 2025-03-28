@@ -120,7 +120,7 @@ class RustBuilder {
   void prepare(
     Rustup rustup,
   ) {
-    final toolchain = _toolchain;
+    final toolchain = _getToolchainVersion(_toolchain);
     if (rustup.installedTargets(toolchain) == null) {
       rustup.installToolchain(toolchain);
     }
