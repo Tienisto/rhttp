@@ -31,6 +31,9 @@ features = [
     "gzip",
 ]
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
+
 [profile.release]
 opt-level = 3
 strip = true
