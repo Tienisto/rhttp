@@ -54,6 +54,7 @@ export 'src/model/request.dart'
 export 'src/model/settings.dart'
     show
         ClientSettings,
+        CookieSettings,
         TimeoutSettings,
         ProxySettings,
         CustomProxy,

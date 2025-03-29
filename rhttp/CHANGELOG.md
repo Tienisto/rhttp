@@ -1,3 +1,6 @@
+## Unreleased
+- feat: add basic Cookie handling
+
 ## 0.11.0
 
 - feat: `HttpMethod` accepts any string as method name @wgh136 (#57)
