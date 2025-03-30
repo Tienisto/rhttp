@@ -33,6 +33,8 @@ class CancelToken {
   final _firstRef = Completer<rust_lib.CancellationToken>();
   final _refs = <rust_lib.CancellationToken>[];
 
+  StreamSubscription<rust_lib.CancellationToken>? _refStreamSub;
+
   CancelState _state = CancelState.idle;
 
   /// The current state of the token.
@@ -42,7 +44,7 @@ class CancelToken {
   bool get isCancelled => _state == CancelState.done;
 
   CancelToken() {
-    _refController.stream.listen((ref) {
+    _refStreamSub = _refController.stream.listen((ref) {
       switch (_state) {
         case CancelState.idle:
           _refs.add(ref);
@@ -93,5 +95,6 @@ class CancelToken {
     _state = CancelState.done;
     _refController.close();
     _refs.clear();
+    return _refStreamSub?.cancel();
   }
 }
