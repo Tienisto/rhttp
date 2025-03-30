@@ -95,6 +95,6 @@ class CancelToken {
     _state = CancelState.done;
     _refController.close();
     _refs.clear();
-    return _refStreamSub?.cancel();
+    await _refStreamSub?.cancel();
   }
 }
