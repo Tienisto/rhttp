@@ -25,10 +25,10 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/rhttp/macos
 
 SPEC CHECKSUMS:
-  cupertino_http: 947a233f40cfea55167a49f2facc18434ea117ba
+  cupertino_http: 94ac07f5ff090b8effa6c5e2c47871d48ab7c86c
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
-  objective_c: e5f8194456e8fc943e034d1af00510a1bc29c067
-  rhttp: 337afda4c3e4df31087160719ffca6452c225cc2
+  objective_c: ec13431e45ba099cb734eb2829a5c1cd37986cba
+  rhttp: 08d791d6373089de796318f4cfb172cbcf34e78b
 
 PODFILE CHECKSUM: 9ebaf0ce3d369aaa26a9ea0e159195ed94724cf3
 
