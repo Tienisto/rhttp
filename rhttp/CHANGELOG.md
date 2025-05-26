@@ -1,3 +1,8 @@
+## 0.12.0
+
+- fix: Flutter 3.32 compatibility @MSOB7YY (#74)
+- deps: bump `flutter_rust_bridge` to `2.10.0`
+
 ## 0.11.1
 
 - feat: add basic Cookie handling @FrankenApps (#67)
