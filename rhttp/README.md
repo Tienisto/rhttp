@@ -287,6 +287,18 @@ HttpStreamResponse response = await Rhttp.getStream('https://example.com');
 Stream<Uint8List> body = response.body;
 ```
 
+They all extend the `HttpResponse` class, which contains the following properties:
+
+| Property                                  | Description                                                     |
+|-------------------------------------------|-----------------------------------------------------------------|
+| `String? remoteIp`                        | The remote IP address of the server that sent the response.     |
+| `HttpRequest request`                     | The HTTP request that this response is associated with.         |
+| `HttpVersion version`                     | The HTTP version of this response.                              |
+| `int statusCode`                          | The HTTP status code of this response.                          |
+| `List<(String, String)> headers`          | The HTTP headers of this response.                              |
+| `Map<String, String> headerMap`           | Response headers converted as a map.                            |
+| `Map<String, List<String>> headerMapList` | Response headers converted as a map respecting multiple values. |
+
 ## Request Lifecycle
 
 ### ➤ Cancel Requests

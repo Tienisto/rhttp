@@ -1,3 +1,11 @@
+## 0.13.0
+
+- feat: add `HttpResponse.remoteIp` to get the remote IP address of the server
+- feat: set `forceSameCodegenVersion: false` to disable check by `flutter_rust_bridge`
+- deps: bump `flutter_rust_bridge` to `2.11.1`
+- deps: bump Rust dependencies to latest versions
+- docs: update Android example @FrankenApps (#78)
+
 ## 0.12.0
 
 - fix: Flutter 3.32 compatibility @MSOB7YY (#74)
