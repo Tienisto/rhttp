@@ -51,6 +51,7 @@ class MockRustLibApi extends Mock implements RustLibApi {
       }
       onAnswer?.call(invocation.namedArguments[#url]);
       return Future.value(rust_http.HttpResponse(
+        remoteIp: null,
         headers: headers ?? [],
         version: switch (version ?? HttpVersion.http1_1) {
           HttpVersion.http09 => rust_http.HttpVersion.http09,
@@ -84,6 +85,7 @@ class MockRustLibApi extends Mock implements RustLibApi {
     ).thenAnswer((invocation) async {
       onAnswer(invocation.namedArguments[#url]);
       return const rust_http.HttpResponse(
+        remoteIp: null,
         headers: [],
         version: rust_http.HttpVersion.http11,
         statusCode: 200,

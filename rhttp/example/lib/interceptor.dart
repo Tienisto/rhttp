@@ -126,6 +126,7 @@ class _ReturnFakeInterceptor extends Interceptor {
   Future<InterceptorResult<HttpRequest>> beforeRequest(
       HttpRequest request) async {
     return Interceptor.resolve(HttpTextResponse(
+      remoteIp: null,
       request: request,
       version: HttpVersion.http1_1,
       statusCode: 204,
@@ -140,6 +141,7 @@ class _ReturnFakeAfterSendInterceptor extends Interceptor {
   Future<InterceptorResult<HttpResponse>> afterResponse(
       HttpResponse response) async {
     return Interceptor.resolve(HttpTextResponse(
+      remoteIp: response.remoteIp,
       request: response.request,
       version: HttpVersion.http1_1,
       statusCode: 204,

@@ -219,6 +219,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
 
       if (convertBackToBytes) {
         response = HttpBytesResponse(
+          remoteIp: response.remoteIp,
           request: request,
           version: response.version,
           statusCode: response.statusCode,

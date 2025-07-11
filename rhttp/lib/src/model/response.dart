@@ -7,9 +7,22 @@ import 'package:rhttp/src/rust/api/http.dart' as rust;
 import 'package:rhttp/src/util/http_header.dart';
 
 sealed class HttpResponse {
+  /// The remote IP address of the server
+  ///
+  /// Based on empirical evidence, it seems that this null when
+  /// HTTP/3 is used.
+  final String? remoteIp;
+
+  /// The HTTP request that this response is associated with.
   final HttpRequest request;
+
+  /// The HTTP version of this response.
   final HttpVersion version;
+
+  /// The HTTP status code of this response.
   final int statusCode;
+
+  /// The HTTP headers of this response.
   final List<(String, String)> headers;
 
   /// Response headers converted as a map.
@@ -19,6 +32,7 @@ sealed class HttpResponse {
   Map<String, List<String>> get headerMapList => headers.asHeaderMapList;
 
   const HttpResponse({
+    required this.remoteIp,
     required this.request,
     required this.version,
     required this.statusCode,
@@ -30,6 +44,7 @@ class HttpTextResponse extends HttpResponse {
   final String body;
 
   const HttpTextResponse({
+    required super.remoteIp,
     required super.request,
     required super.version,
     required super.statusCode,
@@ -50,6 +65,7 @@ class HttpBytesResponse extends HttpResponse {
   final Uint8List body;
 
   const HttpBytesResponse({
+    required super.remoteIp,
     required super.request,
     required super.version,
     required super.statusCode,
@@ -67,6 +83,7 @@ class HttpStreamResponse extends HttpResponse {
   final Stream<Uint8List> body;
 
   const HttpStreamResponse({
+    required super.remoteIp,
     required super.request,
     required super.version,
     required super.statusCode,
@@ -102,6 +119,7 @@ HttpResponse parseHttpResponse(
 
   return switch (response.body) {
     rust.HttpResponseBody_Text text => HttpTextResponse(
+        remoteIp: response.remoteIp,
         request: request,
         version: parseHttpVersion(response.version),
         statusCode: response.statusCode,
@@ -109,6 +127,7 @@ HttpResponse parseHttpResponse(
         body: text.field0,
       ),
     rust.HttpResponseBody_Bytes bytes => HttpBytesResponse(
+        remoteIp: response.remoteIp,
         request: request,
         version: parseHttpVersion(response.version),
         statusCode: response.statusCode,
@@ -116,6 +135,7 @@ HttpResponse parseHttpResponse(
         body: bytes.field0,
       ),
     rust.HttpResponseBody_Stream _ => HttpStreamResponse(
+        remoteIp: response.remoteIp,
         request: request,
         version: parseHttpVersion(response.version),
         statusCode: response.statusCode,

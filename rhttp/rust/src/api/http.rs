@@ -92,6 +92,7 @@ impl HttpVersion {
 }
 
 pub struct HttpResponse {
+    pub remote_ip: Option<String>,
     pub headers: Vec<(String, String)>,
     pub version: HttpVersion,
     pub status_code: u16,
@@ -203,6 +204,7 @@ async fn make_http_request_inner(
     .await?;
 
     Ok(HttpResponse {
+        remote_ip: extract_ip(&response),
         headers: header_to_vec(response.headers()),
         version: HttpVersion::from_version(response.version()),
         status_code: response.status().as_u16(),
@@ -305,6 +307,7 @@ async fn make_http_request_receive_stream_inner(
     };
 
     let http_response = HttpResponse {
+        remote_ip: extract_ip(&response),
         headers: header_to_vec(response.headers()),
         version: HttpVersion::from_version(response.version()),
         status_code: response.status().as_u16(),
@@ -512,4 +515,8 @@ fn header_to_vec(headers: &reqwest::header::HeaderMap) -> Vec<(String, String)> 
 
 pub fn cancel_request(token: &CancellationToken) {
     token.cancel();
+}
+
+fn extract_ip(response: &Response) -> Option<String> {
+    response.remote_addr().map(|addr| addr.ip().to_string())
 }

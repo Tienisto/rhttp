@@ -25,7 +25,12 @@ class ResponseCard extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: Text(response.bodyLabel),
+                child: Column(
+                  children: [
+                    SelectableText('Remote IP: ${response.remoteIp}'),
+                    SelectableText(response.bodyLabel),
+                  ],
+                ),
               ),
             ),
           ],
