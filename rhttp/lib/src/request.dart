@@ -37,7 +37,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
       final result = await interceptors.beforeRequest(request);
       switch (result) {
         case InterceptorNextResult<HttpRequest>() ||
-            InterceptorStopResult<HttpRequest>():
+              InterceptorStopResult<HttpRequest>():
           request = result.value ?? request;
         case InterceptorResolveResult<HttpRequest>():
           return result.response;
@@ -83,10 +83,10 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
   // Convert the Dart stream to a Dart2Rust stream
   final requestBodyStream = switch (request.body) {
     HttpBodyBytesStream body => await _createDart2RustStream(
-      body: body,
-      headers: headers,
-      sendNotifier: sendNotifier,
-    ),
+        body: body,
+        headers: headers,
+        sendNotifier: sendNotifier,
+      ),
     _ => null,
   };
 
@@ -136,8 +136,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         settings: request.settings?.toRustType(),
         method: request.method._toRustType(),
         url: url,
-        query:
-            request.queryRaw ??
+        query: request.queryRaw ??
             request.query?.entries.map((e) => (e.key, e.value)).toList(),
         headers: headers?._toRustType(),
         body: request.body?._toRustType(),
@@ -163,14 +162,12 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
       }
 
       final rustResponse = await responseCompleter.future;
-      final profileByteStream =
-          profile == null || convertBackToBytes
-              ? null
-              : ByteStreamSubscription();
+      final profileByteStream = profile == null || convertBackToBytes
+          ? null
+          : ByteStreamSubscription();
 
       if (receiveNotifier != null) {
-        final contentLengthStr =
-            rustResponse.headers
+        final contentLengthStr = rustResponse.headers
                 .firstWhereOrNull((e) => e.$1.toLowerCase() == 'content-length')
                 ?.$2 ??
             '-1';
@@ -198,10 +195,9 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         stream = stream.transform(
           _createStreamTransformer(
             request: request,
-            onData:
-                profileByteStream == null
-                    ? null
-                    : (chunk) => profileByteStream.addBytes(chunk),
+            onData: profileByteStream == null
+                ? null
+                : (chunk) => profileByteStream.addBytes(chunk),
             onDone: profileByteStream?.close,
           ),
         );
@@ -240,7 +236,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
           final result = await interceptors.afterResponse(response);
           switch (result) {
             case InterceptorNextResult<HttpResponse>() ||
-                InterceptorStopResult<HttpResponse>():
+                  InterceptorStopResult<HttpResponse>():
               response = result.value ?? response;
             case InterceptorResolveResult<HttpResponse>():
               return result.response;
@@ -262,8 +258,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         settings: request.settings?.toRustType(),
         method: request.method._toRustType(),
         url: url,
-        query:
-            request.queryRaw ??
+        query: request.queryRaw ??
             request.query?.entries.map((e) => (e.key, e.value)).toList(),
         headers: headers?._toRustType(),
         body: request.body?._toRustType(),
@@ -290,7 +285,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
           final result = await interceptors.afterResponse(response);
           switch (result) {
             case InterceptorNextResult<HttpResponse>() ||
-                InterceptorStopResult<HttpResponse>():
+                  InterceptorStopResult<HttpResponse>():
               response = result.value ?? response;
             case InterceptorResolveResult<HttpResponse>():
               return result.response;
@@ -334,7 +329,7 @@ Future<HttpResponse> requestInternalGeneric(HttpRequest request) async {
         final result = await interceptors.onError(exception);
         switch (result) {
           case InterceptorNextResult<RhttpException>() ||
-              InterceptorStopResult<RhttpException>():
+                InterceptorStopResult<RhttpException>():
             exception = result.value ?? exception;
           case InterceptorResolveResult<RhttpException>():
             return result.response;
@@ -395,15 +390,14 @@ Future<rust_stream.Dart2RustStreamReceiver> _createDart2RustStream({
   final (sender, receiver) = await rust_stream.createStream();
   listenToStreamWithBackpressure(
     stream: body.stream,
-    onData:
-        sendNotifier == null
-            ? (data) async {
-              await sender.add(data: data);
-            }
-            : (data) async {
-              sendNotifier.notify(data.length, bodyLength);
-              await sender.add(data: data);
-            },
+    onData: sendNotifier == null
+        ? (data) async {
+            await sender.add(data: data);
+          }
+        : (data) async {
+            sendNotifier.notify(data.length, bodyLength);
+            await sender.add(data: data);
+          },
     onDone: () async {
       sendNotifier?.notifyDone(bodyLength);
       await sender.close();
@@ -425,8 +419,8 @@ extension on HttpHeaders {
   rust.HttpHeaders _toRustType() {
     return switch (this) {
       HttpHeaderMap map => rust.HttpHeaders.map({
-        for (final entry in map.map.entries) entry.key.httpName: entry.value,
-      }),
+          for (final entry in map.map.entries) entry.key.httpName: entry.value,
+        }),
       HttpHeaderRawMap rawMap => rust.HttpHeaders.map(rawMap.map),
       HttpHeaderList list => rust.HttpHeaders.list(list.list),
     };
@@ -442,24 +436,23 @@ extension on HttpBody {
       HttpBodyBytesStream _ => const rust.HttpBody.bytesStream(),
       HttpBodyForm form => rust.HttpBody.form(form.form),
       HttpBodyMultipart multipart => rust.HttpBody.multipart(
-        rust.MultipartPayload(
-          parts:
-              multipart.parts.map((e) {
-                final name = e.$1;
-                final item = e.$2;
-                final rustItem = rust.MultipartItem(
-                  value: switch (item) {
-                    MultiPartText() => rust.MultipartValue.text(item.text),
-                    MultiPartBytes() => rust.MultipartValue.bytes(item.bytes),
-                    MultiPartFile() => rust.MultipartValue.file(item.file),
-                  },
-                  fileName: item.fileName,
-                  contentType: item.contentType,
-                );
-                return (name, rustItem);
-              }).toList(),
+          rust.MultipartPayload(
+            parts: multipart.parts.map((e) {
+              final name = e.$1;
+              final item = e.$2;
+              final rustItem = rust.MultipartItem(
+                value: switch (item) {
+                  MultiPartText() => rust.MultipartValue.text(item.text),
+                  MultiPartBytes() => rust.MultipartValue.bytes(item.bytes),
+                  MultiPartFile() => rust.MultipartValue.file(item.file),
+                },
+                fileName: item.fileName,
+                contentType: item.contentType,
+              );
+              return (name, rustItem);
+            }).toList(),
+          ),
         ),
-      ),
     };
   }
 }
@@ -472,28 +465,26 @@ StreamTransformer<Uint8List, Uint8List> _createStreamTransformer({
   void Function()? onDone,
 }) {
   return StreamTransformer<Uint8List, Uint8List>.fromHandlers(
-    handleData:
-        onData == null
-            ? null
-            : (data, sink) {
-              onData(data);
-              sink.add(data);
-            },
-    handleDone:
-        onDone == null
-            ? null
-            : (sink) {
-              onDone();
-              sink.close();
-            },
+    handleData: onData == null
+        ? null
+        : (data, sink) {
+            onData(data);
+            sink.add(data);
+          },
+    handleDone: onDone == null
+        ? null
+        : (sink) {
+            onDone();
+            sink.close();
+          },
     handleError: (error, stackTrace, sink) {
       final mappedError = switch (error) {
         // Flutter Rust Bridge currently always throws AnyhowException
         AnyhowException _ => switch (error.message) {
-          _ when error.message.contains('STREAM_CANCEL_ERROR') =>
-            RhttpCancelException(request),
-          _ => RhttpUnknownException(request, error.message),
-        },
+            _ when error.message.contains('STREAM_CANCEL_ERROR') =>
+              RhttpCancelException(request),
+            _ => RhttpUnknownException(request, error.message),
+          },
         rust_error.RhttpError e => parseError(request, e),
         _ => RhttpUnknownException(request, error.toString()),
       };

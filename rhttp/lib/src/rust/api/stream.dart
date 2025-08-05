@@ -8,31 +8,15 @@ import 'error.dart';
 import 'http.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+Future<(Dart2RustStreamSink, Dart2RustStreamReceiver)> createStream() =>
+    RustLib.instance.api.crateApiStreamCreateStream();
 
-            
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Dart2RustStreamReceiver>>
+abstract class Dart2RustStreamReceiver implements RustOpaqueInterface {}
 
-            Future<(Dart2RustStreamSink,Dart2RustStreamReceiver)>  createStream() => RustLib.instance.api.crateApiStreamCreateStream();
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Dart2RustStreamSink>>
+abstract class Dart2RustStreamSink implements RustOpaqueInterface {
+  Future<void> add({required List<int> data});
 
-            
-                // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Dart2RustStreamReceiver>>
-                abstract class Dart2RustStreamReceiver implements RustOpaqueInterface {
-                    
-
-                    
-                }
-                
-
-
-                // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Dart2RustStreamSink>>
-                abstract class Dart2RustStreamSink implements RustOpaqueInterface {
-                     Future<void>  add({required List<int> data });
-
-
- Future<void>  close();
-
-
-
-                    
-                }
-                
-            
+  Future<void> close();
+}
