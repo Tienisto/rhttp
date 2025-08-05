@@ -14,6 +14,9 @@ import 'package:rhttp/src/util/collection.dart';
 import 'package:rhttp/src/util/http_header.dart';
 
 const Map<String, String> _keepQuery = {'__rhttp_keep__': '__rhttp_keep__'};
+const List<(String, String)> _keepQueryRaw = [
+  ('__rhttp_keep__', '__rhttp_keep__'),
+];
 const HttpHeaders _keepHeaders = HttpHeaders.rawMap({'__keep__': '__keep__'});
 const HttpBody _keepBody = HttpBody.text('__rhttp_keep__');
 
@@ -39,6 +42,11 @@ class BaseHttpRequest {
   /// This can be null, if there are no query parameters
   /// or if they are already part of the URL.
   final Map<String, String>? query;
+
+  /// Raw query parameters as a list of key-value pairs.
+  /// This allows for duplicate keys, which is not possible with [query].
+  /// Cannot be used together with [query].
+  final List<(String, String)>? queryRaw;
 
   /// Headers to send with the request.
   final HttpHeaders? headers;
@@ -67,13 +75,18 @@ class BaseHttpRequest {
     this.method = HttpMethod.get,
     required this.url,
     this.query,
+    this.queryRaw,
     this.headers,
     this.body,
     this.expectBody = HttpExpectBody.stream,
     this.cancelToken,
     this.onSendProgress,
     this.onReceiveProgress,
-  });
+  }) {
+    if (query != null && queryRaw != null) {
+      throw ArgumentError('Cannot specify both query and queryRaw parameters');
+    }
+  }
 }
 
 /// An HTTP request with the information which client to use.
@@ -95,6 +108,7 @@ class HttpRequest extends BaseHttpRequest {
     super.method,
     required super.url,
     super.query,
+    super.queryRaw,
     super.headers,
     super.body,
     super.expectBody,
@@ -108,21 +122,21 @@ class HttpRequest extends BaseHttpRequest {
     RhttpClient? client,
     ClientSettings? settings,
     Interceptor? interceptor,
-  }) =>
-      HttpRequest(
-        client: client,
-        settings: settings,
-        interceptor: interceptor,
-        method: request.method,
-        url: request.url,
-        query: request.query,
-        headers: request.headers,
-        body: request.body,
-        expectBody: request.expectBody,
-        cancelToken: request.cancelToken,
-        onSendProgress: request.onSendProgress,
-        onReceiveProgress: request.onReceiveProgress,
-      );
+  }) => HttpRequest(
+    client: client,
+    settings: settings,
+    interceptor: interceptor,
+    method: request.method,
+    url: request.url,
+    query: request.query,
+    queryRaw: request.queryRaw,
+    headers: request.headers,
+    body: request.body,
+    expectBody: request.expectBody,
+    cancelToken: request.cancelToken,
+    onSendProgress: request.onSendProgress,
+    onReceiveProgress: request.onReceiveProgress,
+  );
 
   /// Sends the request using the specified client / settings
   /// and returns the response.
@@ -134,6 +148,7 @@ class HttpRequest extends BaseHttpRequest {
     HttpMethod? method,
     String? url,
     Map<String, String>? query = _keepQuery,
+    List<(String, String)>? queryRaw = _keepQueryRaw,
     HttpHeaders? headers = _keepHeaders,
     HttpBody? body = _keepBody,
     HttpExpectBody? expectBody,
@@ -146,6 +161,7 @@ class HttpRequest extends BaseHttpRequest {
       method: method ?? this.method,
       url: url ?? this.url,
       query: identical(query, _keepQuery) ? this.query : query,
+      queryRaw: identical(queryRaw, _keepQueryRaw) ? this.queryRaw : queryRaw,
       headers: identical(headers, _keepHeaders) ? this.headers : headers,
       body: identical(body, _keepBody) ? this.body : body,
       expectBody: expectBody ?? this.expectBody,
@@ -161,10 +177,7 @@ class HttpRequest extends BaseHttpRequest {
 
   /// Convenience method to add a header to the request.
   /// Returns a new instance of [HttpRequest] with the added header.
-  HttpRequest addHeader({
-    required HttpHeaderName name,
-    required String value,
-  }) {
+  HttpRequest addHeader({required HttpHeaderName name, required String value}) {
     return copyWith(
       headers: (headers ?? HttpHeaders.empty).copyWith(
         name: name,
@@ -183,7 +196,6 @@ enum HttpExpectBody {
 
   /// The response body is a stream of bytes.
   stream,
-  ;
 }
 
 /// The HTTP method to use.
@@ -226,7 +238,6 @@ enum HttpVersionPref {
 
   /// Default behavior: Let the server decide.
   all,
-  ;
 }
 
 sealed class HttpHeaders {
@@ -252,10 +263,12 @@ sealed class HttpHeaders {
   bool containsKey(HttpHeaderName key) {
     return switch (this) {
       HttpHeaderMap map => map.map.containsKey(key),
-      HttpHeaderRawMap rawMap =>
-        rawMap.map.keys.any((e) => e.toLowerCase() == key.httpName),
-      HttpHeaderList list =>
-        list.list.any((e) => e.$1.toLowerCase() == key.httpName),
+      HttpHeaderRawMap rawMap => rawMap.map.keys.any(
+        (e) => e.toLowerCase() == key.httpName,
+      ),
+      HttpHeaderList list => list.list.any(
+        (e) => e.$1.toLowerCase() == key.httpName,
+      ),
     };
   }
 
@@ -264,13 +277,15 @@ sealed class HttpHeaders {
   String? operator [](HttpHeaderName key) {
     return switch (this) {
       HttpHeaderMap map => map.map[key],
-      HttpHeaderRawMap rawMap => rawMap.map[key.httpName] ??
-          rawMap.map.entries
-              .firstWhereOrNull((e) => e.key.toLowerCase() == key.httpName)
-              ?.value,
-      HttpHeaderList list => list.list
-          .firstWhereOrNull((e) => e.$1.toLowerCase() == key.httpName)
-          ?.$2,
+      HttpHeaderRawMap rawMap =>
+        rawMap.map[key.httpName] ??
+            rawMap.map.entries
+                .firstWhereOrNull((e) => e.key.toLowerCase() == key.httpName)
+                ?.value,
+      HttpHeaderList list =>
+        list.list
+            .firstWhereOrNull((e) => e.$1.toLowerCase() == key.httpName)
+            ?.$2,
     };
   }
 
@@ -280,39 +295,30 @@ sealed class HttpHeaders {
   HttpHeaders copyWithRaw({required String name, required String value}) {
     return switch (this) {
       HttpHeaderMap map => HttpHeaders.rawMap({
-          for (final entry in map.map.entries) entry.key.httpName: entry.value,
-          name: value,
-        }),
+        for (final entry in map.map.entries) entry.key.httpName: entry.value,
+        name: value,
+      }),
       HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
-          ...rawMap.map,
-          name: value,
-        }),
-      HttpHeaderList list => HttpHeaders.list([
-          ...list.list,
-          (name, value),
-        ]),
+        ...rawMap.map,
+        name: value,
+      }),
+      HttpHeaderList list => HttpHeaders.list([...list.list, (name, value)]),
     };
   }
 
   /// Adds a header to the headers.
   /// Returns a new instance of [HttpHeaders] with the added header.
-  HttpHeaders copyWith({
-    required HttpHeaderName name,
-    required String value,
-  }) {
+  HttpHeaders copyWith({required HttpHeaderName name, required String value}) {
     return switch (this) {
-      HttpHeaderMap map => HttpHeaders.map({
-          ...map.map,
-          name: value,
-        }),
+      HttpHeaderMap map => HttpHeaders.map({...map.map, name: value}),
       HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
-          ...rawMap.map,
-          name.httpName: value,
-        }),
+        ...rawMap.map,
+        name.httpName: value,
+      }),
       HttpHeaderList list => HttpHeaders.list([
-          ...list.list,
-          (name.httpName, value),
-        ]),
+        ...list.list,
+        (name.httpName, value),
+      ]),
     };
   }
 
@@ -321,17 +327,17 @@ sealed class HttpHeaders {
   HttpHeaders copyWithout(HttpHeaderName key) {
     return switch (this) {
       HttpHeaderMap map => HttpHeaders.map({
-          for (final entry in map.map.entries)
-            if (entry.key != key) entry.key: entry.value,
-        }),
+        for (final entry in map.map.entries)
+          if (entry.key != key) entry.key: entry.value,
+      }),
       HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
-          for (final entry in rawMap.map.entries)
-            if (entry.key.toLowerCase() != key.httpName) entry.key: entry.value,
-        }),
+        for (final entry in rawMap.map.entries)
+          if (entry.key.toLowerCase() != key.httpName) entry.key: entry.value,
+      }),
       HttpHeaderList list => HttpHeaders.list([
-          for (final entry in list.list)
-            if (entry.$1.toLowerCase() != key.httpName) entry,
-        ]),
+        for (final entry in list.list)
+          if (entry.$1.toLowerCase() != key.httpName) entry,
+      ]),
     };
   }
 
@@ -342,17 +348,17 @@ sealed class HttpHeaders {
     key = key.toLowerCase();
     return switch (this) {
       HttpHeaderMap map => HttpHeaders.rawMap({
-          for (final entry in map.map.entries)
-            if (entry.key.httpName != key) entry.key.httpName: entry.value,
-        }),
+        for (final entry in map.map.entries)
+          if (entry.key.httpName != key) entry.key.httpName: entry.value,
+      }),
       HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
-          for (final entry in rawMap.map.entries)
-            if (entry.key.toLowerCase() != key) entry.key: entry.value,
-        }),
+        for (final entry in rawMap.map.entries)
+          if (entry.key.toLowerCase() != key) entry.key: entry.value,
+      }),
       HttpHeaderList list => HttpHeaders.list([
-          for (final entry in list.list)
-            if (entry.$1.toLowerCase() != key) entry,
-        ]),
+        for (final entry in list.list)
+          if (entry.$1.toLowerCase() != key) entry,
+      ]),
     };
   }
 
@@ -361,12 +367,11 @@ sealed class HttpHeaders {
   Map<String, List<String>> toMapList() {
     return switch (this) {
       HttpHeaderMap map => {
-          for (final entry in map.map.entries)
-            entry.key.httpName: [entry.value],
-        },
+        for (final entry in map.map.entries) entry.key.httpName: [entry.value],
+      },
       HttpHeaderRawMap rawMap => {
-          for (final entry in rawMap.map.entries) entry.key: [entry.value],
-        },
+        for (final entry in rawMap.map.entries) entry.key: [entry.value],
+      },
       HttpHeaderList list => list.list.asHeaderMapList,
     };
   }
@@ -504,10 +509,7 @@ sealed class MultipartItem {
   final String? fileName;
   final String? contentType;
 
-  const MultipartItem({
-    this.fileName,
-    this.contentType,
-  });
+  const MultipartItem({this.fileName, this.contentType});
 
   /// A plain text value.
   const factory MultipartItem.text({
