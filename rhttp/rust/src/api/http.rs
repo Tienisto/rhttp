@@ -509,7 +509,14 @@ async fn make_http_request_helper(
 fn header_to_vec(headers: &reqwest::header::HeaderMap) -> Vec<(String, String)> {
     headers
         .iter()
-        .map(|(k, v)| (k.as_str().to_string(), v.to_str().unwrap().to_string()))
+         .filter_map(|(k, v)| {
+            match v.to_str() {
+                Ok(v_str) => Some((k.as_str().to_string(), v_str.to_string())),
+                Err(_) => {
+                    None
+                }
+            }
+        })
         .collect()
 }
 
