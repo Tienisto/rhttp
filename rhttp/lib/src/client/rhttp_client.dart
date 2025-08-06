@@ -37,9 +37,7 @@ class RhttpClient {
     List<Interceptor>? interceptors,
   }) async {
     settings ??= const ClientSettings();
-    final ref = await rust.registerClient(
-      settings: settings.toRustType(),
-    );
+    final ref = await rust.registerClient(settings: settings.toRustType());
     return RhttpClient._(
       settings: settings,
       interceptor: parseInterceptorList(interceptors),
@@ -59,9 +57,7 @@ class RhttpClient {
     List<Interceptor>? interceptors,
   }) {
     settings ??= const ClientSettings();
-    final ref = rust.registerClientSync(
-      settings: settings.toRustType(),
-    );
+    final ref = rust.registerClientSync(settings: settings.toRustType());
     return RhttpClient._(
       settings: settings,
       interceptor: parseInterceptorList(interceptors),
@@ -93,6 +89,7 @@ class RhttpClient {
     required HttpMethod method,
     required String url,
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     HttpBody? body,
     required HttpExpectBody expectBody,
@@ -107,6 +104,7 @@ class RhttpClient {
         method: method,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         body: body,
         expectBody: expectBody,
@@ -130,6 +128,7 @@ class RhttpClient {
     required HttpMethod method,
     required String url,
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
@@ -140,6 +139,7 @@ class RhttpClient {
       method: method,
       url: url,
       query: query,
+      queryRaw: queryRaw,
       headers: headers,
       body: body,
       expectBody: HttpExpectBody.text,
@@ -155,6 +155,7 @@ class RhttpClient {
     required HttpMethod method,
     required String url,
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
@@ -165,6 +166,7 @@ class RhttpClient {
       method: method,
       url: url,
       query: query,
+      queryRaw: queryRaw,
       headers: headers,
       body: body,
       expectBody: HttpExpectBody.bytes,
@@ -180,6 +182,7 @@ class RhttpClient {
     required HttpMethod method,
     required String url,
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
@@ -190,6 +193,7 @@ class RhttpClient {
       method: method,
       url: url,
       query: query,
+      queryRaw: queryRaw,
       headers: headers,
       body: body,
       expectBody: HttpExpectBody.stream,
@@ -204,6 +208,7 @@ class RhttpClient {
   Future<HttpTextResponse> get(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
@@ -212,6 +217,7 @@ class RhttpClient {
         method: HttpMethod.get,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
@@ -221,6 +227,7 @@ class RhttpClient {
   Future<HttpTextResponse> getText(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
@@ -229,6 +236,7 @@ class RhttpClient {
         method: HttpMethod.get,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
@@ -238,6 +246,7 @@ class RhttpClient {
   Future<HttpBytesResponse> getBytes(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
@@ -246,6 +255,7 @@ class RhttpClient {
         method: HttpMethod.get,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
@@ -255,6 +265,7 @@ class RhttpClient {
   Future<HttpStreamResponse> getStream(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
@@ -263,6 +274,7 @@ class RhttpClient {
         method: HttpMethod.get,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
@@ -273,6 +285,7 @@ class RhttpClient {
   Future<HttpTextResponse> post(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
@@ -283,6 +296,7 @@ class RhttpClient {
         method: HttpMethod.post,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         body: body,
         cancelToken: cancelToken,
@@ -295,6 +309,7 @@ class RhttpClient {
   Future<HttpTextResponse> put(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
@@ -305,6 +320,7 @@ class RhttpClient {
         method: HttpMethod.put,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         body: body,
         cancelToken: cancelToken,
@@ -317,6 +333,7 @@ class RhttpClient {
   Future<HttpTextResponse> delete(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
@@ -327,6 +344,7 @@ class RhttpClient {
         method: HttpMethod.delete,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         body: body,
         cancelToken: cancelToken,
@@ -339,6 +357,7 @@ class RhttpClient {
   Future<HttpTextResponse> head(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
@@ -347,6 +366,7 @@ class RhttpClient {
         method: HttpMethod.head,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
@@ -357,6 +377,7 @@ class RhttpClient {
   Future<HttpTextResponse> patch(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
@@ -367,6 +388,7 @@ class RhttpClient {
         method: HttpMethod.patch,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         body: body,
         cancelToken: cancelToken,
@@ -379,6 +401,7 @@ class RhttpClient {
   Future<HttpTextResponse> options(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
@@ -389,6 +412,7 @@ class RhttpClient {
         method: HttpMethod.options,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         body: body,
         cancelToken: cancelToken,
@@ -401,6 +425,7 @@ class RhttpClient {
   Future<HttpTextResponse> trace(
     String url, {
     Map<String, String>? query,
+    List<(String, String)>? queryRaw,
     HttpHeaders? headers,
     HttpBody? body,
     CancelToken? cancelToken,
@@ -411,6 +436,7 @@ class RhttpClient {
         method: HttpMethod.trace,
         url: url,
         query: query,
+        queryRaw: queryRaw,
         headers: headers,
         body: body,
         cancelToken: cancelToken,
