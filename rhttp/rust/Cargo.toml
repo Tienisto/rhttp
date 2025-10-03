@@ -7,14 +7,14 @@ edition = "2021"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-chrono = "0.4.41"
+chrono = "0.4.42"
 flutter_rust_bridge = { version = "=2.11.1", features = ["chrono"] }
 futures-util = "0.3.31"
-tokio = { version = "1.46.1", features = ["full"] }
-tokio-util = "0.7.15"
+tokio = { version = "1.47.1", features = ["full"] }
+tokio-util = "0.7.16"
 
 [dependencies.reqwest]
-version = "0.12.22"
+version = "0.12.23"
 default-features = false
 features = [
     "charset",
