@@ -2,6 +2,8 @@
 
 - feat: `RhttpCompatibleClient` supports `Abortable` added in `http` v1.5.0
 - feat: support Android 16 KB memory page alignment requirement @sabin26 (#89)
+- feat: add `queryRaw` parameter @nrbnlulu (#86)
+- deps: bump Rust dependencies to latest versions
 
 ## 0.13.0
 
