@@ -52,40 +52,45 @@ class Interceptor {
 /// in the constructor without creating a new class.
 class SimpleInterceptor extends Interceptor {
   final Future<InterceptorResult<HttpRequest>> Function(HttpRequest request)?
-      _beforeRequest;
+  _beforeRequest;
   final Future<InterceptorResult<HttpResponse>> Function(HttpResponse response)?
-      _afterResponse;
+  _afterResponse;
   final Future<InterceptorResult<RhttpException>> Function(
     RhttpException exception,
-  )? _onError;
+  )?
+  _onError;
 
   SimpleInterceptor({
     Future<InterceptorResult<HttpRequest>> Function(HttpRequest request)?
-        beforeRequest,
+    beforeRequest,
     Future<InterceptorResult<HttpResponse>> Function(HttpResponse response)?
-        afterResponse,
+    afterResponse,
     Future<InterceptorResult<RhttpException>> Function(
-            RhttpException exception)?
-        onError,
-  })  : _beforeRequest = beforeRequest,
-        _afterResponse = afterResponse,
-        _onError = onError;
+      RhttpException exception,
+    )?
+    onError,
+  }) : _beforeRequest = beforeRequest,
+       _afterResponse = afterResponse,
+       _onError = onError;
 
   @override
   Future<InterceptorResult<HttpRequest>> beforeRequest(
-      HttpRequest request) async {
+    HttpRequest request,
+  ) async {
     return await _beforeRequest?.call(request) ?? Interceptor.next(request);
   }
 
   @override
   Future<InterceptorResult<HttpResponse>> afterResponse(
-      HttpResponse response) async {
+    HttpResponse response,
+  ) async {
     return await _afterResponse?.call(response) ?? Interceptor.next(response);
   }
 
   @override
   Future<InterceptorResult<RhttpException>> onError(
-      RhttpException exception) async {
+    RhttpException exception,
+  ) async {
     return await _onError?.call(exception) ?? Interceptor.next(exception);
   }
 }

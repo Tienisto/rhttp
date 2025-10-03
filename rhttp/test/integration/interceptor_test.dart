@@ -17,11 +17,13 @@ void main() {
     test('Should call beforeRequest before sending', () async {
       bool called = false;
       bool receivedAfterCalled = false;
-      mockApi.mockDefaultResponse(onAnswer: (_) {
-        if (called) {
-          receivedAfterCalled = true;
-        }
-      });
+      mockApi.mockDefaultResponse(
+        onAnswer: (_) {
+          if (called) {
+            receivedAfterCalled = true;
+          }
+        },
+      );
 
       await Rhttp.get(
         'https://example.com',
@@ -31,7 +33,7 @@ void main() {
               called = true;
               return Interceptor.next();
             },
-          )
+          ),
         ],
       );
 
@@ -49,7 +51,7 @@ void main() {
             beforeRequest: (request) async {
               return Interceptor.resolve(FakeHttpResponse('before123'));
             },
-          )
+          ),
         ],
       );
 
@@ -72,7 +74,7 @@ void main() {
               beforeRequest: (request) async {
                 throw 'Test 123';
               },
-            )
+            ),
           ],
         );
       } catch (e, st) {
@@ -123,7 +125,7 @@ void main() {
                   body: null,
                 );
               },
-            )
+            ),
           ],
         );
       } catch (e) {
@@ -158,7 +160,7 @@ void main() {
             beforeRequest: (request) async {
               return Interceptor.next();
             },
-          )
+          ),
         ],
       );
 
@@ -176,11 +178,13 @@ void main() {
         interceptors: [
           SimpleInterceptor(
             beforeRequest: (request) async {
-              return Interceptor.next(request.copyWith(
-                url: 'https://example.com/modified',
-              ));
+              return Interceptor.next(
+                request.copyWith(
+                  url: 'https://example.com/modified',
+                ),
+              );
             },
-          )
+          ),
         ],
       );
 
@@ -205,7 +209,7 @@ void main() {
               }
               return Interceptor.next();
             },
-          )
+          ),
         ],
       );
 
@@ -223,7 +227,7 @@ void main() {
             afterResponse: (response) async {
               return Interceptor.resolve(FakeHttpResponse('after123'));
             },
-          )
+          ),
         ],
       );
 
@@ -246,7 +250,7 @@ void main() {
               afterResponse: (response) async {
                 throw 'Test 123';
               },
-            )
+            ),
           ],
         );
       } catch (e, st) {
@@ -289,7 +293,7 @@ void main() {
                   body: null,
                 );
               },
-            )
+            ),
           ],
         );
       } catch (e) {
@@ -324,7 +328,7 @@ void main() {
             afterResponse: (response) async {
               return Interceptor.next();
             },
-          )
+          ),
         ],
       );
 
@@ -341,7 +345,7 @@ void main() {
             afterResponse: (response) async {
               return Interceptor.next(FakeHttpResponse('modified-response'));
             },
-          )
+          ),
         ],
       );
 
@@ -366,7 +370,7 @@ void main() {
                 exceptionInInterceptor = exception;
                 return Interceptor.next();
               },
-            )
+            ),
           ],
         );
       } catch (e) {
@@ -375,19 +379,21 @@ void main() {
 
       expect(called, true);
       expect(
-          exceptionInInterceptor,
-          isA<RhttpUnknownException>().having(
-            (e) => e.message,
-            'message',
-            'Test exception',
-          ));
+        exceptionInInterceptor,
+        isA<RhttpUnknownException>().having(
+          (e) => e.message,
+          'message',
+          'Test exception',
+        ),
+      );
       expect(
-          exceptionAfterReturn,
-          isA<RhttpUnknownException>().having(
-            (e) => e.message,
-            'message',
-            'Test exception',
-          ));
+        exceptionAfterReturn,
+        isA<RhttpUnknownException>().having(
+          (e) => e.message,
+          'message',
+          'Test exception',
+        ),
+      );
     });
 
     test('Should resolve response', () async {
@@ -400,7 +406,7 @@ void main() {
             onError: (exception) async {
               return Interceptor.resolve(FakeHttpResponse('resolved'));
             },
-          )
+          ),
         ],
       );
 
@@ -423,7 +429,7 @@ void main() {
               onError: (exception) async {
                 throw 'Test 123';
               },
-            )
+            ),
           ],
         );
       } catch (e, st) {
@@ -466,7 +472,7 @@ void main() {
                   body: null,
                 );
               },
-            )
+            ),
           ],
         );
       } catch (e) {
@@ -503,7 +509,7 @@ void main() {
               onError: (exception) async {
                 return Interceptor.next();
               },
-            )
+            ),
           ],
         );
       } catch (e) {
@@ -530,12 +536,14 @@ void main() {
           interceptors: [
             SimpleInterceptor(
               onError: (exception) async {
-                return Interceptor.next(RhttpUnknownException(
-                  exception.request,
-                  'modified exception',
-                ));
+                return Interceptor.next(
+                  RhttpUnknownException(
+                    exception.request,
+                    'modified exception',
+                  ),
+                );
               },
-            )
+            ),
           ],
         );
       } catch (e) {
@@ -569,7 +577,7 @@ void main() {
                 called = true;
                 return Interceptor.next();
               },
-            )
+            ),
           ],
         );
       } catch (e) {

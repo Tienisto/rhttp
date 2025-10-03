@@ -25,9 +25,7 @@ HttpClientRequestProfile? createDevToolsProfile({
     return null;
   }
 
-  profile.connectionInfo = {
-    'package': 'package:rhttp',
-  };
+  profile.connectionInfo = {'package': 'package:rhttp'};
 
   profile.requestData
     ..headersListValues = headers?.toMapList()
@@ -42,10 +40,12 @@ HttpClientRequestProfile? createDevToolsProfile({
     HttpBodyJson json => utf8.encode(jsonEncode(json.json)),
     HttpBodyBytes bytes => bytes.bytes,
     HttpBodyBytesStream _ => utf8.encode('<stream>'),
-    HttpBodyForm form => utf8
-        .encode(form.form.entries.map((e) => '${e.key}=${e.value}').join('&')),
-    HttpBodyMultipart multipart =>
-      utf8.encode(multipart.parts.map((e) => '${e.$1}=<...>').join('&')),
+    HttpBodyForm form => utf8.encode(
+      form.form.entries.map((e) => '${e.key}=${e.value}').join('&'),
+    ),
+    HttpBodyMultipart multipart => utf8.encode(
+      multipart.parts.map((e) => '${e.$1}=<...>').join('&'),
+    ),
     null => null,
   };
 

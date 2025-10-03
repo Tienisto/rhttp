@@ -15,9 +15,11 @@ void main() {
 
   test('Should cancel request with same CancelToken during retry', () async {
     bool receivedCancelRequest = false;
-    mockApi.mockCancelRequest(onAnswer: (cancelRef) {
-      receivedCancelRequest = true;
-    });
+    mockApi.mockCancelRequest(
+      onAnswer: (cancelRef) {
+        receivedCancelRequest = true;
+      },
+    );
 
     int called = 0;
     mockApi.mockCustomResponse(
@@ -76,9 +78,11 @@ void main() {
 
   test('Should cancel request with same CancelToken before retry', () async {
     bool receivedCancelRequest = false;
-    mockApi.mockCancelRequest(onAnswer: (cancelRef) {
-      receivedCancelRequest = true;
-    });
+    mockApi.mockCancelRequest(
+      onAnswer: (cancelRef) {
+        receivedCancelRequest = true;
+      },
+    );
 
     int called = 0;
     mockApi.mockCustomResponse(
@@ -133,9 +137,11 @@ void main() {
 
   test('Should do nothing with same CancelToken after retry', () async {
     bool receivedCancelRequest = false;
-    mockApi.mockCancelRequest(onAnswer: (cancelRef) {
-      receivedCancelRequest = true;
-    });
+    mockApi.mockCancelRequest(
+      onAnswer: (cancelRef) {
+        receivedCancelRequest = true;
+      },
+    );
 
     int called = 0;
     mockApi.mockCustomResponse(

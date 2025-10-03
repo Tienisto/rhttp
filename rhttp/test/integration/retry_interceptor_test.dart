@@ -76,7 +76,7 @@ void main() {
             secondInterceptorCalled++;
             return Interceptor.next();
           },
-        )
+        ),
       ],
     );
 

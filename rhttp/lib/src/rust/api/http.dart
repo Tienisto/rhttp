@@ -25,57 +25,59 @@ RequestClient registerClientSync({required ClientSettings settings}) =>
 Future<void> cancelRunningRequests({required RequestClient client}) =>
     RustLib.instance.api.crateApiHttpCancelRunningRequests(client: client);
 
-Future<HttpResponse> makeHttpRequest(
-        {RequestClient? client,
-        ClientSettings? settings,
-        required HttpMethod method,
-        required String url,
-        List<(String, String)>? query,
-        HttpHeaders? headers,
-        HttpBody? body,
-        Dart2RustStreamReceiver? bodyStream,
-        required HttpExpectBody expectBody,
-        required FutureOr<void> Function(CancellationToken) onCancelToken,
-        required bool cancelable}) =>
-    RustLib.instance.api.crateApiHttpMakeHttpRequest(
-        client: client,
-        settings: settings,
-        method: method,
-        url: url,
-        query: query,
-        headers: headers,
-        body: body,
-        bodyStream: bodyStream,
-        expectBody: expectBody,
-        onCancelToken: onCancelToken,
-        cancelable: cancelable);
+Future<HttpResponse> makeHttpRequest({
+  RequestClient? client,
+  ClientSettings? settings,
+  required HttpMethod method,
+  required String url,
+  List<(String, String)>? query,
+  HttpHeaders? headers,
+  HttpBody? body,
+  Dart2RustStreamReceiver? bodyStream,
+  required HttpExpectBody expectBody,
+  required FutureOr<void> Function(CancellationToken) onCancelToken,
+  required bool cancelable,
+}) => RustLib.instance.api.crateApiHttpMakeHttpRequest(
+  client: client,
+  settings: settings,
+  method: method,
+  url: url,
+  query: query,
+  headers: headers,
+  body: body,
+  bodyStream: bodyStream,
+  expectBody: expectBody,
+  onCancelToken: onCancelToken,
+  cancelable: cancelable,
+);
 
-Stream<Uint8List> makeHttpRequestReceiveStream(
-        {RequestClient? client,
-        ClientSettings? settings,
-        required HttpMethod method,
-        required String url,
-        List<(String, String)>? query,
-        HttpHeaders? headers,
-        HttpBody? body,
-        Dart2RustStreamReceiver? bodyStream,
-        required FutureOr<void> Function(HttpResponse) onResponse,
-        required FutureOr<void> Function(RhttpError) onError,
-        required FutureOr<void> Function(CancellationToken) onCancelToken,
-        required bool cancelable}) =>
-    RustLib.instance.api.crateApiHttpMakeHttpRequestReceiveStream(
-        client: client,
-        settings: settings,
-        method: method,
-        url: url,
-        query: query,
-        headers: headers,
-        body: body,
-        bodyStream: bodyStream,
-        onResponse: onResponse,
-        onError: onError,
-        onCancelToken: onCancelToken,
-        cancelable: cancelable);
+Stream<Uint8List> makeHttpRequestReceiveStream({
+  RequestClient? client,
+  ClientSettings? settings,
+  required HttpMethod method,
+  required String url,
+  List<(String, String)>? query,
+  HttpHeaders? headers,
+  HttpBody? body,
+  Dart2RustStreamReceiver? bodyStream,
+  required FutureOr<void> Function(HttpResponse) onResponse,
+  required FutureOr<void> Function(RhttpError) onError,
+  required FutureOr<void> Function(CancellationToken) onCancelToken,
+  required bool cancelable,
+}) => RustLib.instance.api.crateApiHttpMakeHttpRequestReceiveStream(
+  client: client,
+  settings: settings,
+  method: method,
+  url: url,
+  query: query,
+  headers: headers,
+  body: body,
+  bodyStream: bodyStream,
+  onResponse: onResponse,
+  onError: onError,
+  onCancelToken: onCancelToken,
+  cancelable: cancelable,
+);
 
 Future<void> cancelRequest({required CancellationToken token}) =>
     RustLib.instance.api.crateApiHttpCancelRequest(token: token);
@@ -84,45 +86,29 @@ Future<void> cancelRequest({required CancellationToken token}) =>
 sealed class HttpBody with _$HttpBody {
   const HttpBody._();
 
-  const factory HttpBody.text(
-    String field0,
-  ) = HttpBody_Text;
-  const factory HttpBody.bytes(
-    Uint8List field0,
-  ) = HttpBody_Bytes;
+  const factory HttpBody.text(String field0) = HttpBody_Text;
+  const factory HttpBody.bytes(Uint8List field0) = HttpBody_Bytes;
   const factory HttpBody.bytesStream() = HttpBody_BytesStream;
-  const factory HttpBody.form(
-    Map<String, String> field0,
-  ) = HttpBody_Form;
-  const factory HttpBody.multipart(
-    MultipartPayload field0,
-  ) = HttpBody_Multipart;
+  const factory HttpBody.form(Map<String, String> field0) = HttpBody_Form;
+  const factory HttpBody.multipart(MultipartPayload field0) =
+      HttpBody_Multipart;
 }
 
-enum HttpExpectBody {
-  text,
-  bytes,
-  ;
-}
+enum HttpExpectBody { text, bytes }
 
 @freezed
 sealed class HttpHeaders with _$HttpHeaders {
   const HttpHeaders._();
 
-  const factory HttpHeaders.map(
-    Map<String, String> field0,
-  ) = HttpHeaders_Map;
-  const factory HttpHeaders.list(
-    List<(String, String)> field0,
-  ) = HttpHeaders_List;
+  const factory HttpHeaders.map(Map<String, String> field0) = HttpHeaders_Map;
+  const factory HttpHeaders.list(List<(String, String)> field0) =
+      HttpHeaders_List;
 }
 
 class HttpMethod {
   final String method;
 
-  const HttpMethod({
-    required this.method,
-  });
+  const HttpMethod({required this.method});
 
   @override
   int get hashCode => method.hashCode;
@@ -174,44 +160,22 @@ class HttpResponse {
 sealed class HttpResponseBody with _$HttpResponseBody {
   const HttpResponseBody._();
 
-  const factory HttpResponseBody.text(
-    String field0,
-  ) = HttpResponseBody_Text;
-  const factory HttpResponseBody.bytes(
-    Uint8List field0,
-  ) = HttpResponseBody_Bytes;
+  const factory HttpResponseBody.text(String field0) = HttpResponseBody_Text;
+  const factory HttpResponseBody.bytes(Uint8List field0) =
+      HttpResponseBody_Bytes;
   const factory HttpResponseBody.stream() = HttpResponseBody_Stream;
 }
 
-enum HttpVersion {
-  http09,
-  http10,
-  http11,
-  http2,
-  http3,
-  other,
-  ;
-}
+enum HttpVersion { http09, http10, http11, http2, http3, other }
 
-enum HttpVersionPref {
-  http10,
-  http11,
-  http2,
-  http3,
-  all,
-  ;
-}
+enum HttpVersionPref { http10, http11, http2, http3, all }
 
 class MultipartItem {
   final MultipartValue value;
   final String? fileName;
   final String? contentType;
 
-  const MultipartItem({
-    required this.value,
-    this.fileName,
-    this.contentType,
-  });
+  const MultipartItem({required this.value, this.fileName, this.contentType});
 
   @override
   int get hashCode => value.hashCode ^ fileName.hashCode ^ contentType.hashCode;
@@ -229,9 +193,7 @@ class MultipartItem {
 class MultipartPayload {
   final List<(String, MultipartItem)> parts;
 
-  const MultipartPayload({
-    required this.parts,
-  });
+  const MultipartPayload({required this.parts});
 
   @override
   int get hashCode => parts.hashCode;
@@ -248,13 +210,7 @@ class MultipartPayload {
 sealed class MultipartValue with _$MultipartValue {
   const MultipartValue._();
 
-  const factory MultipartValue.text(
-    String field0,
-  ) = MultipartValue_Text;
-  const factory MultipartValue.bytes(
-    Uint8List field0,
-  ) = MultipartValue_Bytes;
-  const factory MultipartValue.file(
-    String field0,
-  ) = MultipartValue_File;
+  const factory MultipartValue.text(String field0) = MultipartValue_Text;
+  const factory MultipartValue.bytes(Uint8List field0) = MultipartValue_Bytes;
+  const factory MultipartValue.file(String field0) = MultipartValue_File;
 }

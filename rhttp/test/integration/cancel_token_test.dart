@@ -15,9 +15,11 @@ void main() {
 
   test('Should cancel request', () async {
     bool receivedCancelRequest = false;
-    mockApi.mockCancelRequest(onAnswer: (cancelRef) {
-      receivedCancelRequest = true;
-    });
+    mockApi.mockCancelRequest(
+      onAnswer: (cancelRef) {
+        receivedCancelRequest = true;
+      },
+    );
 
     mockApi.mockCustomResponse(
       statusCode: 200,
@@ -55,9 +57,11 @@ void main() {
 
   test('Should not fail if cancelled multiple times', () async {
     bool receivedCancelRequest = false;
-    mockApi.mockCancelRequest(onAnswer: (cancelRef) {
-      receivedCancelRequest = true;
-    });
+    mockApi.mockCancelRequest(
+      onAnswer: (cancelRef) {
+        receivedCancelRequest = true;
+      },
+    );
 
     mockApi.mockCustomResponse(
       statusCode: 200,

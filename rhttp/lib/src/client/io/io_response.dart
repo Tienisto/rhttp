@@ -74,12 +74,14 @@ class RhttpIoResponse with Stream<List<int>> implements HttpClientResponse {
   String get reasonPhrase => "";
 
   @override
-  Future<HttpClientResponse> redirect(
-      [String? method, Uri? url, bool? followLoops]) {
+  Future<HttpClientResponse> redirect([
+    String? method,
+    Uri? url,
+    bool? followLoops,
+  ]) {
     throw UnimplementedError();
   }
 
   @override
-  List<RedirectInfo> get redirects =>
-      []; // leaving this empty since we cant extract the redirect from rust side
+  List<RedirectInfo> get redirects => []; // leaving this empty since we cant extract the redirect from rust side
 }

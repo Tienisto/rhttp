@@ -122,22 +122,21 @@ class HttpRequest extends BaseHttpRequest {
     RhttpClient? client,
     ClientSettings? settings,
     Interceptor? interceptor,
-  }) =>
-      HttpRequest(
-        client: client,
-        settings: settings,
-        interceptor: interceptor,
-        method: request.method,
-        url: request.url,
-        query: request.query,
-        queryRaw: request.queryRaw,
-        headers: request.headers,
-        body: request.body,
-        expectBody: request.expectBody,
-        cancelToken: request.cancelToken,
-        onSendProgress: request.onSendProgress,
-        onReceiveProgress: request.onReceiveProgress,
-      );
+  }) => HttpRequest(
+    client: client,
+    settings: settings,
+    interceptor: interceptor,
+    method: request.method,
+    url: request.url,
+    query: request.query,
+    queryRaw: request.queryRaw,
+    headers: request.headers,
+    body: request.body,
+    expectBody: request.expectBody,
+    cancelToken: request.cancelToken,
+    onSendProgress: request.onSendProgress,
+    onReceiveProgress: request.onReceiveProgress,
+  );
 
   /// Sends the request using the specified client / settings
   /// and returns the response.
@@ -265,11 +264,11 @@ sealed class HttpHeaders {
     return switch (this) {
       HttpHeaderMap map => map.map.containsKey(key),
       HttpHeaderRawMap rawMap => rawMap.map.keys.any(
-          (e) => e.toLowerCase() == key.httpName,
-        ),
+        (e) => e.toLowerCase() == key.httpName,
+      ),
       HttpHeaderList list => list.list.any(
-          (e) => e.$1.toLowerCase() == key.httpName,
-        ),
+        (e) => e.$1.toLowerCase() == key.httpName,
+      ),
     };
   }
 
@@ -278,13 +277,15 @@ sealed class HttpHeaders {
   String? operator [](HttpHeaderName key) {
     return switch (this) {
       HttpHeaderMap map => map.map[key],
-      HttpHeaderRawMap rawMap => rawMap.map[key.httpName] ??
-          rawMap.map.entries
-              .firstWhereOrNull((e) => e.key.toLowerCase() == key.httpName)
-              ?.value,
-      HttpHeaderList list => list.list
-          .firstWhereOrNull((e) => e.$1.toLowerCase() == key.httpName)
-          ?.$2,
+      HttpHeaderRawMap rawMap =>
+        rawMap.map[key.httpName] ??
+            rawMap.map.entries
+                .firstWhereOrNull((e) => e.key.toLowerCase() == key.httpName)
+                ?.value,
+      HttpHeaderList list =>
+        list.list
+            .firstWhereOrNull((e) => e.$1.toLowerCase() == key.httpName)
+            ?.$2,
     };
   }
 
@@ -294,13 +295,13 @@ sealed class HttpHeaders {
   HttpHeaders copyWithRaw({required String name, required String value}) {
     return switch (this) {
       HttpHeaderMap map => HttpHeaders.rawMap({
-          for (final entry in map.map.entries) entry.key.httpName: entry.value,
-          name: value,
-        }),
+        for (final entry in map.map.entries) entry.key.httpName: entry.value,
+        name: value,
+      }),
       HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
-          ...rawMap.map,
-          name: value,
-        }),
+        ...rawMap.map,
+        name: value,
+      }),
       HttpHeaderList list => HttpHeaders.list([...list.list, (name, value)]),
     };
   }
@@ -311,13 +312,13 @@ sealed class HttpHeaders {
     return switch (this) {
       HttpHeaderMap map => HttpHeaders.map({...map.map, name: value}),
       HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
-          ...rawMap.map,
-          name.httpName: value,
-        }),
+        ...rawMap.map,
+        name.httpName: value,
+      }),
       HttpHeaderList list => HttpHeaders.list([
-          ...list.list,
-          (name.httpName, value),
-        ]),
+        ...list.list,
+        (name.httpName, value),
+      ]),
     };
   }
 
@@ -326,17 +327,17 @@ sealed class HttpHeaders {
   HttpHeaders copyWithout(HttpHeaderName key) {
     return switch (this) {
       HttpHeaderMap map => HttpHeaders.map({
-          for (final entry in map.map.entries)
-            if (entry.key != key) entry.key: entry.value,
-        }),
+        for (final entry in map.map.entries)
+          if (entry.key != key) entry.key: entry.value,
+      }),
       HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
-          for (final entry in rawMap.map.entries)
-            if (entry.key.toLowerCase() != key.httpName) entry.key: entry.value,
-        }),
+        for (final entry in rawMap.map.entries)
+          if (entry.key.toLowerCase() != key.httpName) entry.key: entry.value,
+      }),
       HttpHeaderList list => HttpHeaders.list([
-          for (final entry in list.list)
-            if (entry.$1.toLowerCase() != key.httpName) entry,
-        ]),
+        for (final entry in list.list)
+          if (entry.$1.toLowerCase() != key.httpName) entry,
+      ]),
     };
   }
 
@@ -347,17 +348,17 @@ sealed class HttpHeaders {
     key = key.toLowerCase();
     return switch (this) {
       HttpHeaderMap map => HttpHeaders.rawMap({
-          for (final entry in map.map.entries)
-            if (entry.key.httpName != key) entry.key.httpName: entry.value,
-        }),
+        for (final entry in map.map.entries)
+          if (entry.key.httpName != key) entry.key.httpName: entry.value,
+      }),
       HttpHeaderRawMap rawMap => HttpHeaders.rawMap({
-          for (final entry in rawMap.map.entries)
-            if (entry.key.toLowerCase() != key) entry.key: entry.value,
-        }),
+        for (final entry in rawMap.map.entries)
+          if (entry.key.toLowerCase() != key) entry.key: entry.value,
+      }),
       HttpHeaderList list => HttpHeaders.list([
-          for (final entry in list.list)
-            if (entry.$1.toLowerCase() != key) entry,
-        ]),
+        for (final entry in list.list)
+          if (entry.$1.toLowerCase() != key) entry,
+      ]),
     };
   }
 
@@ -366,12 +367,11 @@ sealed class HttpHeaders {
   Map<String, List<String>> toMapList() {
     return switch (this) {
       HttpHeaderMap map => {
-          for (final entry in map.map.entries)
-            entry.key.httpName: [entry.value],
-        },
+        for (final entry in map.map.entries) entry.key.httpName: [entry.value],
+      },
       HttpHeaderRawMap rawMap => {
-          for (final entry in rawMap.map.entries) entry.key: [entry.value],
-        },
+        for (final entry in rawMap.map.entries) entry.key: [entry.value],
+      },
       HttpHeaderList list => list.list.asHeaderMapList,
     };
   }

@@ -12,10 +12,12 @@ class MockRustLibApi extends Mock implements RustLibApi {
   MockRustLibApi.createAndRegister() {
     registerFallbackValue(rust_http.HttpMethod(method: "GET"));
     registerFallbackValue(rust_http.HttpExpectBody.text);
-    registerFallbackValue(const ClientSettings(
-      httpVersionPref: rust_http.HttpVersionPref.http11,
-      throwOnStatusCode: true,
-    ));
+    registerFallbackValue(
+      const ClientSettings(
+        httpVersionPref: rust_http.HttpVersionPref.http11,
+        throwOnStatusCode: true,
+      ),
+    );
     registerFallbackValue(FakeCancellationToken());
   }
 
@@ -50,24 +52,26 @@ class MockRustLibApi extends Mock implements RustLibApi {
         await Future.delayed(delay);
       }
       onAnswer?.call(invocation.namedArguments[#url]);
-      return Future.value(rust_http.HttpResponse(
-        remoteIp: null,
-        headers: headers ?? [],
-        version: switch (version ?? HttpVersion.http1_1) {
-          HttpVersion.http09 => rust_http.HttpVersion.http09,
-          HttpVersion.http1_0 => rust_http.HttpVersion.http10,
-          HttpVersion.http1_1 => rust_http.HttpVersion.http11,
-          HttpVersion.http2 => rust_http.HttpVersion.http2,
-          HttpVersion.http3 => rust_http.HttpVersion.http3,
-          HttpVersion.other => rust_http.HttpVersion.other,
-        },
-        statusCode: statusCode ?? 200,
-        body: switch (body) {
-          String() => rust_http.HttpResponseBody_Text(body),
-          Uint8List() => rust_http.HttpResponseBody_Bytes(body),
-          _ => throw 'Invalid body type',
-        },
-      ));
+      return Future.value(
+        rust_http.HttpResponse(
+          remoteIp: null,
+          headers: headers ?? [],
+          version: switch (version ?? HttpVersion.http1_1) {
+            HttpVersion.http09 => rust_http.HttpVersion.http09,
+            HttpVersion.http1_0 => rust_http.HttpVersion.http10,
+            HttpVersion.http1_1 => rust_http.HttpVersion.http11,
+            HttpVersion.http2 => rust_http.HttpVersion.http2,
+            HttpVersion.http3 => rust_http.HttpVersion.http3,
+            HttpVersion.other => rust_http.HttpVersion.other,
+          },
+          statusCode: statusCode ?? 200,
+          body: switch (body) {
+            String() => rust_http.HttpResponseBody_Text(body),
+            Uint8List() => rust_http.HttpResponseBody_Bytes(body),
+            _ => throw 'Invalid body type',
+          },
+        ),
+      );
     });
   }
 
@@ -94,8 +98,10 @@ class MockRustLibApi extends Mock implements RustLibApi {
     });
   }
 
-  void mockErrorResponse(
-      {void Function(String) onAnswer = _noop, Object? exception}) {
+  void mockErrorResponse({
+    void Function(String) onAnswer = _noop,
+    Object? exception,
+  }) {
     when<Future<rust_http.HttpResponse>>(
       () => crateApiHttpMakeHttpRequest(
         method: any(named: 'method'),

@@ -98,8 +98,9 @@ class ClientSettings {
       dnsSettings: identical(dnsSettings, _keepDnsSettings)
           ? this.dnsSettings
           : dnsSettings,
-      userAgent:
-          identical(userAgent, _keepUserAgent) ? this.userAgent : userAgent,
+      userAgent: identical(userAgent, _keepUserAgent)
+          ? this.userAgent
+          : userAgent,
     );
   }
 }
@@ -122,12 +123,8 @@ class CookieSettings {
   /// Disables any Cookie store and completly ignores Cookies.
   const factory CookieSettings.none() = CookieSettings._none;
 
-  CookieSettings copyWith({
-    bool? storeCookies,
-  }) {
-    return CookieSettings(
-      storeCookies: storeCookies ?? this.storeCookies,
-    );
+  CookieSettings copyWith({bool? storeCookies}) {
+    return CookieSettings(storeCookies: storeCookies ?? this.storeCookies);
   }
 }
 
@@ -172,22 +169,13 @@ class StaticProxy extends CustomProxy {
   }) : super._();
 
   const StaticProxy.http(String url)
-      : this(
-          url: url,
-          condition: ProxyCondition.onlyHttp,
-        );
+    : this(url: url, condition: ProxyCondition.onlyHttp);
 
   const StaticProxy.https(String url)
-      : this(
-          url: url,
-          condition: ProxyCondition.onlyHttps,
-        );
+    : this(url: url, condition: ProxyCondition.onlyHttps);
 
   const StaticProxy.all(String url)
-      : this(
-          url: url,
-          condition: ProxyCondition.all,
-        );
+    : this(url: url, condition: ProxyCondition.all);
 }
 
 class CustomProxyList extends ProxySettings {
@@ -395,11 +383,11 @@ extension on ProxySettings {
     return switch (this) {
       NoProxy() => const rust_client.ProxySettings.noProxy(),
       CustomProxy proxy => rust_client.ProxySettings.customProxyList([
-          proxy._toRustType(),
-        ]),
+        proxy._toRustType(),
+      ]),
       CustomProxyList list => rust_client.ProxySettings.customProxyList(
-          list.proxies.map((e) => e._toRustType()).toList(),
-        ),
+        list.proxies.map((e) => e._toRustType()).toList(),
+      ),
     };
   }
 }
@@ -408,13 +396,13 @@ extension on CustomProxy {
   rust_client.CustomProxy _toRustType() {
     return switch (this) {
       StaticProxy s => rust_client.CustomProxy(
-          url: s.url,
-          condition: switch (s.condition) {
-            ProxyCondition.onlyHttp => rust_client.ProxyCondition.http,
-            ProxyCondition.onlyHttps => rust_client.ProxyCondition.https,
-            ProxyCondition.all => rust_client.ProxyCondition.all,
-          },
-        ),
+        url: s.url,
+        condition: switch (s.condition) {
+          ProxyCondition.onlyHttp => rust_client.ProxyCondition.http,
+          ProxyCondition.onlyHttps => rust_client.ProxyCondition.https,
+          ProxyCondition.all => rust_client.ProxyCondition.all,
+        },
+      ),
     };
   }
 }
@@ -423,8 +411,9 @@ extension on RedirectSettings {
   rust_client.RedirectSettings _toRustType() {
     return switch (this) {
       NoRedirectSetting() => const rust_client.RedirectSettings.noRedirect(),
-      LimitedRedirects r =>
-        rust_client.RedirectSettings.limitedRedirects(r.maxRedirects),
+      LimitedRedirects r => rust_client.RedirectSettings.limitedRedirects(
+        r.maxRedirects,
+      ),
     };
   }
 }
@@ -481,14 +470,14 @@ extension on DnsSettings {
   rust_client.DnsSettings _toRustType() {
     return switch (this) {
       StaticDnsSettings s => rust_client.createStaticResolverSync(
-          settings: rust_client.StaticDnsSettings(
-            overrides: s.overrides,
-            fallback: s.fallback,
-          ),
+        settings: rust_client.StaticDnsSettings(
+          overrides: s.overrides,
+          fallback: s.fallback,
         ),
+      ),
       DynamicDnsSettings d => rust_client.createDynamicResolverSync(
-          resolver: d.resolver,
-        ),
+        resolver: d.resolver,
+      ),
     };
   }
 }

@@ -140,7 +140,7 @@ RhttpException parseError(HttpRequest request, rust.RhttpError error) {
     rust.RhttpError_RhttpStatusCodeError(
       field0: final code,
       field1: final headers,
-      field2: final body
+      field2: final body,
     ) =>
       RhttpStatusCodeException(
         request: request,

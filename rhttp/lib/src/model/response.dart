@@ -104,7 +104,6 @@ enum HttpVersion {
   http2,
   http3,
   other,
-  ;
 }
 
 @internal
@@ -113,35 +112,36 @@ HttpResponse parseHttpResponse(
   rust.HttpResponse response, {
   Stream<Uint8List>? bodyStream,
 }) {
-  assert((response.body is rust.HttpResponseBody_Stream &&
-          bodyStream != null) ||
-      (response.body is! rust.HttpResponseBody_Stream && bodyStream == null));
+  assert(
+    (response.body is rust.HttpResponseBody_Stream && bodyStream != null) ||
+        (response.body is! rust.HttpResponseBody_Stream && bodyStream == null),
+  );
 
   return switch (response.body) {
     rust.HttpResponseBody_Text text => HttpTextResponse(
-        remoteIp: response.remoteIp,
-        request: request,
-        version: parseHttpVersion(response.version),
-        statusCode: response.statusCode,
-        headers: response.headers,
-        body: text.field0,
-      ),
+      remoteIp: response.remoteIp,
+      request: request,
+      version: parseHttpVersion(response.version),
+      statusCode: response.statusCode,
+      headers: response.headers,
+      body: text.field0,
+    ),
     rust.HttpResponseBody_Bytes bytes => HttpBytesResponse(
-        remoteIp: response.remoteIp,
-        request: request,
-        version: parseHttpVersion(response.version),
-        statusCode: response.statusCode,
-        headers: response.headers,
-        body: bytes.field0,
-      ),
+      remoteIp: response.remoteIp,
+      request: request,
+      version: parseHttpVersion(response.version),
+      statusCode: response.statusCode,
+      headers: response.headers,
+      body: bytes.field0,
+    ),
     rust.HttpResponseBody_Stream _ => HttpStreamResponse(
-        remoteIp: response.remoteIp,
-        request: request,
-        version: parseHttpVersion(response.version),
-        statusCode: response.statusCode,
-        headers: response.headers,
-        body: bodyStream!,
-      ),
+      remoteIp: response.remoteIp,
+      request: request,
+      version: parseHttpVersion(response.version),
+      statusCode: response.statusCode,
+      headers: response.headers,
+      body: bodyStream!,
+    ),
   };
 }
 

@@ -55,13 +55,15 @@ class RhttpIoRequest implements HttpClientRequest {
       cancelToken: _cancelToken,
     );
 
-    response.then((value) async {
-      _controller.close();
-      _responseCompleter.complete(value);
-    }).catchError((error, stackTrace) {
-      _controller.close();
-      _responseCompleter.completeError(error, stackTrace);
-    });
+    response
+        .then((value) async {
+          _controller.close();
+          _responseCompleter.complete(value);
+        })
+        .catchError((error, stackTrace) {
+          _controller.close();
+          _responseCompleter.completeError(error, stackTrace);
+        });
   }
 
   @override

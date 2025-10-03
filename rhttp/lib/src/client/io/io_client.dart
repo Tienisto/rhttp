@@ -99,8 +99,11 @@ class IoCompatibleClient implements HttpClient {
 
   @override
   Future<HttpClientRequest> open(
-          String method, String host, int port, String path) =>
-      openUrl(method, Uri.parse('http://$host:$port$path'));
+    String method,
+    String host,
+    int port,
+    String path,
+  ) => openUrl(method, Uri.parse('http://$host:$port$path'));
 
   @override
   Future<HttpClientRequest> openUrl(String method, Uri url) =>
@@ -129,31 +132,34 @@ class IoCompatibleClient implements HttpClient {
 
   @override
   void addCredentials(
-          Uri url, String realm, HttpClientCredentials credentials) =>
-      throw UnimplementedError("addCredentials is not supported");
+    Uri url,
+    String realm,
+    HttpClientCredentials credentials,
+  ) => throw UnimplementedError("addCredentials is not supported");
 
   @override
-  void addProxyCredentials(String host, int port, String realm,
-          HttpClientCredentials credentials) =>
-      throw UnimplementedError("addProxyCredentials is not supported");
+  void addProxyCredentials(
+    String host,
+    int port,
+    String realm,
+    HttpClientCredentials credentials,
+  ) => throw UnimplementedError("addProxyCredentials is not supported");
 
   @override
   set authenticate(
-          Future<bool> Function(Uri url, String scheme, String? realm)? f) =>
-      throw UnimplementedError("authenticate is not supported");
+    Future<bool> Function(Uri url, String scheme, String? realm)? f,
+  ) => throw UnimplementedError("authenticate is not supported");
 
   @override
   set authenticateProxy(
-          Future<bool> Function(
-                  String host, int port, String scheme, String? realm)?
-              f) =>
-      throw UnimplementedError("authenticateProxy is not supported");
+    Future<bool> Function(String host, int port, String scheme, String? realm)?
+    f,
+  ) => throw UnimplementedError("authenticateProxy is not supported");
 
   @override
   set badCertificateCallback(
-          bool Function(X509Certificate cert, String host, int port)?
-              callback) =>
-      UnimplementedError("badCertificateCallback is not supported");
+    bool Function(X509Certificate cert, String host, int port)? callback,
+  ) => UnimplementedError("badCertificateCallback is not supported");
 
   @override
   void close({bool force = false}) {
@@ -162,11 +168,13 @@ class IoCompatibleClient implements HttpClient {
 
   @override
   set connectionFactory(
-      Future<ConnectionTask<Socket>> Function(
-        Uri url,
-        String? proxyHost,
-        int? proxyPort,
-      )? f) {
+    Future<ConnectionTask<Socket>> Function(
+      Uri url,
+      String? proxyHost,
+      int? proxyPort,
+    )?
+    f,
+  ) {
     UnimplementedError("connectionFactory is not supported");
   }
 

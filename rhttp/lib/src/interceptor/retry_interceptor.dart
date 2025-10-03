@@ -6,12 +6,13 @@ import 'package:rhttp/src/model/response.dart';
 
 typedef RetryCondition = bool Function(HttpResponse?, RhttpException?);
 typedef RetryDelay = Duration Function(int);
-typedef BeforeRetry = Future<HttpRequest?> Function(
-  int attempt,
-  HttpRequest request,
-  HttpResponse? response,
-  RhttpException? exception,
-);
+typedef BeforeRetry =
+    Future<HttpRequest?> Function(
+      int attempt,
+      HttpRequest request,
+      HttpResponse? response,
+      RhttpException? exception,
+    );
 
 /// An interceptor that retries requests if they fail.
 ///
@@ -31,9 +32,9 @@ class RetryInterceptor extends Interceptor {
     RetryCondition? shouldRetry,
     RetryDelay? delay,
     BeforeRetry? beforeRetry,
-  })  : shouldRetryFunc = shouldRetry ?? _defaultRetryCondition,
-        delayFunc = delay ?? _defaultDelay,
-        beforeRetryFunc = beforeRetry;
+  }) : shouldRetryFunc = shouldRetry ?? _defaultRetryCondition,
+       delayFunc = delay ?? _defaultDelay,
+       beforeRetryFunc = beforeRetry;
 
   @override
   @nonVirtual

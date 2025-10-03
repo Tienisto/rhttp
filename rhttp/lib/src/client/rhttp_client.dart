@@ -96,32 +96,34 @@ class RhttpClient {
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestInternalGeneric(HttpRequest(
-        client: this,
-        settings: settings,
-        interceptor: interceptor,
-        method: method,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        body: body,
-        expectBody: expectBody,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      ));
+  }) => requestInternalGeneric(
+    HttpRequest(
+      client: this,
+      settings: settings,
+      interceptor: interceptor,
+      method: method,
+      url: url,
+      query: query,
+      queryRaw: queryRaw,
+      headers: headers,
+      body: body,
+      expectBody: expectBody,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    ),
+  );
 
   /// Similar to [request], but uses a [BaseHttpRequest] object
   /// instead of individual parameters.
-  Future<HttpResponse> send(BaseHttpRequest request) =>
-      requestInternalGeneric(HttpRequest.from(
-        request: request,
-        client: this,
-        settings: settings,
-        interceptor: interceptor,
-      ));
+  Future<HttpResponse> send(BaseHttpRequest request) => requestInternalGeneric(
+    HttpRequest.from(
+      request: request,
+      client: this,
+      settings: settings,
+      interceptor: interceptor,
+    ),
+  );
 
   /// Makes an HTTP request and returns the response as text.
   Future<HttpTextResponse> requestText({
@@ -212,16 +214,15 @@ class RhttpClient {
     HttpHeaders? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestText(
-        method: HttpMethod.get,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        cancelToken: cancelToken,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestText(
+    method: HttpMethod.get,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    cancelToken: cancelToken,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   /// Makes an HTTP GET request and returns the response as text.
   Future<HttpTextResponse> getText(
@@ -231,16 +232,15 @@ class RhttpClient {
     HttpHeaders? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestText(
-        method: HttpMethod.get,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        cancelToken: cancelToken,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestText(
+    method: HttpMethod.get,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    cancelToken: cancelToken,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   /// Makes an HTTP GET request and returns the response as bytes.
   Future<HttpBytesResponse> getBytes(
@@ -250,16 +250,15 @@ class RhttpClient {
     HttpHeaders? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestBytes(
-        method: HttpMethod.get,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        cancelToken: cancelToken,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestBytes(
+    method: HttpMethod.get,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    cancelToken: cancelToken,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   /// Makes an HTTP GET request and returns the response as a stream.
   Future<HttpStreamResponse> getStream(
@@ -269,16 +268,15 @@ class RhttpClient {
     HttpHeaders? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestStream(
-        method: HttpMethod.get,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        cancelToken: cancelToken,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestStream(
+    method: HttpMethod.get,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    cancelToken: cancelToken,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   /// Makes an HTTP POST request and returns the response as text.
   /// Use [requestBytes], or [requestStream] for other response types.
@@ -291,18 +289,17 @@ class RhttpClient {
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestText(
-        method: HttpMethod.post,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        body: body,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestText(
+    method: HttpMethod.post,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    body: body,
+    cancelToken: cancelToken,
+    onSendProgress: onSendProgress,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   /// Makes an HTTP PUT request and returns the response as text.
   /// Use [requestBytes], or [requestStream] for other response types.
@@ -315,18 +312,17 @@ class RhttpClient {
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestText(
-        method: HttpMethod.put,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        body: body,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestText(
+    method: HttpMethod.put,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    body: body,
+    cancelToken: cancelToken,
+    onSendProgress: onSendProgress,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   /// Makes an HTTP DELETE request and returns the response as text.
   /// Use [requestBytes], or [requestStream] for other response types.
@@ -339,18 +335,17 @@ class RhttpClient {
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestText(
-        method: HttpMethod.delete,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        body: body,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestText(
+    method: HttpMethod.delete,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    body: body,
+    cancelToken: cancelToken,
+    onSendProgress: onSendProgress,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   /// Makes an HTTP HEAD request and returns the response as text.
   /// Use [requestBytes], or [requestStream] for other response types.
@@ -361,16 +356,15 @@ class RhttpClient {
     HttpHeaders? headers,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestText(
-        method: HttpMethod.head,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        cancelToken: cancelToken,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestText(
+    method: HttpMethod.head,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    cancelToken: cancelToken,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   /// Makes an HTTP PATCH request and returns the response as text.
   /// Use [requestBytes], or [requestStream] for other response types.
@@ -383,18 +377,17 @@ class RhttpClient {
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestText(
-        method: HttpMethod.patch,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        body: body,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestText(
+    method: HttpMethod.patch,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    body: body,
+    cancelToken: cancelToken,
+    onSendProgress: onSendProgress,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   /// Makes an HTTP OPTIONS request and returns the response as text.
   /// Use [requestBytes], or [requestStream] for other response types.
@@ -407,18 +400,17 @@ class RhttpClient {
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestText(
-        method: HttpMethod.options,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        body: body,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestText(
+    method: HttpMethod.options,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    body: body,
+    cancelToken: cancelToken,
+    onSendProgress: onSendProgress,
+    onReceiveProgress: onReceiveProgress,
+  );
 
   /// Makes an HTTP TRACE request and returns the response as text.
   /// Use [requestBytes], or [requestStream] for other response types.
@@ -431,16 +423,15 @@ class RhttpClient {
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-  }) =>
-      requestText(
-        method: HttpMethod.trace,
-        url: url,
-        query: query,
-        queryRaw: queryRaw,
-        headers: headers,
-        body: body,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
+  }) => requestText(
+    method: HttpMethod.trace,
+    url: url,
+    query: query,
+    queryRaw: queryRaw,
+    headers: headers,
+    body: body,
+    cancelToken: cancelToken,
+    onSendProgress: onSendProgress,
+    onReceiveProgress: onReceiveProgress,
+  );
 }
