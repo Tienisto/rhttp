@@ -1,8 +1,10 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:rhttp/rhttp.dart';
 import 'package:rhttp_example/widgets/response_card.dart';
 
@@ -17,6 +19,9 @@ class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
+
+const _url =
+    'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage';
 
 class _MyAppState extends State<MyApp> {
   RhttpClient? client;
@@ -47,8 +52,7 @@ class _MyAppState extends State<MyApp> {
                       );
                       final resFuture = client!.requestBytes(
                         method: HttpMethod.get,
-                        url:
-                            'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
+                        url: _url,
                         cancelToken: cancelToken,
                       );
 
@@ -82,8 +86,7 @@ class _MyAppState extends State<MyApp> {
 
                       final resFuture = client!.requestStream(
                         method: HttpMethod.get,
-                        url:
-                            'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
+                        url: _url,
                         cancelToken: cancelToken,
                       );
 
@@ -112,6 +115,40 @@ class _MyAppState extends State<MyApp> {
                 ElevatedButton(
                   onPressed: () async {
                     try {
+                      final completer = Completer<void>();
+
+                      final request = AbortableRequest(
+                        'GET',
+                        Uri.parse(_url),
+                        abortTrigger: completer.future,
+                      );
+
+                      final client = await RhttpCompatibleClient.create();
+
+                      final resFuture = client.send(request);
+
+                      Future.delayed(const Duration(seconds: 1), () {
+                        completer.complete();
+                      });
+
+                      final res = await resFuture;
+
+                      res.stream.listen(
+                        (event) {},
+                        onError: (e) {
+                          print('Stream error: ${e.runtimeType} $e');
+                        },
+                      );
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                  child:
+                      const Text('Cancel after 1 second (compatible version)'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    try {
                       final cancelToken = CancelToken();
                       client ??= await RhttpClient.create(
                         settings: const ClientSettings(
@@ -122,8 +159,7 @@ class _MyAppState extends State<MyApp> {
                       );
                       final resFuture = client!.requestBytes(
                         method: HttpMethod.get,
-                        url:
-                            'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
+                        url: _url,
                         cancelToken: cancelToken,
                       );
 
@@ -153,8 +189,7 @@ class _MyAppState extends State<MyApp> {
                       );
                       final resFuture = client!.requestBytes(
                         method: HttpMethod.get,
-                        url:
-                            'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
+                        url: _url,
                         cancelToken: cancelToken,
                       );
 
@@ -185,15 +220,13 @@ class _MyAppState extends State<MyApp> {
 
                     final resFuture = client!.requestBytes(
                       method: HttpMethod.get,
-                      url:
-                          'https://github.com/localsend/localsend/releases/download/v1.15.3/LocalSend-1.15.3-linux-x86-64.AppImage',
+                      url: _url,
                       cancelToken: cancelToken,
                     );
 
                     final resFuture2 = client!.requestBytes(
                       method: HttpMethod.get,
-                      url:
-                          'https://github.com/localsend/localsend/releases/download/v1.16.0/LocalSend-1.16.0-linux-x86-64.AppImage',
+                      url: _url,
                       cancelToken: cancelToken,
                     );
 
