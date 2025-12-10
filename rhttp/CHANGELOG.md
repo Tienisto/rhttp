@@ -1,3 +1,10 @@
+## 0.15.0
+
+- fix: `RhttpCompatibleClient` should combine header values with the same key using comma as per `http` spec (#95)
+- fix: crash on non-UTF8 headers (#92)
+- deps: bump `freezed` to `^3.0.0`
+- deps: bump Rust dependencies to latest versions
+
 ## 0.14.0
 
 - feat: `RhttpCompatibleClient` supports `Abortable` added in `http` v1.5.0
