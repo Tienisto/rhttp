@@ -21,7 +21,9 @@ class RhttpCompatibleClient with BaseClient {
   /// The actual client that is used to make requests.
   final RhttpClient client;
 
-  RhttpCompatibleClient._(this.client);
+  /// Creates a new HTTP client from an existing [RhttpClient].
+  /// Only for advanced use cases.
+  RhttpCompatibleClient.of(this.client);
 
   /// Creates a new HTTP client asynchronously.
   /// Use this method if your app is already running to avoid blocking the UI.
@@ -33,7 +35,7 @@ class RhttpCompatibleClient with BaseClient {
       settings: (settings ?? const ClientSettings()).digest(),
       interceptors: interceptors,
     );
-    return RhttpCompatibleClient._(client);
+    return RhttpCompatibleClient.of(client);
   }
 
   /// Creates a new HTTP client synchronously.
@@ -51,7 +53,7 @@ class RhttpCompatibleClient with BaseClient {
       settings: (settings ?? const ClientSettings()).digest(),
       interceptors: interceptors,
     );
-    return RhttpCompatibleClient._(client);
+    return RhttpCompatibleClient.of(client);
   }
 
   @override
@@ -77,7 +79,10 @@ class RhttpCompatibleClient with BaseClient {
         cancelToken: cancelToken,
       );
 
-      final responseHeaderMap = response.headerMap;
+      final responseHeaderMap = response.headerMapList.map(
+        // Combine multiple values as per `http` package specification.
+        (key, value) => MapEntry(key, value.join(', ')),
+      );
 
       return StreamedResponse(
         response.body.handleError((e, st) {

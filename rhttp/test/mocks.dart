@@ -1,5 +1,7 @@
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:rhttp/src/client/rhttp_client.dart';
+import 'package:rhttp/src/model/request.dart';
 import 'package:rhttp/src/model/response.dart';
 import 'package:rhttp/src/rust/api/client.dart';
 import 'package:rhttp/src/rust/frb_generated.dart';
@@ -138,6 +140,49 @@ class MockRustLibApi extends Mock implements RustLibApi {
     });
   }
 }
+
+class MockRhttpClient extends Mock implements RhttpClient {
+  MockRhttpClient.createAndRegister() {
+    registerFallbackValue(HttpMethod.get);
+  }
+
+  void mockStreamResponse({
+    List<(String, String)>? headers,
+    int? statusCode,
+    Stream<Uint8List>? bodyStream,
+  }) {
+    when<Future<HttpStreamResponse>>(
+      () => requestStream(
+        method: any(named: 'method'),
+        url: any(named: 'url'),
+        query: any(named: 'query'),
+        queryRaw: any(named: 'queryRaw'),
+        headers: any(named: 'headers'),
+        body: any(named: 'body'),
+        cancelToken: any(named: 'cancelToken'),
+        onSendProgress: any(named: 'onSendProgress'),
+        onReceiveProgress: any(named: 'onReceiveProgress'),
+      ),
+    ).thenAnswer((invocation) {
+      return Future.value(
+        HttpStreamResponse(
+          remoteIp: null,
+          request: FakeRequest(),
+          version: HttpVersion.http1_1,
+          statusCode: statusCode ?? 200,
+          headers: headers ?? [],
+          body:
+              bodyStream ??
+              Stream<Uint8List>.fromIterable(
+                [Uint8List.fromList('Fake stream body'.codeUnits)],
+              ),
+        ),
+      );
+    });
+  }
+}
+
+class FakeRequest extends Fake implements HttpRequest {}
 
 class FakeHttpResponse extends Fake implements HttpTextResponse {
   @override
