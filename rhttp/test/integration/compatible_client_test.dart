@@ -17,12 +17,29 @@ void main() {
 
     final client = RhttpCompatibleClient.of(mockRhttpClient);
 
-    final response = await client.post(Uri.parse('https://example.com'));
+    final Response response = await client.post(
+      Uri.parse('https://example.com'),
+    );
 
     expect(response.headers, {
       'set-cookie': 'cookie1=value1; Path=/, cookie2=value2; Path=/',
     });
     expect(response.headersSplitValues, {
+      'set-cookie': [
+        'cookie1=value1; Path=/',
+        'cookie2=value2; Path=/',
+      ],
+    });
+
+    // Also test client.send()
+    final StreamedResponse streamedResponse = await client.send(
+      Request('POST', Uri.parse('https://example.com')),
+    );
+
+    expect(streamedResponse.headers, {
+      'set-cookie': 'cookie1=value1; Path=/, cookie2=value2; Path=/',
+    });
+    expect(streamedResponse.headersSplitValues, {
       'set-cookie': [
         'cookie1=value1; Path=/',
         'cookie2=value2; Path=/',
