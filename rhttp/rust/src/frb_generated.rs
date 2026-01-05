@@ -27,6 +27,7 @@
 
 use crate::api::client::*;
 use crate::api::stream::*;
+use crate::api::websocket::*;
 use crate::*;
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
 use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
@@ -40,7 +41,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 2036241710;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 122445535;
 
 // Section: executor
 
@@ -553,6 +554,244 @@ fn wire__crate__api__http__register_client_sync_impl(
         },
     )
 }
+fn wire__crate__api__websocket__websocket_close_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "websocket_close",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_handle = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, crate::api::error::RhttpError>(
+                    (move || async move {
+                        let mut api_handle_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_handle,
+                                    0,
+                                    false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_handle_guard =
+                                        Some(api_handle.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_handle_guard = api_handle_guard.unwrap();
+                        let output_ok =
+                            crate::api::websocket::websocket_close(&*api_handle_guard).await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__websocket__websocket_connect_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "websocket_connect",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api__client =
+                <Option<RustAutoOpaqueMoi<RequestClient>>>::sse_decode(&mut deserializer);
+            let api_settings =
+                <Option<crate::api::client::ClientSettings>>::sse_decode(&mut deserializer);
+            let api_method = <crate::api::http::HttpMethod>::sse_decode(&mut deserializer);
+            let api_url = <String>::sse_decode(&mut deserializer);
+            let api_query = <Option<Vec<(String, String)>>>::sse_decode(&mut deserializer);
+            let api_headers =
+                <Option<crate::api::http::HttpHeaders>>::sse_decode(&mut deserializer);
+            let api_body = <Option<crate::api::http::HttpBody>>::sse_decode(&mut deserializer);
+            let api_body_stream = <Option<Dart2RustStreamReceiver>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, crate::api::error::RhttpError>(
+                    (move || async move {
+                        let output_ok = crate::api::websocket::websocket_connect(
+                            api__client,
+                            api_settings,
+                            api_method,
+                            api_url,
+                            api_query,
+                            api_headers,
+                            api_body,
+                            api_body_stream,
+                        )
+                        .await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__websocket__websocket_listen_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "websocket_listen",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_handle = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>,
+            >>::sse_decode(&mut deserializer);
+            let api_sink = <StreamSink<
+                crate::api::websocket::RhttpWebSocketEvent,
+                flutter_rust_bridge::for_generated::SseCodec,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, crate::api::error::RhttpError>(
+                    (move || async move {
+                        let mut api_handle_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_handle,
+                                    0,
+                                    false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_handle_guard =
+                                        Some(api_handle.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_handle_guard = api_handle_guard.unwrap();
+                        let output_ok =
+                            crate::api::websocket::websocket_listen(&*api_handle_guard, api_sink)
+                                .await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__websocket__websocket_send_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "websocket_send",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_handle = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>,
+            >>::sse_decode(&mut deserializer);
+            let api_msg =
+                <crate::api::websocket::RhttpWebSocketMessage>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, crate::api::error::RhttpError>(
+                    (move || async move {
+                        let mut api_handle_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_handle,
+                                    0,
+                                    false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_handle_guard =
+                                        Some(api_handle.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_handle_guard = api_handle_guard.unwrap();
+                        let output_ok =
+                            crate::api::websocket::websocket_send(&*api_handle_guard, api_msg)
+                                .await?;
+                        Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
 
 // Section: related_funcs
 
@@ -705,6 +944,9 @@ flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
     flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>
 );
+flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
+    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>
+);
 
 // Section: dart2rust
 
@@ -771,6 +1013,16 @@ impl SseDecode for RequestClient {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <RustOpaqueMoi<
             flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>,
+        >>::sse_decode(deserializer);
+        return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
+    }
+}
+
+impl SseDecode for WebSocketHandle {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <RustOpaqueMoi<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>,
         >>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
     }
@@ -860,7 +1112,30 @@ impl SseDecode
     }
 }
 
+impl SseDecode
+    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>>
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <usize>::sse_decode(deserializer);
+        return decode_rust_opaque_moi(inner);
+    }
+}
+
 impl SseDecode for StreamSink<Vec<u8>, flutter_rust_bridge::for_generated::SseCodec> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <String>::sse_decode(deserializer);
+        return StreamSink::deserialize(inner);
+    }
+}
+
+impl SseDecode
+    for StreamSink<
+        crate::api::websocket::RhttpWebSocketEvent,
+        flutter_rust_bridge::for_generated::SseCodec,
+    >
+{
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <String>::sse_decode(deserializer);
@@ -1424,6 +1699,17 @@ impl SseDecode for Option<crate::api::client::TlsVersion> {
     }
 }
 
+impl SseDecode for Option<u16> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<u16>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<Vec<(String, String)>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1557,6 +1843,75 @@ impl SseDecode for crate::api::error::RhttpError {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::api::error::RhttpError::RhttpUnknownError(var_field0);
             }
+            7 => {
+                let mut var_field0 = <crate::api::error::WebSocketError>::sse_decode(deserializer);
+                return crate::api::error::RhttpError::RhttpWebSocketError(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::websocket::RhttpWebSocketEvent {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 =
+                    <crate::api::websocket::RhttpWebSocketMessage>::sse_decode(deserializer);
+                return crate::api::websocket::RhttpWebSocketEvent::Message(var_field0);
+            }
+            1 => {
+                let mut var_code = <Option<u16>>::sse_decode(deserializer);
+                let mut var_reason = <Option<String>>::sse_decode(deserializer);
+                return crate::api::websocket::RhttpWebSocketEvent::Closed {
+                    code: var_code,
+                    reason: var_reason,
+                };
+            }
+            2 => {
+                let mut var_field0 = <crate::api::error::WebSocketError>::sse_decode(deserializer);
+                return crate::api::websocket::RhttpWebSocketEvent::Error(var_field0);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::websocket::RhttpWebSocketMessage {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::websocket::RhttpWebSocketMessage::Text(var_field0);
+            }
+            1 => {
+                let mut var_field0 = <Vec<u8>>::sse_decode(deserializer);
+                return crate::api::websocket::RhttpWebSocketMessage::Binary(var_field0);
+            }
+            2 => {
+                let mut var_field0 = <Vec<u8>>::sse_decode(deserializer);
+                return crate::api::websocket::RhttpWebSocketMessage::Ping(var_field0);
+            }
+            3 => {
+                let mut var_field0 = <Vec<u8>>::sse_decode(deserializer);
+                return crate::api::websocket::RhttpWebSocketMessage::Pong(var_field0);
+            }
+            4 => {
+                let mut var_code = <u16>::sse_decode(deserializer);
+                let mut var_reason = <String>::sse_decode(deserializer);
+                return crate::api::websocket::RhttpWebSocketMessage::Close {
+                    code: var_code,
+                    reason: var_reason,
+                };
+            }
             _ => {
                 unimplemented!("");
             }
@@ -1656,6 +2011,52 @@ impl SseDecode for usize {
     }
 }
 
+impl SseDecode for crate::api::error::WebSocketError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_status = <u16>::sse_decode(deserializer);
+                let mut var_reason = <Option<String>>::sse_decode(deserializer);
+                return crate::api::error::WebSocketError::HandshakeFailed {
+                    status: var_status,
+                    reason: var_reason,
+                };
+            }
+            1 => {
+                let mut var_message = <String>::sse_decode(deserializer);
+                return crate::api::error::WebSocketError::ProtocolError {
+                    message: var_message,
+                };
+            }
+            2 => {
+                let mut var_message = <String>::sse_decode(deserializer);
+                return crate::api::error::WebSocketError::TransportError {
+                    message: var_message,
+                };
+            }
+            3 => {
+                let mut var_code = <Option<u16>>::sse_decode(deserializer);
+                let mut var_reason = <Option<String>>::sse_decode(deserializer);
+                return crate::api::error::WebSocketError::ConnectionClosed {
+                    code: var_code,
+                    reason: var_reason,
+                };
+            }
+            4 => {
+                return crate::api::error::WebSocketError::ClosedLocally;
+            }
+            5 => {
+                return crate::api::error::WebSocketError::Unknown;
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 fn pde_ffi_dispatcher_primary_impl(
     func_id: i32,
     port: flutter_rust_bridge::for_generated::MessagePort,
@@ -1697,6 +2098,12 @@ fn pde_ffi_dispatcher_primary_impl(
             data_len,
         ),
         12 => wire__crate__api__http__register_client_impl(port, ptr, rust_vec_len, data_len),
+        14 => wire__crate__api__websocket__websocket_close_impl(port, ptr, rust_vec_len, data_len),
+        15 => {
+            wire__crate__api__websocket__websocket_connect_impl(port, ptr, rust_vec_len, data_len)
+        }
+        16 => wire__crate__api__websocket__websocket_listen_impl(port, ptr, rust_vec_len, data_len),
+        17 => wire__crate__api__websocket__websocket_send_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -1801,6 +2208,21 @@ impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<
 
 impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<RequestClient>> for RequestClient {
     fn into_into_dart(self) -> FrbWrapper<RequestClient> {
+        self.into()
+    }
+}
+
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<WebSocketHandle> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self.0)
+            .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<WebSocketHandle> {}
+
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<WebSocketHandle>> for WebSocketHandle {
+    fn into_into_dart(self) -> FrbWrapper<WebSocketHandle> {
         self.into()
     }
 }
@@ -2242,6 +2664,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::error::RhttpError {
             crate::api::error::RhttpError::RhttpUnknownError(field0) => {
                 [6.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
+            crate::api::error::RhttpError::RhttpWebSocketError(field0) => {
+                [7.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
             _ => {
                 unimplemented!("");
             }
@@ -2253,6 +2678,78 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::error::RhttpError>
     for crate::api::error::RhttpError
 {
     fn into_into_dart(self) -> crate::api::error::RhttpError {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::websocket::RhttpWebSocketEvent {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::websocket::RhttpWebSocketEvent::Message(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::websocket::RhttpWebSocketEvent::Closed { code, reason } => [
+                1.into_dart(),
+                code.into_into_dart().into_dart(),
+                reason.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::websocket::RhttpWebSocketEvent::Error(field0) => {
+                [2.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::websocket::RhttpWebSocketEvent
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::websocket::RhttpWebSocketEvent>
+    for crate::api::websocket::RhttpWebSocketEvent
+{
+    fn into_into_dart(self) -> crate::api::websocket::RhttpWebSocketEvent {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::websocket::RhttpWebSocketMessage {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::websocket::RhttpWebSocketMessage::Text(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::websocket::RhttpWebSocketMessage::Binary(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::websocket::RhttpWebSocketMessage::Ping(field0) => {
+                [2.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::websocket::RhttpWebSocketMessage::Pong(field0) => {
+                [3.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::websocket::RhttpWebSocketMessage::Close { code, reason } => [
+                4.into_dart(),
+                code.into_into_dart().into_dart(),
+                reason.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::websocket::RhttpWebSocketMessage
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::websocket::RhttpWebSocketMessage>
+    for crate::api::websocket::RhttpWebSocketMessage
+{
+    fn into_into_dart(self) -> crate::api::websocket::RhttpWebSocketMessage {
         self
     }
 }
@@ -2347,6 +2844,47 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::client::TlsVersion>
         self
     }
 }
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::error::WebSocketError {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::error::WebSocketError::HandshakeFailed { status, reason } => [
+                0.into_dart(),
+                status.into_into_dart().into_dart(),
+                reason.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::error::WebSocketError::ProtocolError { message } => {
+                [1.into_dart(), message.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::error::WebSocketError::TransportError { message } => {
+                [2.into_dart(), message.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::error::WebSocketError::ConnectionClosed { code, reason } => [
+                3.into_dart(),
+                code.into_into_dart().into_dart(),
+                reason.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::error::WebSocketError::ClosedLocally => [4.into_dart()].into_dart(),
+            crate::api::error::WebSocketError::Unknown => [5.into_dart()].into_dart(),
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::error::WebSocketError
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::error::WebSocketError>
+    for crate::api::error::WebSocketError
+{
+    fn into_into_dart(self) -> crate::api::error::WebSocketError {
+        self
+    }
+}
 
 impl SseEncode for flutter_rust_bridge::for_generated::anyhow::Error {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2399,6 +2937,13 @@ impl SseEncode for RequestClient {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self), serializer);
+    }
+}
+
+impl SseEncode for WebSocketHandle {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self), serializer);
     }
 }
 
@@ -2491,7 +3036,30 @@ impl SseEncode
     }
 }
 
+impl SseEncode
+    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>>
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        let (ptr, size) = self.sse_encode_raw();
+        <usize>::sse_encode(ptr, serializer);
+        <i32>::sse_encode(size, serializer);
+    }
+}
+
 impl SseEncode for StreamSink<Vec<u8>, flutter_rust_bridge::for_generated::SseCodec> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        unimplemented!("")
+    }
+}
+
+impl SseEncode
+    for StreamSink<
+        crate::api::websocket::RhttpWebSocketEvent,
+        flutter_rust_bridge::for_generated::SseCodec,
+    >
+{
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         unimplemented!("")
@@ -2983,6 +3551,16 @@ impl SseEncode for Option<crate::api::client::TlsVersion> {
     }
 }
 
+impl SseEncode for Option<u16> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <u16>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<Vec<(String, String)>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -3109,6 +3687,66 @@ impl SseEncode for crate::api::error::RhttpError {
                 <i32>::sse_encode(6, serializer);
                 <String>::sse_encode(field0, serializer);
             }
+            crate::api::error::RhttpError::RhttpWebSocketError(field0) => {
+                <i32>::sse_encode(7, serializer);
+                <crate::api::error::WebSocketError>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::websocket::RhttpWebSocketEvent {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::websocket::RhttpWebSocketEvent::Message(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <crate::api::websocket::RhttpWebSocketMessage>::sse_encode(field0, serializer);
+            }
+            crate::api::websocket::RhttpWebSocketEvent::Closed { code, reason } => {
+                <i32>::sse_encode(1, serializer);
+                <Option<u16>>::sse_encode(code, serializer);
+                <Option<String>>::sse_encode(reason, serializer);
+            }
+            crate::api::websocket::RhttpWebSocketEvent::Error(field0) => {
+                <i32>::sse_encode(2, serializer);
+                <crate::api::error::WebSocketError>::sse_encode(field0, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::websocket::RhttpWebSocketMessage {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::websocket::RhttpWebSocketMessage::Text(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::websocket::RhttpWebSocketMessage::Binary(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <Vec<u8>>::sse_encode(field0, serializer);
+            }
+            crate::api::websocket::RhttpWebSocketMessage::Ping(field0) => {
+                <i32>::sse_encode(2, serializer);
+                <Vec<u8>>::sse_encode(field0, serializer);
+            }
+            crate::api::websocket::RhttpWebSocketMessage::Pong(field0) => {
+                <i32>::sse_encode(3, serializer);
+                <Vec<u8>>::sse_encode(field0, serializer);
+            }
+            crate::api::websocket::RhttpWebSocketMessage::Close { code, reason } => {
+                <i32>::sse_encode(4, serializer);
+                <u16>::sse_encode(code, serializer);
+                <String>::sse_encode(reason, serializer);
+            }
             _ => {
                 unimplemented!("");
             }
@@ -3195,6 +3833,41 @@ impl SseEncode for usize {
     }
 }
 
+impl SseEncode for crate::api::error::WebSocketError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::error::WebSocketError::HandshakeFailed { status, reason } => {
+                <i32>::sse_encode(0, serializer);
+                <u16>::sse_encode(status, serializer);
+                <Option<String>>::sse_encode(reason, serializer);
+            }
+            crate::api::error::WebSocketError::ProtocolError { message } => {
+                <i32>::sse_encode(1, serializer);
+                <String>::sse_encode(message, serializer);
+            }
+            crate::api::error::WebSocketError::TransportError { message } => {
+                <i32>::sse_encode(2, serializer);
+                <String>::sse_encode(message, serializer);
+            }
+            crate::api::error::WebSocketError::ConnectionClosed { code, reason } => {
+                <i32>::sse_encode(3, serializer);
+                <Option<u16>>::sse_encode(code, serializer);
+                <Option<String>>::sse_encode(reason, serializer);
+            }
+            crate::api::error::WebSocketError::ClosedLocally => {
+                <i32>::sse_encode(4, serializer);
+            }
+            crate::api::error::WebSocketError::Unknown => {
+                <i32>::sse_encode(5, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 #[cfg(not(target_family = "wasm"))]
 mod io {
     // This file is automatically generated, so please do not edit it.
@@ -3205,6 +3878,7 @@ mod io {
     use super::*;
     use crate::api::client::*;
     use crate::api::stream::*;
+    use crate::api::websocket::*;
     use crate::*;
     use flutter_rust_bridge::for_generated::byteorder::{
         NativeEndian, ReadBytesExt, WriteBytesExt,
@@ -3285,6 +3959,20 @@ mod io {
     ) {
         MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>>::decrement_strong_count(ptr as _);
     }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_rhttp_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>>::increment_strong_count(ptr as _);
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_rhttp_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>>::decrement_strong_count(ptr as _);
+    }
 }
 #[cfg(not(target_family = "wasm"))]
 pub use io::*;
@@ -3300,6 +3988,7 @@ mod web {
     use super::*;
     use crate::api::client::*;
     use crate::api::stream::*;
+    use crate::api::websocket::*;
     use crate::*;
     use flutter_rust_bridge::for_generated::byteorder::{
         NativeEndian, ReadBytesExt, WriteBytesExt,
@@ -3381,6 +4070,20 @@ mod web {
         ptr: *const std::ffi::c_void,
     ) {
         MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>>::decrement_strong_count(ptr as _);
+    }
+
+    #[wasm_bindgen]
+    pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>>::increment_strong_count(ptr as _);
+    }
+
+    #[wasm_bindgen]
+    pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WebSocketHandle>>::decrement_strong_count(ptr as _);
     }
 }
 #[cfg(target_family = "wasm")]

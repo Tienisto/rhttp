@@ -4,6 +4,7 @@ export 'src/client/compatible_client.dart'
     show RhttpCompatibleClient, RhttpWrappedClientException;
 export 'src/client/io/io_client.dart' show IoCompatibleClient;
 export 'src/client/rhttp_client.dart' show RhttpClient;
+export 'src/client/rhttp_websocket_client.dart' show RhttpWebsocketClient;
 export 'src/interceptor/interceptor.dart'
     show
         Interceptor,

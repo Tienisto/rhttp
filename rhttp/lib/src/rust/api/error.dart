@@ -9,7 +9,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'error.freezed.dart';
 
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`
 
 @freezed
 sealed class RhttpError with _$RhttpError implements FrbException {
@@ -23,10 +23,49 @@ sealed class RhttpError with _$RhttpError implements FrbException {
     List<(String, String)> field1,
     HttpResponseBody field2,
   ) = RhttpError_RhttpStatusCodeError;
-  const factory RhttpError.rhttpInvalidCertificateError(String field0) =
-      RhttpError_RhttpInvalidCertificateError;
-  const factory RhttpError.rhttpConnectionError(String field0) =
-      RhttpError_RhttpConnectionError;
-  const factory RhttpError.rhttpUnknownError(String field0) =
-      RhttpError_RhttpUnknownError;
+  const factory RhttpError.rhttpInvalidCertificateError(
+    String field0,
+  ) = RhttpError_RhttpInvalidCertificateError;
+  const factory RhttpError.rhttpConnectionError(
+    String field0,
+  ) = RhttpError_RhttpConnectionError;
+  const factory RhttpError.rhttpUnknownError(
+    String field0,
+  ) = RhttpError_RhttpUnknownError;
+  const factory RhttpError.rhttpWebSocketError(
+    WebSocketError field0,
+  ) = RhttpError_RhttpWebSocketError;
+}
+
+@freezed
+sealed class WebSocketError with _$WebSocketError {
+  const WebSocketError._();
+
+  /// HTTP upgrade failed (not a 101 response, bad headers, and so on).
+  const factory WebSocketError.handshakeFailed({
+    required int status,
+    String? reason,
+  }) = WebSocketError_HandshakeFailed;
+
+  /// WebSocket protocol violation after upgrade.
+  const factory WebSocketError.protocolError({
+    required String message,
+  }) = WebSocketError_ProtocolError;
+
+  /// An IO or transport-level failure occurred.
+  const factory WebSocketError.transportError({
+    required String message,
+  }) = WebSocketError_TransportError;
+
+  /// The peer closed the connection unexpectedly.
+  const factory WebSocketError.connectionClosed({
+    int? code,
+    String? reason,
+  }) = WebSocketError_ConnectionClosed;
+
+  /// A local close was initiated.
+  const factory WebSocketError.closedLocally() = WebSocketError_ClosedLocally;
+
+  /// An unknown error occurred during WebSocket usage.
+  const factory WebSocketError.unknown() = WebSocketError_Unknown;
 }

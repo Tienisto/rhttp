@@ -12,9 +12,9 @@ import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 import 'stream.dart';
 part 'http.freezed.dart';
 
-// These functions are ignored because they are not marked as `pub`: `build_cancel_tokens`, `extract_ip`, `from_version`, `header_to_vec`, `make_http_request_helper`, `make_http_request_inner`, `make_http_request_receive_stream_inner`, `register_client_internal`, `to_method`
+// These functions are ignored because they are not marked as `pub`: `build_cancel_tokens`, `extract_ip`, `from_version`, `header_to_vec`, `make_http_request_helper`, `make_http_request_inner`, `make_http_request_receive_stream_inner`, `register_client_internal`, `retrieve_client`, `retrieve_request`, `to_method`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `RequestCancelTokens`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`, `fmt`
 
 Future<RequestClient> registerClient({required ClientSettings settings}) =>
     RustLib.instance.api.crateApiHttpRegisterClient(settings: settings);
@@ -86,29 +86,44 @@ Future<void> cancelRequest({required CancellationToken token}) =>
 sealed class HttpBody with _$HttpBody {
   const HttpBody._();
 
-  const factory HttpBody.text(String field0) = HttpBody_Text;
-  const factory HttpBody.bytes(Uint8List field0) = HttpBody_Bytes;
+  const factory HttpBody.text(
+    String field0,
+  ) = HttpBody_Text;
+  const factory HttpBody.bytes(
+    Uint8List field0,
+  ) = HttpBody_Bytes;
   const factory HttpBody.bytesStream() = HttpBody_BytesStream;
-  const factory HttpBody.form(Map<String, String> field0) = HttpBody_Form;
-  const factory HttpBody.multipart(MultipartPayload field0) =
-      HttpBody_Multipart;
+  const factory HttpBody.form(
+    Map<String, String> field0,
+  ) = HttpBody_Form;
+  const factory HttpBody.multipart(
+    MultipartPayload field0,
+  ) = HttpBody_Multipart;
 }
 
-enum HttpExpectBody { text, bytes }
+enum HttpExpectBody {
+  text,
+  bytes,
+}
 
 @freezed
 sealed class HttpHeaders with _$HttpHeaders {
   const HttpHeaders._();
 
-  const factory HttpHeaders.map(Map<String, String> field0) = HttpHeaders_Map;
-  const factory HttpHeaders.list(List<(String, String)> field0) =
-      HttpHeaders_List;
+  const factory HttpHeaders.map(
+    Map<String, String> field0,
+  ) = HttpHeaders_Map;
+  const factory HttpHeaders.list(
+    List<(String, String)> field0,
+  ) = HttpHeaders_List;
 }
 
 class HttpMethod {
   final String method;
 
-  const HttpMethod({required this.method});
+  const HttpMethod({
+    required this.method,
+  });
 
   @override
   int get hashCode => method.hashCode;
@@ -160,22 +175,42 @@ class HttpResponse {
 sealed class HttpResponseBody with _$HttpResponseBody {
   const HttpResponseBody._();
 
-  const factory HttpResponseBody.text(String field0) = HttpResponseBody_Text;
-  const factory HttpResponseBody.bytes(Uint8List field0) =
-      HttpResponseBody_Bytes;
+  const factory HttpResponseBody.text(
+    String field0,
+  ) = HttpResponseBody_Text;
+  const factory HttpResponseBody.bytes(
+    Uint8List field0,
+  ) = HttpResponseBody_Bytes;
   const factory HttpResponseBody.stream() = HttpResponseBody_Stream;
 }
 
-enum HttpVersion { http09, http10, http11, http2, http3, other }
+enum HttpVersion {
+  http09,
+  http10,
+  http11,
+  http2,
+  http3,
+  other,
+}
 
-enum HttpVersionPref { http10, http11, http2, http3, all }
+enum HttpVersionPref {
+  http10,
+  http11,
+  http2,
+  http3,
+  all,
+}
 
 class MultipartItem {
   final MultipartValue value;
   final String? fileName;
   final String? contentType;
 
-  const MultipartItem({required this.value, this.fileName, this.contentType});
+  const MultipartItem({
+    required this.value,
+    this.fileName,
+    this.contentType,
+  });
 
   @override
   int get hashCode => value.hashCode ^ fileName.hashCode ^ contentType.hashCode;
@@ -193,7 +228,9 @@ class MultipartItem {
 class MultipartPayload {
   final List<(String, MultipartItem)> parts;
 
-  const MultipartPayload({required this.parts});
+  const MultipartPayload({
+    required this.parts,
+  });
 
   @override
   int get hashCode => parts.hashCode;
@@ -210,7 +247,13 @@ class MultipartPayload {
 sealed class MultipartValue with _$MultipartValue {
   const MultipartValue._();
 
-  const factory MultipartValue.text(String field0) = MultipartValue_Text;
-  const factory MultipartValue.bytes(Uint8List field0) = MultipartValue_Bytes;
-  const factory MultipartValue.file(String field0) = MultipartValue_File;
+  const factory MultipartValue.text(
+    String field0,
+  ) = MultipartValue_Text;
+  const factory MultipartValue.bytes(
+    Uint8List field0,
+  ) = MultipartValue_Bytes;
+  const factory MultipartValue.file(
+    String field0,
+  ) = MultipartValue_File;
 }

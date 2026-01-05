@@ -7,6 +7,7 @@ import 'api/client.dart';
 import 'api/error.dart';
 import 'api/http.dart';
 import 'api/stream.dart';
+import 'api/websocket.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -39,8 +40,12 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 
   /// Initialize flutter_rust_bridge in mock mode.
   /// No libraries for FFI are loaded.
-  static void initMock({required RustLibApi api}) {
-    instance.initMockImpl(api: api);
+  static void initMock({
+    required RustLibApi api,
+  }) {
+    instance.initMockImpl(
+      api: api,
+    );
   }
 
   /// Dispose flutter_rust_bridge
@@ -70,7 +75,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => 2036241710;
+  int get rustContentHash => 122445535;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -148,6 +153,30 @@ abstract class RustLibApi extends BaseApi {
     required ClientSettings settings,
   });
 
+  Future<void> crateApiWebsocketWebsocketClose({
+    required WebSocketHandle handle,
+  });
+
+  Future<WebSocketHandle> crateApiWebsocketWebsocketConnect({
+    RequestClient? client,
+    ClientSettings? settings,
+    required HttpMethod method,
+    required String url,
+    List<(String, String)>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
+    Dart2RustStreamReceiver? bodyStream,
+  });
+
+  Stream<RhttpWebSocketEvent> crateApiWebsocketWebsocketListen({
+    required WebSocketHandle handle,
+  });
+
+  Future<void> crateApiWebsocketWebsocketSend({
+    required WebSocketHandle handle,
+    required RhttpWebSocketMessage msg,
+  });
+
   RustArcIncrementStrongCountFnType
   get rust_arc_increment_strong_count_CancellationToken;
 
@@ -191,6 +220,15 @@ abstract class RustLibApi extends BaseApi {
 
   CrossPlatformFinalizerArg
   get rust_arc_decrement_strong_count_RequestClientPtr;
+
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_WebSocketHandle;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_WebSocketHandle;
+
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_WebSocketHandlePtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -303,8 +341,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiHttpCancelRequestConstMeta =>
-      const TaskConstMeta(debugName: "cancel_request", argNames: ["token"]);
+  TaskConstMeta get kCrateApiHttpCancelRequestConstMeta => const TaskConstMeta(
+    debugName: "cancel_request",
+    argNames: ["token"],
+  );
 
   @override
   Future<void> crateApiHttpCancelRunningRequests({
@@ -367,7 +407,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiClientClientSettingsDefaultConstMeta =>
-      const TaskConstMeta(debugName: "client_settings_default", argNames: []);
+      const TaskConstMeta(
+        debugName: "client_settings_default",
+        argNames: [],
+      );
 
   @override
   DnsSettings crateApiClientCreateDynamicResolverSync({
@@ -456,8 +499,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiStreamCreateStreamConstMeta =>
-      const TaskConstMeta(debugName: "create_stream", argNames: []);
+  TaskConstMeta get kCrateApiStreamCreateStreamConstMeta => const TaskConstMeta(
+    debugName: "create_stream",
+    argNames: [],
+  );
 
   @override
   Future<void> crateApiInitInitApp() {
@@ -483,8 +528,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiInitInitAppConstMeta =>
-      const TaskConstMeta(debugName: "init_app", argNames: []);
+  TaskConstMeta get kCrateApiInitInitAppConstMeta => const TaskConstMeta(
+    debugName: "init_app",
+    argNames: [],
+  );
 
   @override
   Future<HttpResponse> crateApiHttpMakeHttpRequest({
@@ -706,8 +753,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiHttpRegisterClientConstMeta =>
-      const TaskConstMeta(debugName: "register_client", argNames: ["settings"]);
+  TaskConstMeta get kCrateApiHttpRegisterClientConstMeta => const TaskConstMeta(
+    debugName: "register_client",
+    argNames: ["settings"],
+  );
 
   @override
   RequestClient crateApiHttpRegisterClientSync({
@@ -736,6 +785,193 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "register_client_sync",
         argNames: ["settings"],
+      );
+
+  @override
+  Future<void> crateApiWebsocketWebsocketClose({
+    required WebSocketHandle handle,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+            handle,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 14,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_rhttp_error,
+        ),
+        constMeta: kCrateApiWebsocketWebsocketCloseConstMeta,
+        argValues: [handle],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiWebsocketWebsocketCloseConstMeta =>
+      const TaskConstMeta(
+        debugName: "websocket_close",
+        argNames: ["handle"],
+      );
+
+  @override
+  Future<WebSocketHandle> crateApiWebsocketWebsocketConnect({
+    RequestClient? client,
+    ClientSettings? settings,
+    required HttpMethod method,
+    required String url,
+    List<(String, String)>? query,
+    HttpHeaders? headers,
+    HttpBody? body,
+    Dart2RustStreamReceiver? bodyStream,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_opt_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+            client,
+            serializer,
+          );
+          sse_encode_opt_box_autoadd_client_settings(settings, serializer);
+          sse_encode_box_autoadd_http_method(method, serializer);
+          sse_encode_String(url, serializer);
+          sse_encode_opt_list_record_string_string(query, serializer);
+          sse_encode_opt_box_autoadd_http_headers(headers, serializer);
+          sse_encode_opt_box_autoadd_http_body(body, serializer);
+          sse_encode_opt_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamReceiver(
+            bodyStream,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 15,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle,
+          decodeErrorData: sse_decode_rhttp_error,
+        ),
+        constMeta: kCrateApiWebsocketWebsocketConnectConstMeta,
+        argValues: [
+          client,
+          settings,
+          method,
+          url,
+          query,
+          headers,
+          body,
+          bodyStream,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiWebsocketWebsocketConnectConstMeta =>
+      const TaskConstMeta(
+        debugName: "websocket_connect",
+        argNames: [
+          "client",
+          "settings",
+          "method",
+          "url",
+          "query",
+          "headers",
+          "body",
+          "bodyStream",
+        ],
+      );
+
+  @override
+  Stream<RhttpWebSocketEvent> crateApiWebsocketWebsocketListen({
+    required WebSocketHandle handle,
+  }) {
+    final sink = RustStreamSink<RhttpWebSocketEvent>();
+    unawaited(
+      handler.executeNormal(
+        NormalTask(
+          callFfi: (port_) {
+            final serializer = SseSerializer(generalizedFrbRustBinding);
+            sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+              handle,
+              serializer,
+            );
+            sse_encode_StreamSink_rhttp_web_socket_event_Sse(sink, serializer);
+            pdeCallFfi(
+              generalizedFrbRustBinding,
+              serializer,
+              funcId: 16,
+              port: port_,
+            );
+          },
+          codec: SseCodec(
+            decodeSuccessData: sse_decode_unit,
+            decodeErrorData: sse_decode_rhttp_error,
+          ),
+          constMeta: kCrateApiWebsocketWebsocketListenConstMeta,
+          argValues: [handle, sink],
+          apiImpl: this,
+        ),
+      ),
+    );
+    return sink.stream;
+  }
+
+  TaskConstMeta get kCrateApiWebsocketWebsocketListenConstMeta =>
+      const TaskConstMeta(
+        debugName: "websocket_listen",
+        argNames: ["handle", "sink"],
+      );
+
+  @override
+  Future<void> crateApiWebsocketWebsocketSend({
+    required WebSocketHandle handle,
+    required RhttpWebSocketMessage msg,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+            handle,
+            serializer,
+          );
+          sse_encode_box_autoadd_rhttp_web_socket_message(msg, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 17,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_rhttp_error,
+        ),
+        constMeta: kCrateApiWebsocketWebsocketSendConstMeta,
+        argValues: [handle, msg],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiWebsocketWebsocketSendConstMeta =>
+      const TaskConstMeta(
+        debugName: "websocket_send",
+        argNames: ["handle", "msg"],
       );
 
   Future<void> Function(int, dynamic)
@@ -921,6 +1157,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   get rust_arc_decrement_strong_count_RequestClient => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient;
 
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_WebSocketHandle => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_WebSocketHandle => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle;
+
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -986,6 +1230,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  WebSocketHandle
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return WebSocketHandleImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
   Dart2RustStreamSink
   dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
     dynamic raw,
@@ -1010,6 +1263,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return RequestClientImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  WebSocketHandle
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return WebSocketHandleImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -1130,9 +1392,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  WebSocketHandle
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return WebSocketHandleImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
   RustStreamSink<Uint8List> dco_decode_StreamSink_list_prim_u_8_strict_Sse(
     dynamic raw,
   ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    throw UnimplementedError();
+  }
+
+  @protected
+  RustStreamSink<RhttpWebSocketEvent>
+  dco_decode_StreamSink_rhttp_web_socket_event_Sse(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     throw UnimplementedError();
   }
@@ -1238,6 +1516,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RhttpWebSocketMessage dco_decode_box_autoadd_rhttp_web_socket_message(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_rhttp_web_socket_message(raw);
+  }
+
+  @protected
   StaticDnsSettings dco_decode_box_autoadd_static_dns_settings(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_static_dns_settings(raw);
@@ -1259,6 +1545,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TlsVersion dco_decode_box_autoadd_tls_version(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_tls_version(raw);
+  }
+
+  @protected
+  int dco_decode_box_autoadd_u_16(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
+  }
+
+  @protected
+  WebSocketError dco_decode_box_autoadd_web_socket_error(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_web_socket_error(raw);
   }
 
   @protected
@@ -1301,7 +1599,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     final arr = raw as List<dynamic>;
     if (arr.length != 1)
       throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-    return CookieSettings(storeCookies: dco_decode_bool(arr[0]));
+    return CookieSettings(
+      storeCookies: dco_decode_bool(arr[0]),
+    );
   }
 
   @protected
@@ -1321,13 +1621,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
       case 0:
-        return HttpBody_Text(dco_decode_String(raw[1]));
+        return HttpBody_Text(
+          dco_decode_String(raw[1]),
+        );
       case 1:
-        return HttpBody_Bytes(dco_decode_list_prim_u_8_strict(raw[1]));
+        return HttpBody_Bytes(
+          dco_decode_list_prim_u_8_strict(raw[1]),
+        );
       case 2:
         return HttpBody_BytesStream();
       case 3:
-        return HttpBody_Form(dco_decode_Map_String_String_None(raw[1]));
+        return HttpBody_Form(
+          dco_decode_Map_String_String_None(raw[1]),
+        );
       case 4:
         return HttpBody_Multipart(
           dco_decode_box_autoadd_multipart_payload(raw[1]),
@@ -1348,9 +1654,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
       case 0:
-        return HttpHeaders_Map(dco_decode_Map_String_String_None(raw[1]));
+        return HttpHeaders_Map(
+          dco_decode_Map_String_String_None(raw[1]),
+        );
       case 1:
-        return HttpHeaders_List(dco_decode_list_record_string_string(raw[1]));
+        return HttpHeaders_List(
+          dco_decode_list_record_string_string(raw[1]),
+        );
       default:
         throw Exception("unreachable");
     }
@@ -1362,7 +1672,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     final arr = raw as List<dynamic>;
     if (arr.length != 1)
       throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-    return HttpMethod(method: dco_decode_String(arr[0]));
+    return HttpMethod(
+      method: dco_decode_String(arr[0]),
+    );
   }
 
   @protected
@@ -1385,9 +1697,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
       case 0:
-        return HttpResponseBody_Text(dco_decode_String(raw[1]));
+        return HttpResponseBody_Text(
+          dco_decode_String(raw[1]),
+        );
       case 1:
-        return HttpResponseBody_Bytes(dco_decode_list_prim_u_8_strict(raw[1]));
+        return HttpResponseBody_Bytes(
+          dco_decode_list_prim_u_8_strict(raw[1]),
+        );
       case 2:
         return HttpResponseBody_Stream();
       default:
@@ -1510,11 +1826,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
       case 0:
-        return MultipartValue_Text(dco_decode_String(raw[1]));
+        return MultipartValue_Text(
+          dco_decode_String(raw[1]),
+        );
       case 1:
-        return MultipartValue_Bytes(dco_decode_list_prim_u_8_strict(raw[1]));
+        return MultipartValue_Bytes(
+          dco_decode_list_prim_u_8_strict(raw[1]),
+        );
       case 2:
-        return MultipartValue_File(dco_decode_String(raw[1]));
+        return MultipartValue_File(
+          dco_decode_String(raw[1]),
+        );
       default:
         throw Exception("unreachable");
     }
@@ -1634,6 +1956,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int? dco_decode_opt_box_autoadd_u_16(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_u_16(raw);
+  }
+
+  @protected
   List<(String, String)>? dco_decode_opt_list_record_string_string(
     dynamic raw,
   ) {
@@ -1689,7 +2017,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (arr.length != 2) {
       throw Exception('Expected 2 elements, got ${arr.length}');
     }
-    return (dco_decode_String(arr[0]), dco_decode_list_String(arr[1]));
+    return (
+      dco_decode_String(arr[0]),
+      dco_decode_list_String(arr[1]),
+    );
   }
 
   @protected
@@ -1699,7 +2030,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (arr.length != 2) {
       throw Exception('Expected 2 elements, got ${arr.length}');
     }
-    return (dco_decode_String(arr[0]), dco_decode_multipart_item(arr[1]));
+    return (
+      dco_decode_String(arr[0]),
+      dco_decode_multipart_item(arr[1]),
+    );
   }
 
   @protected
@@ -1709,7 +2043,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     if (arr.length != 2) {
       throw Exception('Expected 2 elements, got ${arr.length}');
     }
-    return (dco_decode_String(arr[0]), dco_decode_String(arr[1]));
+    return (
+      dco_decode_String(arr[0]),
+      dco_decode_String(arr[1]),
+    );
   }
 
   @protected
@@ -1719,7 +2056,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 0:
         return RedirectSettings_NoRedirect();
       case 1:
-        return RedirectSettings_LimitedRedirects(dco_decode_i_32(raw[1]));
+        return RedirectSettings_LimitedRedirects(
+          dco_decode_i_32(raw[1]),
+        );
       default:
         throw Exception("unreachable");
     }
@@ -1746,9 +2085,69 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_String(raw[1]),
         );
       case 5:
-        return RhttpError_RhttpConnectionError(dco_decode_String(raw[1]));
+        return RhttpError_RhttpConnectionError(
+          dco_decode_String(raw[1]),
+        );
       case 6:
-        return RhttpError_RhttpUnknownError(dco_decode_String(raw[1]));
+        return RhttpError_RhttpUnknownError(
+          dco_decode_String(raw[1]),
+        );
+      case 7:
+        return RhttpError_RhttpWebSocketError(
+          dco_decode_box_autoadd_web_socket_error(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  RhttpWebSocketEvent dco_decode_rhttp_web_socket_event(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return RhttpWebSocketEvent_Message(
+          dco_decode_box_autoadd_rhttp_web_socket_message(raw[1]),
+        );
+      case 1:
+        return RhttpWebSocketEvent_Closed(
+          code: dco_decode_opt_box_autoadd_u_16(raw[1]),
+          reason: dco_decode_opt_String(raw[2]),
+        );
+      case 2:
+        return RhttpWebSocketEvent_Error(
+          dco_decode_box_autoadd_web_socket_error(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  RhttpWebSocketMessage dco_decode_rhttp_web_socket_message(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return RhttpWebSocketMessage_Text(
+          dco_decode_String(raw[1]),
+        );
+      case 1:
+        return RhttpWebSocketMessage_Binary(
+          dco_decode_list_prim_u_8_strict(raw[1]),
+        );
+      case 2:
+        return RhttpWebSocketMessage_Ping(
+          dco_decode_list_prim_u_8_strict(raw[1]),
+        );
+      case 3:
+        return RhttpWebSocketMessage_Pong(
+          dco_decode_list_prim_u_8_strict(raw[1]),
+        );
+      case 4:
+        return RhttpWebSocketMessage_Close(
+          code: dco_decode_u_16(raw[1]),
+          reason: dco_decode_String(raw[2]),
+        );
       default:
         throw Exception("unreachable");
     }
@@ -1825,6 +2224,37 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BigInt dco_decode_usize(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dcoDecodeU64(raw);
+  }
+
+  @protected
+  WebSocketError dco_decode_web_socket_error(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return WebSocketError_HandshakeFailed(
+          status: dco_decode_u_16(raw[1]),
+          reason: dco_decode_opt_String(raw[2]),
+        );
+      case 1:
+        return WebSocketError_ProtocolError(
+          message: dco_decode_String(raw[1]),
+        );
+      case 2:
+        return WebSocketError_TransportError(
+          message: dco_decode_String(raw[1]),
+        );
+      case 3:
+        return WebSocketError_ConnectionClosed(
+          code: dco_decode_opt_box_autoadd_u_16(raw[1]),
+          reason: dco_decode_opt_String(raw[2]),
+        );
+      case 4:
+        return WebSocketError_ClosedLocally();
+      case 5:
+        return WebSocketError_Unknown();
+      default:
+        throw Exception("unreachable");
+    }
   }
 
   @protected
@@ -1908,6 +2338,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  WebSocketHandle
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return WebSocketHandleImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   Dart2RustStreamSink
   sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
     SseDeserializer deserializer,
@@ -1938,6 +2380,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return RequestClientImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  WebSocketHandle
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return WebSocketHandleImpl.frbInternalSseDecode(
       sse_decode_usize(deserializer),
       sse_decode_i_32(deserializer),
     );
@@ -2036,7 +2490,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  WebSocketHandle
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return WebSocketHandleImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   RustStreamSink<Uint8List> sse_decode_StreamSink_list_prim_u_8_strict_Sse(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    throw UnimplementedError('Unreachable ()');
+  }
+
+  @protected
+  RustStreamSink<RhttpWebSocketEvent>
+  sse_decode_StreamSink_rhttp_web_socket_event_Sse(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2163,6 +2638,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  RhttpWebSocketMessage sse_decode_box_autoadd_rhttp_web_socket_message(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_rhttp_web_socket_message(deserializer));
+  }
+
+  @protected
   StaticDnsSettings sse_decode_box_autoadd_static_dns_settings(
     SseDeserializer deserializer,
   ) {
@@ -2190,6 +2673,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TlsVersion sse_decode_box_autoadd_tls_version(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_tls_version(deserializer));
+  }
+
+  @protected
+  int sse_decode_box_autoadd_u_16(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_u_16(deserializer));
+  }
+
+  @protected
+  WebSocketError sse_decode_box_autoadd_web_socket_error(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_web_socket_error(deserializer));
   }
 
   @protected
@@ -2715,6 +3212,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  int? sse_decode_opt_box_autoadd_u_16(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_u_16(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   List<(String, String)>? sse_decode_opt_list_record_string_string(
     SseDeserializer deserializer,
   ) {
@@ -2845,6 +3353,63 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 6:
         var var_field0 = sse_decode_String(deserializer);
         return RhttpError_RhttpUnknownError(var_field0);
+      case 7:
+        var var_field0 = sse_decode_box_autoadd_web_socket_error(deserializer);
+        return RhttpError_RhttpWebSocketError(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  RhttpWebSocketEvent sse_decode_rhttp_web_socket_event(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_box_autoadd_rhttp_web_socket_message(
+          deserializer,
+        );
+        return RhttpWebSocketEvent_Message(var_field0);
+      case 1:
+        var var_code = sse_decode_opt_box_autoadd_u_16(deserializer);
+        var var_reason = sse_decode_opt_String(deserializer);
+        return RhttpWebSocketEvent_Closed(code: var_code, reason: var_reason);
+      case 2:
+        var var_field0 = sse_decode_box_autoadd_web_socket_error(deserializer);
+        return RhttpWebSocketEvent_Error(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  RhttpWebSocketMessage sse_decode_rhttp_web_socket_message(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_String(deserializer);
+        return RhttpWebSocketMessage_Text(var_field0);
+      case 1:
+        var var_field0 = sse_decode_list_prim_u_8_strict(deserializer);
+        return RhttpWebSocketMessage_Binary(var_field0);
+      case 2:
+        var var_field0 = sse_decode_list_prim_u_8_strict(deserializer);
+        return RhttpWebSocketMessage_Ping(var_field0);
+      case 3:
+        var var_field0 = sse_decode_list_prim_u_8_strict(deserializer);
+        return RhttpWebSocketMessage_Pong(var_field0);
+      case 4:
+        var var_code = sse_decode_u_16(deserializer);
+        var var_reason = sse_decode_String(deserializer);
+        return RhttpWebSocketMessage_Close(code: var_code, reason: var_reason);
       default:
         throw UnimplementedError('');
     }
@@ -2941,6 +3506,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  WebSocketError sse_decode_web_socket_error(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_status = sse_decode_u_16(deserializer);
+        var var_reason = sse_decode_opt_String(deserializer);
+        return WebSocketError_HandshakeFailed(
+          status: var_status,
+          reason: var_reason,
+        );
+      case 1:
+        var var_message = sse_decode_String(deserializer);
+        return WebSocketError_ProtocolError(message: var_message);
+      case 2:
+        var var_message = sse_decode_String(deserializer);
+        return WebSocketError_TransportError(message: var_message);
+      case 3:
+        var var_code = sse_decode_opt_box_autoadd_u_16(deserializer);
+        var var_reason = sse_decode_opt_String(deserializer);
+        return WebSocketError_ConnectionClosed(
+          code: var_code,
+          reason: var_reason,
+        );
+      case 4:
+        return WebSocketError_ClosedLocally();
+      case 5:
+        return WebSocketError_Unknown();
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
   void sse_encode_AnyhowException(
     AnyhowException self,
     SseSerializer serializer,
@@ -3029,6 +3629,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    WebSocketHandle self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as WebSocketHandleImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
+  void
   sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
     Dart2RustStreamSink self,
     SseSerializer serializer,
@@ -3062,6 +3675,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
       (self as RequestClientImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    WebSocketHandle self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as WebSocketHandleImpl).frbInternalSseEncode(move: false),
       serializer,
     );
   }
@@ -3228,6 +3854,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    WebSocketHandle self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as WebSocketHandleImpl).frbInternalSseEncode(move: null),
+      serializer,
+    );
+  }
+
+  @protected
   void sse_encode_StreamSink_list_prim_u_8_strict_Sse(
     RustStreamSink<Uint8List> self,
     SseSerializer serializer,
@@ -3237,6 +3876,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       self.setupAndSerialize(
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_prim_u_8_strict,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+      ),
+      serializer,
+    );
+  }
+
+  @protected
+  void sse_encode_StreamSink_rhttp_web_socket_event_Sse(
+    RustStreamSink<RhttpWebSocketEvent> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(
+      self.setupAndSerialize(
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_rhttp_web_socket_event,
           decodeErrorData: sse_decode_AnyhowException,
         ),
       ),
@@ -3382,6 +4038,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_rhttp_web_socket_message(
+    RhttpWebSocketMessage self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_rhttp_web_socket_message(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_static_dns_settings(
     StaticDnsSettings self,
     SseSerializer serializer,
@@ -3415,6 +4080,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_tls_version(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_u_16(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_16(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_web_socket_error(
+    WebSocketError self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_web_socket_error(self, serializer);
   }
 
   @protected
@@ -3911,6 +4591,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_u_16(int? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_u_16(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_list_record_string_string(
     List<(String, String)>? self,
     SseSerializer serializer,
@@ -4034,6 +4724,55 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case RhttpError_RhttpUnknownError(field0: final field0):
         sse_encode_i_32(6, serializer);
         sse_encode_String(field0, serializer);
+      case RhttpError_RhttpWebSocketError(field0: final field0):
+        sse_encode_i_32(7, serializer);
+        sse_encode_box_autoadd_web_socket_error(field0, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_rhttp_web_socket_event(
+    RhttpWebSocketEvent self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case RhttpWebSocketEvent_Message(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_box_autoadd_rhttp_web_socket_message(field0, serializer);
+      case RhttpWebSocketEvent_Closed(code: final code, reason: final reason):
+        sse_encode_i_32(1, serializer);
+        sse_encode_opt_box_autoadd_u_16(code, serializer);
+        sse_encode_opt_String(reason, serializer);
+      case RhttpWebSocketEvent_Error(field0: final field0):
+        sse_encode_i_32(2, serializer);
+        sse_encode_box_autoadd_web_socket_error(field0, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_rhttp_web_socket_message(
+    RhttpWebSocketMessage self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case RhttpWebSocketMessage_Text(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_String(field0, serializer);
+      case RhttpWebSocketMessage_Binary(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_list_prim_u_8_strict(field0, serializer);
+      case RhttpWebSocketMessage_Ping(field0: final field0):
+        sse_encode_i_32(2, serializer);
+        sse_encode_list_prim_u_8_strict(field0, serializer);
+      case RhttpWebSocketMessage_Pong(field0: final field0):
+        sse_encode_i_32(3, serializer);
+        sse_encode_list_prim_u_8_strict(field0, serializer);
+      case RhttpWebSocketMessage_Close(code: final code, reason: final reason):
+        sse_encode_i_32(4, serializer);
+        sse_encode_u_16(code, serializer);
+        sse_encode_String(reason, serializer);
     }
   }
 
@@ -4107,6 +4846,40 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_usize(BigInt self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putBigUint64(self);
+  }
+
+  @protected
+  void sse_encode_web_socket_error(
+    WebSocketError self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case WebSocketError_HandshakeFailed(
+        status: final status,
+        reason: final reason,
+      ):
+        sse_encode_i_32(0, serializer);
+        sse_encode_u_16(status, serializer);
+        sse_encode_opt_String(reason, serializer);
+      case WebSocketError_ProtocolError(message: final message):
+        sse_encode_i_32(1, serializer);
+        sse_encode_String(message, serializer);
+      case WebSocketError_TransportError(message: final message):
+        sse_encode_i_32(2, serializer);
+        sse_encode_String(message, serializer);
+      case WebSocketError_ConnectionClosed(
+        code: final code,
+        reason: final reason,
+      ):
+        sse_encode_i_32(3, serializer);
+        sse_encode_opt_box_autoadd_u_16(code, serializer);
+        sse_encode_opt_String(reason, serializer);
+      case WebSocketError_ClosedLocally():
+        sse_encode_i_32(4, serializer);
+      case WebSocketError_Unknown():
+        sse_encode_i_32(5, serializer);
+    }
   }
 }
 
@@ -4195,7 +4968,9 @@ class Dart2RustStreamSinkImpl extends RustOpaque
       .crateApiStreamDart2RustStreamSinkAdd(that: this, data: data);
 
   Future<void> close() =>
-      RustLib.instance.api.crateApiStreamDart2RustStreamSinkClose(that: this);
+      RustLib.instance.api.crateApiStreamDart2RustStreamSinkClose(
+        that: this,
+      );
 }
 
 @sealed
@@ -4235,5 +5010,25 @@ class RequestClientImpl extends RustOpaque implements RequestClient {
         RustLib.instance.api.rust_arc_decrement_strong_count_RequestClient,
     rustArcDecrementStrongCountPtr:
         RustLib.instance.api.rust_arc_decrement_strong_count_RequestClientPtr,
+  );
+}
+
+@sealed
+class WebSocketHandleImpl extends RustOpaque implements WebSocketHandle {
+  // Not to be used by end users
+  WebSocketHandleImpl.frbInternalDcoDecode(List<dynamic> wire)
+    : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  WebSocketHandleImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+    : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_WebSocketHandle,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_WebSocketHandle,
+    rustArcDecrementStrongCountPtr:
+        RustLib.instance.api.rust_arc_decrement_strong_count_WebSocketHandlePtr,
   );
 }

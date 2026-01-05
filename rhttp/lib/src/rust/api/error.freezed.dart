@@ -1,5 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format width=80
 // coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -40,166 +41,6 @@ class $RhttpErrorCopyWith<$Res>  {
 $RhttpErrorCopyWith(RhttpError _, $Res Function(RhttpError) __);
 }
 
-
-/// Adds pattern-matching-related methods to [RhttpError].
-extension RhttpErrorPatterns on RhttpError {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( RhttpError_RhttpCancelError value)?  rhttpCancelError,TResult Function( RhttpError_RhttpTimeoutError value)?  rhttpTimeoutError,TResult Function( RhttpError_RhttpRedirectError value)?  rhttpRedirectError,TResult Function( RhttpError_RhttpStatusCodeError value)?  rhttpStatusCodeError,TResult Function( RhttpError_RhttpInvalidCertificateError value)?  rhttpInvalidCertificateError,TResult Function( RhttpError_RhttpConnectionError value)?  rhttpConnectionError,TResult Function( RhttpError_RhttpUnknownError value)?  rhttpUnknownError,required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case RhttpError_RhttpCancelError() when rhttpCancelError != null:
-return rhttpCancelError(_that);case RhttpError_RhttpTimeoutError() when rhttpTimeoutError != null:
-return rhttpTimeoutError(_that);case RhttpError_RhttpRedirectError() when rhttpRedirectError != null:
-return rhttpRedirectError(_that);case RhttpError_RhttpStatusCodeError() when rhttpStatusCodeError != null:
-return rhttpStatusCodeError(_that);case RhttpError_RhttpInvalidCertificateError() when rhttpInvalidCertificateError != null:
-return rhttpInvalidCertificateError(_that);case RhttpError_RhttpConnectionError() when rhttpConnectionError != null:
-return rhttpConnectionError(_that);case RhttpError_RhttpUnknownError() when rhttpUnknownError != null:
-return rhttpUnknownError(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( RhttpError_RhttpCancelError value)  rhttpCancelError,required TResult Function( RhttpError_RhttpTimeoutError value)  rhttpTimeoutError,required TResult Function( RhttpError_RhttpRedirectError value)  rhttpRedirectError,required TResult Function( RhttpError_RhttpStatusCodeError value)  rhttpStatusCodeError,required TResult Function( RhttpError_RhttpInvalidCertificateError value)  rhttpInvalidCertificateError,required TResult Function( RhttpError_RhttpConnectionError value)  rhttpConnectionError,required TResult Function( RhttpError_RhttpUnknownError value)  rhttpUnknownError,}){
-final _that = this;
-switch (_that) {
-case RhttpError_RhttpCancelError():
-return rhttpCancelError(_that);case RhttpError_RhttpTimeoutError():
-return rhttpTimeoutError(_that);case RhttpError_RhttpRedirectError():
-return rhttpRedirectError(_that);case RhttpError_RhttpStatusCodeError():
-return rhttpStatusCodeError(_that);case RhttpError_RhttpInvalidCertificateError():
-return rhttpInvalidCertificateError(_that);case RhttpError_RhttpConnectionError():
-return rhttpConnectionError(_that);case RhttpError_RhttpUnknownError():
-return rhttpUnknownError(_that);}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( RhttpError_RhttpCancelError value)?  rhttpCancelError,TResult? Function( RhttpError_RhttpTimeoutError value)?  rhttpTimeoutError,TResult? Function( RhttpError_RhttpRedirectError value)?  rhttpRedirectError,TResult? Function( RhttpError_RhttpStatusCodeError value)?  rhttpStatusCodeError,TResult? Function( RhttpError_RhttpInvalidCertificateError value)?  rhttpInvalidCertificateError,TResult? Function( RhttpError_RhttpConnectionError value)?  rhttpConnectionError,TResult? Function( RhttpError_RhttpUnknownError value)?  rhttpUnknownError,}){
-final _that = this;
-switch (_that) {
-case RhttpError_RhttpCancelError() when rhttpCancelError != null:
-return rhttpCancelError(_that);case RhttpError_RhttpTimeoutError() when rhttpTimeoutError != null:
-return rhttpTimeoutError(_that);case RhttpError_RhttpRedirectError() when rhttpRedirectError != null:
-return rhttpRedirectError(_that);case RhttpError_RhttpStatusCodeError() when rhttpStatusCodeError != null:
-return rhttpStatusCodeError(_that);case RhttpError_RhttpInvalidCertificateError() when rhttpInvalidCertificateError != null:
-return rhttpInvalidCertificateError(_that);case RhttpError_RhttpConnectionError() when rhttpConnectionError != null:
-return rhttpConnectionError(_that);case RhttpError_RhttpUnknownError() when rhttpUnknownError != null:
-return rhttpUnknownError(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  rhttpCancelError,TResult Function()?  rhttpTimeoutError,TResult Function()?  rhttpRedirectError,TResult Function( int field0,  List<(String, String)> field1,  HttpResponseBody field2)?  rhttpStatusCodeError,TResult Function( String field0)?  rhttpInvalidCertificateError,TResult Function( String field0)?  rhttpConnectionError,TResult Function( String field0)?  rhttpUnknownError,required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case RhttpError_RhttpCancelError() when rhttpCancelError != null:
-return rhttpCancelError();case RhttpError_RhttpTimeoutError() when rhttpTimeoutError != null:
-return rhttpTimeoutError();case RhttpError_RhttpRedirectError() when rhttpRedirectError != null:
-return rhttpRedirectError();case RhttpError_RhttpStatusCodeError() when rhttpStatusCodeError != null:
-return rhttpStatusCodeError(_that.field0,_that.field1,_that.field2);case RhttpError_RhttpInvalidCertificateError() when rhttpInvalidCertificateError != null:
-return rhttpInvalidCertificateError(_that.field0);case RhttpError_RhttpConnectionError() when rhttpConnectionError != null:
-return rhttpConnectionError(_that.field0);case RhttpError_RhttpUnknownError() when rhttpUnknownError != null:
-return rhttpUnknownError(_that.field0);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  rhttpCancelError,required TResult Function()  rhttpTimeoutError,required TResult Function()  rhttpRedirectError,required TResult Function( int field0,  List<(String, String)> field1,  HttpResponseBody field2)  rhttpStatusCodeError,required TResult Function( String field0)  rhttpInvalidCertificateError,required TResult Function( String field0)  rhttpConnectionError,required TResult Function( String field0)  rhttpUnknownError,}) {final _that = this;
-switch (_that) {
-case RhttpError_RhttpCancelError():
-return rhttpCancelError();case RhttpError_RhttpTimeoutError():
-return rhttpTimeoutError();case RhttpError_RhttpRedirectError():
-return rhttpRedirectError();case RhttpError_RhttpStatusCodeError():
-return rhttpStatusCodeError(_that.field0,_that.field1,_that.field2);case RhttpError_RhttpInvalidCertificateError():
-return rhttpInvalidCertificateError(_that.field0);case RhttpError_RhttpConnectionError():
-return rhttpConnectionError(_that.field0);case RhttpError_RhttpUnknownError():
-return rhttpUnknownError(_that.field0);}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  rhttpCancelError,TResult? Function()?  rhttpTimeoutError,TResult? Function()?  rhttpRedirectError,TResult? Function( int field0,  List<(String, String)> field1,  HttpResponseBody field2)?  rhttpStatusCodeError,TResult? Function( String field0)?  rhttpInvalidCertificateError,TResult? Function( String field0)?  rhttpConnectionError,TResult? Function( String field0)?  rhttpUnknownError,}) {final _that = this;
-switch (_that) {
-case RhttpError_RhttpCancelError() when rhttpCancelError != null:
-return rhttpCancelError();case RhttpError_RhttpTimeoutError() when rhttpTimeoutError != null:
-return rhttpTimeoutError();case RhttpError_RhttpRedirectError() when rhttpRedirectError != null:
-return rhttpRedirectError();case RhttpError_RhttpStatusCodeError() when rhttpStatusCodeError != null:
-return rhttpStatusCodeError(_that.field0,_that.field1,_that.field2);case RhttpError_RhttpInvalidCertificateError() when rhttpInvalidCertificateError != null:
-return rhttpInvalidCertificateError(_that.field0);case RhttpError_RhttpConnectionError() when rhttpConnectionError != null:
-return rhttpConnectionError(_that.field0);case RhttpError_RhttpUnknownError() when rhttpUnknownError != null:
-return rhttpUnknownError(_that.field0);case _:
-  return null;
-
-}
-}
-
-}
 
 /// @nodoc
 
@@ -579,5 +420,442 @@ as String,
 
 
 }
+
+/// @nodoc
+
+
+class RhttpError_RhttpWebSocketError extends RhttpError {
+  const RhttpError_RhttpWebSocketError(this.field0): super._();
+  
+
+ final  WebSocketError field0;
+
+/// Create a copy of RhttpError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$RhttpError_RhttpWebSocketErrorCopyWith<RhttpError_RhttpWebSocketError> get copyWith => _$RhttpError_RhttpWebSocketErrorCopyWithImpl<RhttpError_RhttpWebSocketError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RhttpError_RhttpWebSocketError&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,field0);
+
+@override
+String toString() {
+  return 'RhttpError.rhttpWebSocketError(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $RhttpError_RhttpWebSocketErrorCopyWith<$Res> implements $RhttpErrorCopyWith<$Res> {
+  factory $RhttpError_RhttpWebSocketErrorCopyWith(RhttpError_RhttpWebSocketError value, $Res Function(RhttpError_RhttpWebSocketError) _then) = _$RhttpError_RhttpWebSocketErrorCopyWithImpl;
+@useResult
+$Res call({
+ WebSocketError field0
+});
+
+
+$WebSocketErrorCopyWith<$Res> get field0;
+
+}
+/// @nodoc
+class _$RhttpError_RhttpWebSocketErrorCopyWithImpl<$Res>
+    implements $RhttpError_RhttpWebSocketErrorCopyWith<$Res> {
+  _$RhttpError_RhttpWebSocketErrorCopyWithImpl(this._self, this._then);
+
+  final RhttpError_RhttpWebSocketError _self;
+  final $Res Function(RhttpError_RhttpWebSocketError) _then;
+
+/// Create a copy of RhttpError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(RhttpError_RhttpWebSocketError(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as WebSocketError,
+  ));
+}
+
+/// Create a copy of RhttpError
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$WebSocketErrorCopyWith<$Res> get field0 {
+  
+  return $WebSocketErrorCopyWith<$Res>(_self.field0, (value) {
+    return _then(_self.copyWith(field0: value));
+  });
+}
+}
+
+/// @nodoc
+mixin _$WebSocketError {
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketError);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'WebSocketError()';
+}
+
+
+}
+
+/// @nodoc
+class $WebSocketErrorCopyWith<$Res>  {
+$WebSocketErrorCopyWith(WebSocketError _, $Res Function(WebSocketError) __);
+}
+
+
+/// @nodoc
+
+
+class WebSocketError_HandshakeFailed extends WebSocketError {
+  const WebSocketError_HandshakeFailed({required this.status, this.reason}): super._();
+  
+
+ final  int status;
+ final  String? reason;
+
+/// Create a copy of WebSocketError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$WebSocketError_HandshakeFailedCopyWith<WebSocketError_HandshakeFailed> get copyWith => _$WebSocketError_HandshakeFailedCopyWithImpl<WebSocketError_HandshakeFailed>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketError_HandshakeFailed&&(identical(other.status, status) || other.status == status)&&(identical(other.reason, reason) || other.reason == reason));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,status,reason);
+
+@override
+String toString() {
+  return 'WebSocketError.handshakeFailed(status: $status, reason: $reason)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $WebSocketError_HandshakeFailedCopyWith<$Res> implements $WebSocketErrorCopyWith<$Res> {
+  factory $WebSocketError_HandshakeFailedCopyWith(WebSocketError_HandshakeFailed value, $Res Function(WebSocketError_HandshakeFailed) _then) = _$WebSocketError_HandshakeFailedCopyWithImpl;
+@useResult
+$Res call({
+ int status, String? reason
+});
+
+
+
+
+}
+/// @nodoc
+class _$WebSocketError_HandshakeFailedCopyWithImpl<$Res>
+    implements $WebSocketError_HandshakeFailedCopyWith<$Res> {
+  _$WebSocketError_HandshakeFailedCopyWithImpl(this._self, this._then);
+
+  final WebSocketError_HandshakeFailed _self;
+  final $Res Function(WebSocketError_HandshakeFailed) _then;
+
+/// Create a copy of WebSocketError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? status = null,Object? reason = freezed,}) {
+  return _then(WebSocketError_HandshakeFailed(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as int,reason: freezed == reason ? _self.reason : reason // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class WebSocketError_ProtocolError extends WebSocketError {
+  const WebSocketError_ProtocolError({required this.message}): super._();
+  
+
+ final  String message;
+
+/// Create a copy of WebSocketError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$WebSocketError_ProtocolErrorCopyWith<WebSocketError_ProtocolError> get copyWith => _$WebSocketError_ProtocolErrorCopyWithImpl<WebSocketError_ProtocolError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketError_ProtocolError&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message);
+
+@override
+String toString() {
+  return 'WebSocketError.protocolError(message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $WebSocketError_ProtocolErrorCopyWith<$Res> implements $WebSocketErrorCopyWith<$Res> {
+  factory $WebSocketError_ProtocolErrorCopyWith(WebSocketError_ProtocolError value, $Res Function(WebSocketError_ProtocolError) _then) = _$WebSocketError_ProtocolErrorCopyWithImpl;
+@useResult
+$Res call({
+ String message
+});
+
+
+
+
+}
+/// @nodoc
+class _$WebSocketError_ProtocolErrorCopyWithImpl<$Res>
+    implements $WebSocketError_ProtocolErrorCopyWith<$Res> {
+  _$WebSocketError_ProtocolErrorCopyWithImpl(this._self, this._then);
+
+  final WebSocketError_ProtocolError _self;
+  final $Res Function(WebSocketError_ProtocolError) _then;
+
+/// Create a copy of WebSocketError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+  return _then(WebSocketError_ProtocolError(
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class WebSocketError_TransportError extends WebSocketError {
+  const WebSocketError_TransportError({required this.message}): super._();
+  
+
+ final  String message;
+
+/// Create a copy of WebSocketError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$WebSocketError_TransportErrorCopyWith<WebSocketError_TransportError> get copyWith => _$WebSocketError_TransportErrorCopyWithImpl<WebSocketError_TransportError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketError_TransportError&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message);
+
+@override
+String toString() {
+  return 'WebSocketError.transportError(message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $WebSocketError_TransportErrorCopyWith<$Res> implements $WebSocketErrorCopyWith<$Res> {
+  factory $WebSocketError_TransportErrorCopyWith(WebSocketError_TransportError value, $Res Function(WebSocketError_TransportError) _then) = _$WebSocketError_TransportErrorCopyWithImpl;
+@useResult
+$Res call({
+ String message
+});
+
+
+
+
+}
+/// @nodoc
+class _$WebSocketError_TransportErrorCopyWithImpl<$Res>
+    implements $WebSocketError_TransportErrorCopyWith<$Res> {
+  _$WebSocketError_TransportErrorCopyWithImpl(this._self, this._then);
+
+  final WebSocketError_TransportError _self;
+  final $Res Function(WebSocketError_TransportError) _then;
+
+/// Create a copy of WebSocketError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+  return _then(WebSocketError_TransportError(
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class WebSocketError_ConnectionClosed extends WebSocketError {
+  const WebSocketError_ConnectionClosed({this.code, this.reason}): super._();
+  
+
+ final  int? code;
+ final  String? reason;
+
+/// Create a copy of WebSocketError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$WebSocketError_ConnectionClosedCopyWith<WebSocketError_ConnectionClosed> get copyWith => _$WebSocketError_ConnectionClosedCopyWithImpl<WebSocketError_ConnectionClosed>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketError_ConnectionClosed&&(identical(other.code, code) || other.code == code)&&(identical(other.reason, reason) || other.reason == reason));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,code,reason);
+
+@override
+String toString() {
+  return 'WebSocketError.connectionClosed(code: $code, reason: $reason)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $WebSocketError_ConnectionClosedCopyWith<$Res> implements $WebSocketErrorCopyWith<$Res> {
+  factory $WebSocketError_ConnectionClosedCopyWith(WebSocketError_ConnectionClosed value, $Res Function(WebSocketError_ConnectionClosed) _then) = _$WebSocketError_ConnectionClosedCopyWithImpl;
+@useResult
+$Res call({
+ int? code, String? reason
+});
+
+
+
+
+}
+/// @nodoc
+class _$WebSocketError_ConnectionClosedCopyWithImpl<$Res>
+    implements $WebSocketError_ConnectionClosedCopyWith<$Res> {
+  _$WebSocketError_ConnectionClosedCopyWithImpl(this._self, this._then);
+
+  final WebSocketError_ConnectionClosed _self;
+  final $Res Function(WebSocketError_ConnectionClosed) _then;
+
+/// Create a copy of WebSocketError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? code = freezed,Object? reason = freezed,}) {
+  return _then(WebSocketError_ConnectionClosed(
+code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as int?,reason: freezed == reason ? _self.reason : reason // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class WebSocketError_ClosedLocally extends WebSocketError {
+  const WebSocketError_ClosedLocally(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketError_ClosedLocally);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'WebSocketError.closedLocally()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class WebSocketError_Unknown extends WebSocketError {
+  const WebSocketError_Unknown(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketError_Unknown);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'WebSocketError.unknown()';
+}
+
+
+}
+
+
+
 
 // dart format on

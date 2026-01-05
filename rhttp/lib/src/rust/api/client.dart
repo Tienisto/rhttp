@@ -11,7 +11,7 @@ part 'client.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `create_client`, `new_default`, `new`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DynamicDnsSettings`, `DynamicResolver`, `StaticResolver`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `resolve`, `resolve`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `resolve`, `resolve`
 
 DnsSettings createStaticResolverSync({required StaticDnsSettings settings}) =>
     RustLib.instance.api.crateApiClientCreateStaticResolverSync(
@@ -108,7 +108,9 @@ class ClientSettings {
 class CookieSettings {
   final bool storeCookies;
 
-  const CookieSettings({required this.storeCookies});
+  const CookieSettings({
+    required this.storeCookies,
+  });
 
   @override
   int get hashCode => storeCookies.hashCode;
@@ -125,7 +127,10 @@ class CustomProxy {
   final String url;
   final ProxyCondition condition;
 
-  const CustomProxy({required this.url, required this.condition});
+  const CustomProxy({
+    required this.url,
+    required this.condition,
+  });
 
   @override
   int get hashCode => url.hashCode ^ condition.hashCode;
@@ -139,15 +144,20 @@ class CustomProxy {
           condition == other.condition;
 }
 
-enum ProxyCondition { http, https, all }
+enum ProxyCondition {
+  http,
+  https,
+  all,
+}
 
 @freezed
 sealed class ProxySettings with _$ProxySettings {
   const ProxySettings._();
 
   const factory ProxySettings.noProxy() = ProxySettings_NoProxy;
-  const factory ProxySettings.customProxyList(List<CustomProxy> field0) =
-      ProxySettings_CustomProxyList;
+  const factory ProxySettings.customProxyList(
+    List<CustomProxy> field0,
+  ) = ProxySettings_CustomProxyList;
 }
 
 @freezed
@@ -155,15 +165,19 @@ sealed class RedirectSettings with _$RedirectSettings {
   const RedirectSettings._();
 
   const factory RedirectSettings.noRedirect() = RedirectSettings_NoRedirect;
-  const factory RedirectSettings.limitedRedirects(int field0) =
-      RedirectSettings_LimitedRedirects;
+  const factory RedirectSettings.limitedRedirects(
+    int field0,
+  ) = RedirectSettings_LimitedRedirects;
 }
 
 class StaticDnsSettings {
   final Map<String, List<String>> overrides;
   final String? fallback;
 
-  const StaticDnsSettings({required this.overrides, this.fallback});
+  const StaticDnsSettings({
+    required this.overrides,
+    this.fallback,
+  });
 
   @override
   int get hashCode => overrides.hashCode ^ fallback.hashCode;
@@ -251,4 +265,7 @@ class TlsSettings {
           sni == other.sni;
 }
 
-enum TlsVersion { tls12, tls13 }
+enum TlsVersion {
+  tls12,
+  tls13,
+}

@@ -131,6 +131,17 @@ class RhttpUnknownException extends RhttpException {
   String toString() => '[$runtimeType] $message';
 }
 
+/// An exception thrown when a websocket error occurs.
+class RhttpWebSocketException extends RhttpException {
+  /// The inner exception
+  final WebSocketException inner;
+
+  const RhttpWebSocketException(super.request, this.inner);
+
+  @override
+  String toString() => '[$runtimeType] $inner';
+}
+
 @internal
 RhttpException parseError(HttpRequest request, rust.RhttpError error) {
   return switch (error) {
@@ -158,5 +169,41 @@ RhttpException parseError(HttpRequest request, rust.RhttpError error) {
       RhttpConnectionException(request, message),
     rust.RhttpError_RhttpUnknownError(field0: final message) =>
       RhttpUnknownException(request, message),
+    rust.RhttpError_RhttpWebSocketError(field0: final webSocketError) =>
+      RhttpWebSocketException(request, switch (webSocketError) {
+        rust.WebSocketError_HandshakeFailed(
+          status: final status,
+          reason: final reason,
+        ) =>
+          WebSocketHandshakeFailedException(status, reason),
+        rust.WebSocketError_ProtocolError() => throw UnimplementedError(),
+        rust.WebSocketError_TransportError() => throw UnimplementedError(),
+        rust.WebSocketError_ConnectionClosed() => throw UnimplementedError(),
+        rust.WebSocketError_ClosedLocally() => throw UnimplementedError(),
+        rust.WebSocketError_Unknown() => throw UnimplementedError(),
+      }),
   };
+}
+
+/// The base class for all exceptions thrown by the websocket part of the
+/// `rhttp` library.
+///
+/// This class is not sealed to allow for custom exceptions.
+class WebSocketException {
+  const WebSocketException();
+}
+
+/// An exception thrown when a connection error occurs.
+/// For example, when the server is unreachable or internet is not available.
+class WebSocketHandshakeFailedException extends WebSocketException {
+  final int status;
+
+  final String? reason;
+
+  const WebSocketHandshakeFailedException(this.status, this.reason);
+
+  @override
+  String toString() =>
+      '[$runtimeType] Handshake error. ($status)'
+      '${reason != null ? ' Reason: $reason' : ''}';
 }

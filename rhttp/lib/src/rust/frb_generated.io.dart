@@ -7,6 +7,7 @@ import 'api/client.dart';
 import 'api/error.dart';
 import 'api/http.dart';
 import 'api/stream.dart';
+import 'api/websocket.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
@@ -41,6 +42,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CrossPlatformFinalizerArg
   get rust_arc_decrement_strong_count_RequestClientPtr => wire
       ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClientPtr;
+
+  CrossPlatformFinalizerArg
+  get rust_arc_decrement_strong_count_WebSocketHandlePtr => wire
+      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandlePtr;
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);
@@ -82,6 +87,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  WebSocketHandle
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    dynamic raw,
+  );
+
+  @protected
   Dart2RustStreamSink
   dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
     dynamic raw,
@@ -96,6 +107,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   RequestClient
   dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+    dynamic raw,
+  );
+
+  @protected
+  WebSocketHandle
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
     dynamic raw,
   );
 
@@ -164,9 +181,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  WebSocketHandle
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    dynamic raw,
+  );
+
+  @protected
   RustStreamSink<Uint8List> dco_decode_StreamSink_list_prim_u_8_strict_Sse(
     dynamic raw,
   );
+
+  @protected
+  RustStreamSink<RhttpWebSocketEvent>
+  dco_decode_StreamSink_rhttp_web_socket_event_Sse(dynamic raw);
 
   @protected
   String dco_decode_String(dynamic raw);
@@ -220,6 +247,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RedirectSettings dco_decode_box_autoadd_redirect_settings(dynamic raw);
 
   @protected
+  RhttpWebSocketMessage dco_decode_box_autoadd_rhttp_web_socket_message(
+    dynamic raw,
+  );
+
+  @protected
   StaticDnsSettings dco_decode_box_autoadd_static_dns_settings(dynamic raw);
 
   @protected
@@ -230,6 +262,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   TlsVersion dco_decode_box_autoadd_tls_version(dynamic raw);
+
+  @protected
+  int dco_decode_box_autoadd_u_16(dynamic raw);
+
+  @protected
+  WebSocketError dco_decode_box_autoadd_web_socket_error(dynamic raw);
 
   @protected
   ClientCertificate dco_decode_client_certificate(dynamic raw);
@@ -368,6 +406,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   TlsVersion? dco_decode_opt_box_autoadd_tls_version(dynamic raw);
 
   @protected
+  int? dco_decode_opt_box_autoadd_u_16(dynamic raw);
+
+  @protected
   List<(String, String)>? dco_decode_opt_list_record_string_string(dynamic raw);
 
   @protected
@@ -398,6 +439,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RhttpError dco_decode_rhttp_error(dynamic raw);
 
   @protected
+  RhttpWebSocketEvent dco_decode_rhttp_web_socket_event(dynamic raw);
+
+  @protected
+  RhttpWebSocketMessage dco_decode_rhttp_web_socket_message(dynamic raw);
+
+  @protected
   StaticDnsSettings dco_decode_static_dns_settings(dynamic raw);
 
   @protected
@@ -420,6 +467,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BigInt dco_decode_usize(dynamic raw);
+
+  @protected
+  WebSocketError dco_decode_web_socket_error(dynamic raw);
 
   @protected
   AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
@@ -461,6 +511,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  WebSocketHandle
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   Dart2RustStreamSink
   sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
     SseDeserializer deserializer,
@@ -475,6 +531,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   RequestClient
   sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  WebSocketHandle
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
     SseDeserializer deserializer,
   );
 
@@ -525,7 +587,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  WebSocketHandle
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   RustStreamSink<Uint8List> sse_decode_StreamSink_list_prim_u_8_strict_Sse(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  RustStreamSink<RhttpWebSocketEvent>
+  sse_decode_StreamSink_rhttp_web_socket_event_Sse(
     SseDeserializer deserializer,
   );
 
@@ -595,6 +669,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  RhttpWebSocketMessage sse_decode_box_autoadd_rhttp_web_socket_message(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   StaticDnsSettings sse_decode_box_autoadd_static_dns_settings(
     SseDeserializer deserializer,
   );
@@ -609,6 +688,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   TlsVersion sse_decode_box_autoadd_tls_version(SseDeserializer deserializer);
+
+  @protected
+  int sse_decode_box_autoadd_u_16(SseDeserializer deserializer);
+
+  @protected
+  WebSocketError sse_decode_box_autoadd_web_socket_error(
+    SseDeserializer deserializer,
+  );
 
   @protected
   ClientCertificate sse_decode_client_certificate(SseDeserializer deserializer);
@@ -771,6 +858,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  int? sse_decode_opt_box_autoadd_u_16(SseDeserializer deserializer);
+
+  @protected
   List<(String, String)>? sse_decode_opt_list_record_string_string(
     SseDeserializer deserializer,
   );
@@ -809,6 +899,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RhttpError sse_decode_rhttp_error(SseDeserializer deserializer);
 
   @protected
+  RhttpWebSocketEvent sse_decode_rhttp_web_socket_event(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  RhttpWebSocketMessage sse_decode_rhttp_web_socket_message(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   StaticDnsSettings sse_decode_static_dns_settings(
     SseDeserializer deserializer,
   );
@@ -833,6 +933,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BigInt sse_decode_usize(SseDeserializer deserializer);
+
+  @protected
+  WebSocketError sse_decode_web_socket_error(SseDeserializer deserializer);
 
   @protected
   void sse_encode_AnyhowException(
@@ -884,6 +987,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    WebSocketHandle self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
   sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDart2RustStreamSink(
     Dart2RustStreamSink self,
     SseSerializer serializer,
@@ -900,6 +1010,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void
   sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
     RequestClient self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    WebSocketHandle self,
     SseSerializer serializer,
   );
 
@@ -982,8 +1099,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    WebSocketHandle self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_StreamSink_list_prim_u_8_strict_Sse(
     RustStreamSink<Uint8List> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_StreamSink_rhttp_web_socket_event_Sse(
+    RustStreamSink<RhttpWebSocketEvent> self,
     SseSerializer serializer,
   );
 
@@ -1074,6 +1204,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_rhttp_web_socket_message(
+    RhttpWebSocketMessage self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_static_dns_settings(
     StaticDnsSettings self,
     SseSerializer serializer,
@@ -1094,6 +1230,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_tls_version(
     TlsVersion self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_u_16(int self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_web_socket_error(
+    WebSocketError self,
     SseSerializer serializer,
   );
 
@@ -1308,6 +1453,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_opt_box_autoadd_u_16(int? self, SseSerializer serializer);
+
+  @protected
   void sse_encode_opt_list_record_string_string(
     List<(String, String)>? self,
     SseSerializer serializer,
@@ -1357,6 +1505,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_rhttp_error(RhttpError self, SseSerializer serializer);
 
   @protected
+  void sse_encode_rhttp_web_socket_event(
+    RhttpWebSocketEvent self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_rhttp_web_socket_message(
+    RhttpWebSocketMessage self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_static_dns_settings(
     StaticDnsSettings self,
     SseSerializer serializer,
@@ -1385,6 +1545,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_usize(BigInt self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_web_socket_error(
+    WebSocketError self,
+    SseSerializer serializer,
+  );
 }
 
 // Section: wire_class
@@ -1569,5 +1735,39 @@ class RustLibWire implements BaseWire {
       );
   late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient =
       _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClientPtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandlePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_rhttp_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle',
+      );
+  late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle =
+      _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandlePtr
+          .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+    ffi.Pointer<ffi.Void> ptr,
+  ) {
+    return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle(
+      ptr,
+    );
+  }
+
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandlePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+        'frbgen_rhttp_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle',
+      );
+  late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandle =
+      _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWebSocketHandlePtr
           .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 }
