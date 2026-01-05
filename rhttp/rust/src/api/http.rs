@@ -349,106 +349,18 @@ async fn make_http_request_helper(
     body_stream: Option<stream::Dart2RustStreamReceiver>,
     expect_body: Option<HttpExpectBody>,
 ) -> Result<Response, RhttpError> {
-    let client: RequestClient = match client {
-        Some(client) => client.try_read().unwrap().clone(),
-        None => match settings {
-            Some(settings) => RequestClient::new(settings)
-                .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
-            None => RequestClient::new_default(),
-        },
-    };
-
-    let request = {
-        let mut request = client.client.request(
-            method.to_method(),
-            Url::parse(&url).map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
-        );
-
-        request = match client.http_version_pref {
-            HttpVersionPref::Http10 => request.version(Version::HTTP_10),
-            HttpVersionPref::Http11 => request.version(Version::HTTP_11),
-            HttpVersionPref::Http2 => request.version(Version::HTTP_2),
-            HttpVersionPref::Http3 => request.version(Version::HTTP_3),
-            HttpVersionPref::All => request,
-        };
-
-        if let Some(query) = query {
-            request = request.query(&query);
-        }
-
-        match headers {
-            Some(HttpHeaders::Map(map)) => {
-                for (k, v) in map {
-                    let header_name = HeaderName::from_str(&k)
-                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
-                    let header_value = HeaderValue::from_str(&v)
-                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
-                    request = request.header(header_name, header_value);
-                }
-            }
-            Some(HttpHeaders::List(list)) => {
-                for (k, v) in list {
-                    let header_name = HeaderName::from_str(&k)
-                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
-                    let header_value = HeaderValue::from_str(&v)
-                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
-                    request = request.header(header_name, header_value);
-                }
-            }
-            None => (),
-        };
-
-        request = match body {
-            Some(HttpBody::Text(text)) => request.body(text),
-            Some(HttpBody::Bytes(bytes)) => request.body(bytes),
-            Some(HttpBody::BytesStream) => {
-                let stream = body_stream
-                    .expect("body_stream should exist for HttpBody::BytesStream")
-                    .receiver
-                    .map(|v| Ok::<Vec<u8>, RhttpError>(v));
-
-                let body = reqwest::Body::wrap_stream(stream);
-                request.body(body)
-            }
-            Some(HttpBody::Form(form)) => request.form(&form),
-            Some(HttpBody::Multipart(body)) => {
-                let mut form = reqwest::multipart::Form::new();
-                for (k, v) in body.parts {
-                    let mut part = match v.value {
-                        MultipartValue::Text(text) => reqwest::multipart::Part::text(text),
-                        MultipartValue::Bytes(bytes) => reqwest::multipart::Part::bytes(bytes),
-                        MultipartValue::File(file) => {
-                            let file = tokio::fs::File::open(file).await.map_err(|_| {
-                                RhttpError::RhttpUnknownError("Failed to open file".to_string())
-                            })?;
-                            reqwest::multipart::Part::stream(reqwest::Body::wrap_stream(
-                                tokio_util::io::ReaderStream::new(file),
-                            ))
-                        }
-                    };
-
-                    if let Some(file_name) = v.file_name {
-                        part = part.file_name(file_name);
-                    }
-
-                    if let Some(content_type) = v.content_type {
-                        part = part
-                            .mime_str(&content_type)
-                            .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
-                    }
-
-                    form = form.part(k, part);
-                }
-
-                request.multipart(form)
-            }
-            None => request,
-        };
-
-        request
-            .build()
-            .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?
-    };
+    let client = retrieve_client(client, settings)?;
+    
+    let request = retrieve_request(
+        &client,
+        method,
+        url,
+        query,
+        headers,
+        body,
+        body_stream,
+    )
+    .await?;
 
     let response = client.client.execute(request).await.map_err(|e| {
         if e.is_redirect() {
@@ -506,16 +418,126 @@ async fn make_http_request_helper(
     Ok(response)
 }
 
+pub(crate) fn retrieve_client(
+    client: Option<RustAutoOpaque<RequestClient>>,
+    settings: Option<ClientSettings>,
+) -> Result<RequestClient, RhttpError> {
+    match client {
+        Some(client) => Ok(client.try_read().unwrap().clone()),
+        None => match settings {
+            Some(settings) => RequestClient::new(settings)
+                .map_err(|e| RhttpError::RhttpUnknownError(e.to_string())),
+            None => Ok(RequestClient::new_default()),
+        },
+    }
+}
+
+pub(crate) async fn retrieve_request(
+    client: &RequestClient,
+    method: HttpMethod,
+    url: String,
+    query: Option<Vec<(String, String)>>,
+    headers: Option<HttpHeaders>,
+    body: Option<HttpBody>,
+    body_stream: Option<stream::Dart2RustStreamReceiver>,
+) -> Result<reqwest::Request, RhttpError> {
+    let mut request = client.client.request(
+        method.to_method(),
+        Url::parse(&url).map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?,
+    );
+
+    request = match client.http_version_pref {
+        HttpVersionPref::Http10 => request.version(Version::HTTP_10),
+        HttpVersionPref::Http11 => request.version(Version::HTTP_11),
+        HttpVersionPref::Http2 => request.version(Version::HTTP_2),
+        HttpVersionPref::Http3 => request.version(Version::HTTP_3),
+        HttpVersionPref::All => request,
+    };
+
+    if let Some(query) = query {
+        request = request.query(&query);
+    }
+
+    match headers {
+        Some(HttpHeaders::Map(map)) => {
+            for (k, v) in map {
+                let header_name = HeaderName::from_str(&k)
+                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
+                let header_value = HeaderValue::from_str(&v)
+                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
+                request = request.header(header_name, header_value);
+            }
+        }
+        Some(HttpHeaders::List(list)) => {
+            for (k, v) in list {
+                let header_name = HeaderName::from_str(&k)
+                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
+                let header_value = HeaderValue::from_str(&v)
+                    .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
+                request = request.header(header_name, header_value);
+            }
+        }
+        None => (),
+    };
+
+    request = match body {
+        Some(HttpBody::Text(text)) => request.body(text),
+        Some(HttpBody::Bytes(bytes)) => request.body(bytes),
+        Some(HttpBody::BytesStream) => {
+            let stream = body_stream
+                .expect("body_stream should exist for HttpBody::BytesStream")
+                .receiver
+                .map(|v| Ok::<Vec<u8>, RhttpError>(v));
+
+            let body = reqwest::Body::wrap_stream(stream);
+            request.body(body)
+        }
+        Some(HttpBody::Form(form)) => request.form(&form),
+        Some(HttpBody::Multipart(body)) => {
+            let mut form = reqwest::multipart::Form::new();
+            for (k, v) in body.parts {
+                let mut part = match v.value {
+                    MultipartValue::Text(text) => reqwest::multipart::Part::text(text),
+                    MultipartValue::Bytes(bytes) => reqwest::multipart::Part::bytes(bytes),
+                    MultipartValue::File(file) => {
+                        let file = tokio::fs::File::open(file).await.map_err(|_| {
+                            RhttpError::RhttpUnknownError("Failed to open file".to_string())
+                        })?;
+                        reqwest::multipart::Part::stream(reqwest::Body::wrap_stream(
+                            tokio_util::io::ReaderStream::new(file),
+                        ))
+                    }
+                };
+
+                if let Some(file_name) = v.file_name {
+                    part = part.file_name(file_name);
+                }
+
+                if let Some(content_type) = v.content_type {
+                    part = part
+                        .mime_str(&content_type)
+                        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))?;
+                }
+
+                form = form.part(k, part);
+            }
+
+            request.multipart(form)
+        }
+        None => request,
+    };
+
+    request
+        .build()
+        .map_err(|e| RhttpError::RhttpUnknownError(e.to_string()))
+}
+
 fn header_to_vec(headers: &reqwest::header::HeaderMap) -> Vec<(String, String)> {
     headers
         .iter()
-         .filter_map(|(k, v)| {
-            match v.to_str() {
-                Ok(v_str) => Some((k.as_str().to_string(), v_str.to_string())),
-                Err(_) => {
-                    None
-                }
-            }
+        .filter_map(|(k, v)| match v.to_str() {
+            Ok(v_str) => Some((k.as_str().to_string(), v_str.to_string())),
+            Err(_) => None,
         })
         .collect()
 }
