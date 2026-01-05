@@ -54,7 +54,7 @@ pub enum MultipartValue {
     File(String),
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum HttpVersionPref {
     Http10,
     Http11,

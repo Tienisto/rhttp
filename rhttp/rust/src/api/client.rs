@@ -6,11 +6,13 @@ use flutter_rust_bridge::{frb, DartFnFuture};
 use reqwest::dns::{Addrs, Name, Resolve, Resolving};
 use reqwest::{tls, Certificate};
 use std::collections::HashMap;
+use std::fmt::Debug;
 use std::net::SocketAddr;
 use std::str::FromStr;
 use std::sync::Arc;
 pub use tokio_util::sync::CancellationToken;
 
+#[derive(Debug)]
 pub struct ClientSettings {
     pub cookie_settings: Option<CookieSettings>,
     pub http_version_pref: HttpVersionPref,
@@ -23,31 +25,37 @@ pub struct ClientSettings {
     pub user_agent: Option<String>,
 }
 
+#[derive(Debug)]
 pub struct CookieSettings {
     pub store_cookies: bool,
 }
 
+#[derive(Debug)]
 pub enum ProxySettings {
     NoProxy,
     CustomProxyList(Vec<CustomProxy>),
 }
 
+#[derive(Debug)]
 pub struct CustomProxy {
     pub url: String,
     pub condition: ProxyCondition,
 }
 
+#[derive(Debug)]
 pub enum ProxyCondition {
     Http,
     Https,
     All,
 }
 
+#[derive(Debug)]
 pub enum RedirectSettings {
     NoRedirect,
     LimitedRedirects(i32),
 }
 
+#[derive(Debug)]
 pub struct TimeoutSettings {
     pub timeout: Option<Duration>,
     pub connect_timeout: Option<Duration>,
@@ -55,6 +63,7 @@ pub struct TimeoutSettings {
     pub keep_alive_ping: Option<Duration>,
 }
 
+#[derive(Debug)]
 pub struct TlsSettings {
     pub trust_root_certificates: bool,
     pub trusted_root_certificates: Vec<Vec<u8>>,
@@ -65,11 +74,13 @@ pub struct TlsSettings {
     pub sni: bool,
 }
 
+#[derive(Debug)]
 pub enum DnsSettings {
     StaticDns(StaticDnsSettings),
     DynamicDns(DynamicDnsSettings),
 }
 
+#[derive(Debug)]
 pub struct StaticDnsSettings {
     pub overrides: HashMap<String, Vec<String>>,
     pub fallback: Option<String>,
@@ -80,11 +91,19 @@ pub struct DynamicDnsSettings {
     resolver: Arc<dyn Fn(String) -> DartFnFuture<Vec<String>> + 'static + Send + Sync>,
 }
 
+impl Debug for DynamicDnsSettings {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("DynamicDnsSettings").finish()
+    }
+}
+
+#[derive(Debug)]
 pub struct ClientCertificate {
     pub certificate: Vec<u8>,
     pub private_key: Vec<u8>,
 }
 
+#[derive(Debug)]
 pub enum TlsVersion {
     Tls1_2,
     Tls1_3,
