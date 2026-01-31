@@ -8,68 +8,57 @@ on:
 
 env:
   FLUTTER_VERSION_OLDEST: "3.35.7"
-  FLUTTER_VERSION_NEWEST: "3.38.4"
+  FLUTTER_VERSION_NEWEST: "3.38.9"
 
 jobs:
-  format:
-    name: Format (newest Flutter version)
-    runs-on: ubuntu-latest
+  test:
+    name: Test (newest Flutter version)
+    runs-on: codeberg-small
 
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+
+      - name: Setup Flutter
+        uses: ./.forgejo/actions/setup-flutter
         with:
           flutter-version: ${{ env.FLUTTER_VERSION_NEWEST }}
-          channel: "stable"
 
       - name: Dependencies
         working-directory: rhttp
         run: flutter pub get
+
       - name: Check format
         working-directory: rhttp
         run: dart format --set-exit-if-changed lib bin test
+
       - name: Analyze
         working-directory: rhttp
         run: flutter analyze
 
-  format_oldest:
-    name: Format (oldest Flutter version)
-    runs-on: ubuntu-latest
+      - name: Test
+        working-directory: rhttp
+        run: flutter test
+
+  test_legacy:
+    name: Test (oldest Flutter version)
+    runs-on: codeberg-small
 
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+
+      - name: Setup Flutter
+        uses: ./.forgejo/actions/setup-flutter
         with:
           flutter-version: ${{ env.FLUTTER_VERSION_OLDEST }}
-          channel: "stable"
 
       - name: Remove example
         working-directory: rhttp
         run: rm -rf example
+
       - name: Downgrade
         working-directory: rhttp
         run: flutter pub downgrade
-      - name: Check format
-        working-directory: rhttp
-        run: dart format --set-exit-if-changed lib bin test
-      - name: Analyze
-        working-directory: rhttp
-        run: flutter analyze
 
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION_NEWEST }}
-          channel: "stable"
-
-      - name: Dependencies
-        working-directory: rhttp
-        run: flutter pub get
       - name: Test
         working-directory: rhttp
         run: flutter test

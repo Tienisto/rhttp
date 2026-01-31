@@ -1,3 +1,7 @@
+## 0.15.1
+
+- chore: migrate from GitHub to Codeberg: https://codeberg.org/Tienisto/rhttp
+
 ## 0.15.0
 
 - fix: `RhttpCompatibleClient` should combine header values with the same key using comma as per `http` spec (#95)

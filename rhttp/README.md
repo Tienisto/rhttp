@@ -1,7 +1,7 @@
 # rhttp
 
 [![pub package](https://img.shields.io/pub/v/rhttp.svg)](https://pub.dev/packages/rhttp)
-![ci](https://github.com/Tienisto/rhttp/actions/workflows/ci.yml/badge.svg)
+![ci](https://codeberg.org/Tienisto/rhttp/actions/workflows/ci.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Make HTTP requests using Rust for Flutter developers.
@@ -40,9 +40,9 @@ Web is currently not supported.
 
 rhttp is much faster at downloading large files and a bit faster at downloading small files compared to the default HTTP client in Dart.
 
-| Small Files (1 KB)                                                                                   | Large Files (10 MB)                                                                                  |
-|------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
-| ![benchmark-small](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-small.png) | ![benchmark-large](https://raw.githubusercontent.com/Tienisto/rhttp/main/benchmark/result-large.png) |
+| Small Files (1 KB)                                                                                 | Large Files (10 MB)                                                                                |
+|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+| ![benchmark-small](https://codeberg.org/Tienisto/rhttp/raw/branch/main/benchmark/result-small.png) | ![benchmark-large](https://codeberg.org/Tienisto/rhttp/raw/branch/main/benchmark/result-large.png) |
 
 Referred packages: [dio](https://pub.dev/packages/dio) (5.5.0+1), [http](https://pub.dev/packages/http) (1.2.2), [rhttp](https://pub.dev/packages/rhttp) (0.3.0)
 
@@ -881,7 +881,7 @@ void main() async {
 
 MIT License
 
-Copyright (c) 2024-2025 Tien Do Nam
+Copyright (c) 2024-2026 Tien Do Nam
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

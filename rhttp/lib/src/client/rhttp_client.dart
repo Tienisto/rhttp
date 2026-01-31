@@ -51,7 +51,7 @@ class RhttpClient {
   ///
   /// Note:
   /// This method crashes when configured to use HTTP/3.
-  /// See: https://github.com/Tienisto/rhttp/issues/10
+  /// See: https://codeberg.org/Tienisto/rhttp/issues/10
   factory RhttpClient.createSync({
     ClientSettings? settings,
     List<Interceptor>? interceptors,

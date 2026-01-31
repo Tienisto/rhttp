@@ -34,7 +34,7 @@ class IoCompatibleClient implements HttpClient {
   ///
   /// Note:
   /// This method crashes when configured to use HTTP/3.
-  /// See: https://github.com/Tienisto/rhttp/issues/10
+  /// See: https://codeberg.org/Tienisto/rhttp/issues/10
   factory IoCompatibleClient.createSync({
     ClientSettings? settings,
     List<Interceptor>? interceptors,
