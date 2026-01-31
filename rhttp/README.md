@@ -4,6 +4,8 @@
 ![ci](https://codeberg.org/Tienisto/rhttp/actions/workflows/ci.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+**ARCHIVE NOTICE:** This repository has been archived. Follow development on [Codeberg](https://codeberg.org/Tienisto/rhttp).
+
 Make HTTP requests using Rust for Flutter developers.
 
 ## About
